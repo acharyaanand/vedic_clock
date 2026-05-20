@@ -6,7 +6,7 @@ Source: BPHS Vimshottari Dasha Adhyaya (Parashara)
 """
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
-from app.classical_knowledge import (
+from classical_knowledge import (
     VIMSHOTTARI_YEARS, NAKSHATRA_DASHA_LORD, DASHA_ORDER, NAKSHATRAS
 )
 

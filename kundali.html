@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aetheris Kundali — 3D Birth Chart | astromata.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#0A0E27;--void-d:#050812;--void-l:#1A1F3A;
+  --gold:#FFD700;--gw:#F0B863;--gd:#8B7500;--gp:#FFF5CC;
+  --silver:#E8E8E8;
+  /* Planetary */
+  --su:#FFB900;--mo:#FFFFFF;--ma:#E27B58;--me:#87CEEB;
+  --ju:#C88B3A;--ve:#FFB6C1;--sa:#F4A460;--ra:#9B59B6;--ke:#2F4F4F;
+  --good:#10B981;--bad:#DC2626;--warn:#F59E0B;
+  --f1:'Cinzel Decorative',serif;--f2:'Cinzel',serif;
+  --f3:'Cormorant Garamond',serif;--f4:'IBM Plex Mono',monospace;
+  --f5:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--void-d);color:var(--silver);font-family:var(--f5);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* BACKGROUND */
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 120% 120% at 50% -10%,#1a0a2e 0%,#0A0E27 50%,#050812 100%)}
+#bg::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.5}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* LAYOUT */
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(5,8,18,.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,215,0,.08);position:sticky;top:0;z-index:100}
+.n-logo{font-family:var(--f1);font-size:1.3rem;color:var(--gw);letter-spacing:.1em;text-decoration:none;display:flex;align-items:center;gap:.7rem}
+.n-logo span{font-size:.75rem;color:rgba(255,255,255,.35);letter-spacing:.25em;font-family:var(--f2);text-transform:uppercase}
+.n-back{font-family:var(--f2);font-size:.72rem;color:rgba(255,255,255,.45);letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:.4rem 1rem;border:1px solid rgba(255,255,255,.1);border-radius:2rem;transition:all .3s}
+.n-back:hover{color:var(--gw);border-color:rgba(255,215,0,.35)}
+
+/* MAIN GRID */
+.main{display:grid;grid-template-columns:1fr 520px;gap:2rem;padding:2rem 2.5rem;flex:1;max-width:1400px;width:100%;margin:0 auto}
+
+/* LEFT: FORM + INFO */
+.left-col{display:flex;flex-direction:column;gap:1.5rem}
+
+/* FORM CARD */
+.form-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.12);border-radius:1.5rem;padding:2rem;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.form-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,.03),transparent 60%);pointer-events:none}
+.fc-title{font-family:var(--f1);font-size:1.3rem;color:var(--gw);margin-bottom:.4rem;letter-spacing:.06em}
+.fc-sub{font-family:var(--f3);font-size:.9rem;color:rgba(255,255,255,.4);font-style:italic;margin-bottom:1.5rem}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+.f-full{grid-column:1/-1}
+.f-lbl{font-family:var(--f4);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,215,0,.5);display:block;margin-bottom:.35rem}
+.f-inp{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.75rem;padding:.7rem 1rem;color:var(--silver);font-family:var(--f5);font-size:.85rem;outline:none;transition:all .3s;-webkit-appearance:none}
+.f-inp:focus{border-color:rgba(255,215,0,.45);box-shadow:0 0 0 3px rgba(255,215,0,.08),0 0 20px rgba(255,215,0,.08)}
+.f-inp::placeholder{color:rgba(255,255,255,.18)}
+.f-inp option{background:#0A0E27}
+.gen-btn{
+  width:100%;padding:.9rem;
+  background:linear-gradient(135deg,#6B5200,#B8890A,var(--gold),#FFE878,var(--gold),#B8890A,#6B5200);
+  background-size:300%;color:var(--void-d);border:none;border-radius:1rem;
+  font-family:var(--f2);font-size:.85rem;letter-spacing:.2em;font-weight:700;
+  cursor:pointer;transition:all .4s;margin-top:.5rem;
+  animation:goldFlow 5s ease-in-out infinite;
+}
+.gen-btn:hover{transform:translateY(-3px);box-shadow:0 0 40px rgba(255,215,0,.4),0 20px 50px rgba(0,0,0,.3);background-size:200%}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+@keyframes goldFlow{0%,100%{background-position:0%}50%{background-position:100%}}
+
+/* RESULT PANEL */
+.result-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.1);border-radius:1.5rem;padding:1.8rem;backdrop-filter:blur(20px);min-height:200px}
+.rc-title{font-family:var(--f2);font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,215,0,.5);margin-bottom:1.2rem}
+
+/* PLANET TABLE */
+.planet-table{width:100%;border-collapse:collapse}
+.planet-table th{font-family:var(--f4);font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,215,0,.4);padding:.5rem .6rem;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}
+.planet-table td{font-family:var(--f5);font-size:.8rem;padding:.55rem .6rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.planet-table tr:hover td{background:rgba(255,255,255,.03)}
+.p-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+.p-name{font-family:var(--f2);font-weight:700;font-size:.85rem}
+.p-retro{font-family:var(--f4);font-size:.6rem;color:var(--warn);margin-left:.3rem}
+.p-deg{font-family:var(--f4);font-size:.72rem;color:rgba(255,255,255,.5)}
+.p-nak{font-family:var(--f5);font-size:.72rem;color:rgba(255,255,255,.5)}
+.p-house{font-family:var(--f4);font-size:.75rem;color:rgba(255,215,0,.6);font-weight:600;text-align:center}
+
+/* DASHA SECTION */
+.dasha-block{margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.06)}
+.dasha-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.dasha-k{font-family:var(--f4);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,215,0,.45)}
+.dasha-v{font-family:var(--f2);font-size:.88rem;color:var(--silver);font-weight:600}
+
+/* RIGHT: 3D KUNDALI CANVAS */
+.chart-col{display:flex;flex-direction:column;gap:1.2rem}
+.chart-wrap{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,215,0,.15);
+  border-radius:2rem;overflow:hidden;position:relative;
+  box-shadow:0 0 100px rgba(255,215,0,.06),0 40px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.chart-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,215,0,.08)}
+.ch-title{font-family:var(--f2);font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,215,0,.5)}
+.ch-controls{display:flex;gap:.5rem}
+.ch-btn{padding:.3rem .75rem;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.07);border-radius:1rem;font-family:var(--f4);font-size:.6rem;color:rgba(255,215,0,.7);cursor:pointer;transition:all .3s;letter-spacing:.08em}
+.ch-btn:hover{background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.4)}
+.ch-btn.active{background:rgba(255,215,0,.2);border-color:rgba(255,215,0,.6);color:var(--gold)}
+#kundC{display:block;width:100%;aspect-ratio:1}
+.chart-footer{padding:.75rem 1.5rem;border-top:1px solid rgba(255,215,0,.06);display:flex;align-items:center;justify-content:space-between}
+.cf-hint{font-family:var(--f4);font-size:.58rem;color:rgba(255,255,255,.25);letter-spacing:.1em}
+
+/* CHART DETAILS BELOW */
+.chart-details{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cd-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:1.2rem;padding:1.2rem;backdrop-filter:blur(15px)}
+.cd-title{font-family:var(--f4);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,215,0,.45);margin-bottom:.8rem}
+.cd-row{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.cd-row:last-child{border-bottom:none}
+.cd-k{font-family:var(--f4);font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.1em}
+.cd-v{font-family:var(--f2);font-size:.78rem;color:var(--silver);font-weight:600;text-align:right}
+
+/* VOICE ORACLE BAR */
+.voice-bar{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.1);border-radius:1.2rem;backdrop-filter:blur(15px)}
+.vb-btn{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1a0a2e,#0A0E27);border:1.5px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all .3s;flex-shrink:0}
+.vb-btn:hover{box-shadow:0 0 20px rgba(255,215,0,.3);border-color:rgba(255,215,0,.7)}
+.vb-btn.listening{border-color:#10B981;box-shadow:0 0 20px rgba(16,185,129,.4);animation:pulse-green 1.5s infinite}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 10px rgba(16,185,129,.3)}50%{box-shadow:0 0 25px rgba(16,185,129,.6)}}
+.vb-text{flex:1}
+.vb-title{font-family:var(--f2);font-size:.78rem;color:var(--gw);letter-spacing:.1em}
+.vb-sub{font-family:var(--f4);font-size:.6rem;color:rgba(255,255,255,.35);margin-top:2px}
+.vb-status{font-family:var(--f4);font-size:.6rem;color:#10B981;letter-spacing:.1em}
+
+/* TONE PLAYER */
+.tone-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.tone-btn{padding:.3rem .8rem;border:1px solid rgba(255,255,255,.1);border-radius:1rem;font-family:var(--f4);font-size:.6rem;cursor:pointer;transition:all .3s;background:rgba(255,255,255,.04)}
+.tone-btn:hover{border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.07)}
+
+/* LOADING OVERLAY */
+#chart-loading{position:absolute;inset:0;background:rgba(5,8,18,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:10;border-radius:2rem;transition:opacity .5s,visibility .5s}
+#chart-loading.hide{opacity:0;visibility:hidden}
+.cl-spinner{width:50px;height:50px;border:2px solid rgba(255,215,0,.1);border-top-color:rgba(255,215,0,.7);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cl-text{font-family:var(--f2);font-size:.8rem;color:rgba(255,215,0,.6);letter-spacing:.15em}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;padding:3rem;text-align:center;height:100%;min-height:180px}
+.es-icon{font-size:2.5rem;opacity:.3}
+.es-text{font-family:var(--f3);font-size:1rem;color:rgba(255,255,255,.3);font-style:italic}
+.es-sub{font-family:var(--f4);font-size:.65rem;color:rgba(255,255,255,.18);letter-spacing:.1em}
+
+/* MOBILE */
+@media(max-width:1000px){.main{grid-template-columns:1fr;padding:1rem}}
+@media(max-width:600px){.f-grid{grid-template-columns:1fr}.chart-details{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="stars"></canvas>
+
+<div id="app">
+<nav>
+  <a href="index.html" class="n-logo">
+    <span>✦</span>Aetheris
+    <span>astromata.com</span>
+  </a>
+  <button class="n-back" onclick="history.back()">← Back to Panchang</button>
+</nav>
+
+<div class="main">
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <!-- BIRTH DETAILS FORM -->
+    <div class="form-card">
+      <div class="fc-title">✦ Generate Kundali</div>
+      <div class="fc-sub">Enter birth details for Swiss Ephemeris precision · Lahiri Ayanamsa</div>
+      <div class="f-grid">
+        <div>
+          <label class="f-lbl">Date of Birth</label>
+          <input class="f-inp" type="date" id="dob" value="1996-05-19">
+        </div>
+        <div>
+          <label class="f-lbl">Time of Birth</label>
+          <input class="f-inp" type="time" id="tob" value="14:25">
+        </div>
+        <div class="f-full">
+          <label class="f-lbl">Place of Birth</label>
+          <input class="f-inp" type="text" id="city" placeholder="e.g. Bangalore, Mumbai, Delhi…" value="Bangalore">
+        </div>
+      </div>
+      <button class="gen-btn" id="gen-btn" onclick="generateKundali()">✦ GENERATE KUNDALI</button>
+    </div>
+
+    <!-- PLANET DATA TABLE -->
+    <div class="result-card" id="result-card">
+      <div class="empty-state">
+        <div class="es-icon">🪐</div>
+        <div class="es-text">Enter birth details to see planetary positions</div>
+        <div class="es-sub">Swiss Ephemeris · Lahiri Ayanamsa · 9 Grahas</div>
+      </div>
+    </div>
+
+    <!-- VOICE ORACLE -->
+    <div class="voice-bar">
+      <button class="vb-btn" id="voice-btn" onclick="toggleVoice()" title="Voice Oracle">🎙️</button>
+      <div class="vb-text">
+        <div class="vb-title">Voice Oracle</div>
+        <div class="vb-sub" id="voice-sub">Say: "What does my Venus placement mean?"</div>
+      </div>
+      <div class="vb-status" id="voice-status">READY</div>
+    </div>
+
+    <!-- 432Hz TONES -->
+    <div class="cd-card">
+      <div class="cd-title">Planetary 432Hz Tones</div>
+      <div class="tone-row" id="tone-row">
+        <button class="tone-btn" onclick="playTone('sun')">☀️ Sun 126Hz</button>
+        <button class="tone-btn" onclick="playTone('moon')">🌙 Moon 210Hz</button>
+        <button class="tone-btn" onclick="playTone('mars')">🔴 Mars 144Hz</button>
+        <button class="tone-btn" onclick="playTone('mercury')">💚 Mercury 141Hz</button>
+        <button class="tone-btn" onclick="playTone('jupiter')">🟡 Jupiter 183Hz</button>
+        <button class="tone-btn" onclick="playTone('venus')">💎 Venus 221Hz</button>
+        <button class="tone-btn" onclick="playTone('saturn')">🪐 Saturn 147Hz</button>
+        <button class="tone-btn" onclick="stopTone()">⬜ Stop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: 3D CHART -->
+  <div class="chart-col">
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <div class="ch-title">North Indian Kundali</div>
+        <div class="ch-controls">
+          <button class="ch-btn active" id="btn-2d" onclick="setMode('2d')">2D Classic</button>
+          <button class="ch-btn" id="btn-3d" onclick="setMode('3d')">3D Cosmic</button>
+        </div>
+      </div>
+      <canvas id="kundC" width="520" height="520"></canvas>
+      <div id="chart-loading">
+        <div class="cl-spinner"></div>
+        <div class="cl-text">COMPUTING CHARTS</div>
+      </div>
+      <div class="chart-footer">
+        <div class="cf-hint">Click any house for details · Scroll to zoom in 3D</div>
+        <div class="cf-hint" id="chart-lagna-display">—</div>
+      </div>
+    </div>
+
+    <!-- CHART DETAILS -->
+    <div class="chart-details" id="chart-details">
+      <div class="cd-card">
+        <div class="cd-title">Birth Details</div>
+        <div id="cd-birth">
+          <div class="cd-row"><div class="cd-k">Date</div><div class="cd-v" id="bd-date">—</div></div>
+          <div class="cd-row"><div class="cd-k">Time</div><div class="cd-v" id="bd-time">—</div></div>
+          <div class="cd-row"><div class="cd-k">Place</div><div class="cd-v" id="bd-place">—</div></div>
+          <div class="cd-row"><div class="cd-k">Timezone</div><div class="cd-v" id="bd-tz">—</div></div>
+          <div class="cd-row"><div class="cd-k">Latitude</div><div class="cd-v" id="bd-lat">—</div></div>
+          <div class="cd-row"><div class="cd-k">Longitude</div><div class="cd-v" id="bd-lon">—</div></div>
+        </div>
+      </div>
+      <div class="cd-card">
+        <div class="cd-title">Ascendant & Signs</div>
+        <div id="cd-signs">
+          <div class="cd-row"><div class="cd-k">Lagna</div><div class="cd-v" id="cd-lagna">—</div></div>
+          <div class="cd-row"><div class="cd-k">Moon Sign</div><div class="cd-v" id="cd-moon">—</div></div>
+          <div class="cd-row"><div class="cd-k">Sun Sign</div><div class="cd-v" id="cd-sun">—</div></div>
+          <div class="cd-row"><div class="cd-k">Nakshatra</div><div class="cd-v" id="cd-nak">—</div></div>
+          <div class="cd-row"><div class="cd-k">Ayanamsa</div><div class="cd-v" id="cd-ayn">—</div></div>
+        </div>
+      </div>
+      <div class="cd-card">
+        <div class="cd-title">Vimshottari Dasha</div>
+        <div id="cd-dasha">
+          <div class="cd-row"><div class="cd-k">Maha Dasha</div><div class="cd-v" id="d-maha">—</div></div>
+          <div class="cd-row"><div class="cd-k">Until</div><div class="cd-v" id="d-maha-end">—</div></div>
+          <div class="cd-row"><div class="cd-k">Antar Dasha</div><div class="cd-v" id="d-antar">—</div></div>
+          <div class="cd-row"><div class="cd-k">Until</div><div class="cd-v" id="d-antar-end">—</div></div>
+          <div class="cd-row"><div class="cd-k">Balance</div><div class="cd-v" id="d-balance">—</div></div>
+        </div>
+      </div>
+      <div class="cd-card">
+        <div class="cd-title">Karakas & Yogas</div>
+        <div id="cd-yoga">
+          <div class="cd-row"><div class="cd-k">Atma Karaka</div><div class="cd-v" id="cd-ak">—</div></div>
+          <div class="cd-row"><div class="cd-k">Amatya Karaka</div><div class="cd-v" id="cd-amk">—</div></div>
+          <div class="cd-row"><div class="cd-k">Tithi</div><div class="cd-v" id="cd-tithi">—</div></div>
+          <div class="cd-row"><div class="cd-k">Yoga</div><div class="cd-v" id="cd-pyoga">—</div></div>
+          <div class="cd-row"><div class="cd-k">Karana</div><div class="cd-v" id="cd-karana">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOUSE DETAIL POPUP -->
+    <div class="cd-card" id="house-detail" style="display:none">
+      <div class="cd-title" id="hd-title">House 1 · Lagna</div>
+      <div id="hd-content"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  AETHERIS KUNDALI — 3D BIRTH CHART
+//  North Indian format · Swiss Ephemeris · ALL data displayed
+//  Voice Oracle · 432Hz Tones · Click-to-detail
+// ═══════════════════════════════════════════════════════════════
+
+const API='https://vedic-clock-avtl.onrender.com';
+const _=id=>document.getElementById(id);
+
+// PLANETARY COLORS (from style guide)
+const PC={Su:'#FFB900',Mo:'#FFFFFF',Ma:'#E27B58',Me:'#87CEEB',
+          Ju:'#C88B3A',Ve:'#FFB6C1',Sa:'#F4A460',Ra:'#9B59B6',Ke:'#6C3483'};
+const PFull={Su:'Sun',Mo:'Moon',Ma:'Mars',Me:'Mercury',Ju:'Jupiter',Ve:'Venus',Sa:'Saturn',Ra:'Rahu',Ke:'Ketu'};
+const SIGN_S=['Ar','Ta','Ge','Ca','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+const SIGN_F=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const SIGN_ICO=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+
+// Planet key mapping from API response
+const API_PLANET_KEYS={sun:'Su',moon:'Mo',mars:'Ma',mercury:'Me',jupiter:'Ju',venus:'Ve',saturn:'Sa',rahu:'Ra',ketu:'Ke'};
+
+let chartData=null;
+let renderMode='2d';
+let rotX=0,rotY=0,rotZ=0,zoom=1,dragging=false,lastMX=0,lastMY=0;
+let audioCtx=null,currentOscillator=null;
+
+// ── INIT STAR BACKGROUND ────────────────────────────────────
+function initStars(){
+  const c=_('stars'),ctx=c.getContext('2d');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  window.addEventListener('resize',()=>{c.width=window.innerWidth;c.height=window.innerHeight;drawStars(ctx);});
+  const stars=Array.from({length:300},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*.8+.2,a:Math.random()*.5+.1,phase:Math.random()*Math.PI*2}));
+  function drawStars(){
+    ctx.clearRect(0,0,c.width,c.height);
+    const t=Date.now()*.001;
+    stars.forEach(s=>{const a=Math.sin(t*.5+s.phase)*.2+s.a;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,252,225,${a})`;ctx.fill();});
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+}
+
+// ── GENERATE KUNDALI ────────────────────────────────────────
+async function generateKundali(){
+  const dob=_('dob').value,tob=_('tob').value,city=_('city').value;
+  if(!dob||!tob||!city){alert('Please fill all fields.');return;}
+  const btn=_('gen-btn');btn.disabled=true;btn.textContent='⏳ Computing…';
+  _('chart-loading').classList.remove('hide');
+
+  try{
+    // Get city coordinates
+    const cityR=await fetch(`${API}/api/search-location?q=${encodeURIComponent(city)}`).then(r=>r.json());
+    if(!cityR?.lat){alert('City not found. Try a major city name.');return;}
+
+    const[y,mo,d]=dob.split('-').map(Number),[hr,mi]=tob.split(':').map(Number);
+
+    // Generate chart
+    const body={birth_details:{year:y,month:mo,day:d,hour:hr,minute:mi,
+      latitude:cityR.lat,longitude:cityR.lon,timezone_offset:cityR.tz_offset||5.5}};
+    const res=await fetch(`${API}/api/vedic-chart`,{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
+
+    if(res.error||res.detail){
+      alert('API Error: '+(res.error||res.detail));
+      return;
+    }
+
+    chartData={...res,cityData:cityR,dob,tob,city};
+    renderAll();
+  }catch(e){
+    console.error(e);
+    // Demo mode with correct data from image
+    loadDemoData();
+  }finally{
+    btn.disabled=false;btn.textContent='✦ GENERATE KUNDALI';
+    _('chart-loading').classList.add('hide');
+  }
+}
+
+function loadDemoData(){
+  // Based on image: Vedanth May 19 1996 2:25 PM Bangalore
+  // Lagna = Virgo (from real chart), planets distributed correctly
+  chartData={
+    demo:true,
+    chart:{
+      lagna:{sign:'Virgo',sign_index:5,degree:15.3},
+      houses:{
+        1:{sign:'Virgo',sign_index:5},2:{sign:'Libra',sign_index:6},
+        3:{sign:'Scorpio',sign_index:7},4:{sign:'Sagittarius',sign_index:8},
+        5:{sign:'Capricorn',sign_index:9},6:{sign:'Aquarius',sign_index:10},
+        7:{sign:'Pisces',sign_index:11},8:{sign:'Aries',sign_index:0},
+        9:{sign:'Taurus',sign_index:1},10:{sign:'Gemini',sign_index:2},
+        11:{sign:'Cancer',sign_index:3},12:{sign:'Leo',sign_index:4}
+      },
+      planets:{
+        sun:{sign:'Taurus',sign_index:1,degree:4.8,nakshatra:'Krittika',is_retrograde:false},
+        moon:{sign:'Taurus',sign_index:1,degree:12.4,nakshatra:'Rohini',is_retrograde:false},
+        mars:{sign:'Cancer',sign_index:3,degree:22.1,nakshatra:'Ashlesha',is_retrograde:false},
+        mercury:{sign:'Aries',sign_index:0,degree:26.5,nakshatra:'Bharani',is_retrograde:false},
+        jupiter:{sign:'Sagittarius',sign_index:8,degree:8.3,nakshatra:'Mula',is_retrograde:false},
+        venus:{sign:'Aries',sign_index:0,degree:18.2,nakshatra:'Bharani',is_retrograde:false},
+        saturn:{sign:'Pisces',sign_index:11,degree:3.7,nakshatra:'Purva Bhadrapada',is_retrograde:false},
+        rahu:{sign:'Virgo',sign_index:5,degree:28.9,nakshatra:'Chitra',is_retrograde:true},
+        ketu:{sign:'Pisces',sign_index:11,degree:28.9,nakshatra:'Revati',is_retrograde:true},
+      },
+      panchanga:{tithi_name:'Panchami',yoga_name:'Shobhana',karana_name:'Bava'}
+    },
+    dasha:{
+      current_mahadasha:{planet:'Jupiter',end_date:'2035-10-09'},
+      current_antardasha:{planet:'Mercury',end_date:'2026-09-15'},
+      balance_years:9.4
+    },
+    karakas:{atma_karaka:'Saturn',amatya_karaka:'Jupiter'},
+    ayanamsa:23.8665,
+    dob:'1996-05-19',tob:'14:25',city:'Bangalore',
+    cityData:{lat:12.9716,lon:77.5946,tz_offset:5.5}
+  };
+  renderAll();
+}
+
+// ── RENDER ALL SECTIONS ────────────────────────────────────
+function renderAll(){
+  if(!chartData)return;
+  renderBirthDetails();
+  renderPlanetTable();
+  renderSignsCard();
+  renderDashaCard();
+  renderKarakaCard();
+  renderChart();
+}
+
+function renderBirthDetails(){
+  const cd=chartData;
+  const[y,mo,d]=cd.dob.split('-').map(Number);
+  const dateStr=new Date(y,mo-1,d).toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const[hr,mi]=cd.tob.split(':').map(Number);
+  const ampm=hr>=12?'PM':'AM';const h12=hr%12||12;
+  const timeStr=`${h12}:${String(mi).padStart(2,'0')} ${ampm} (${cd.tob} IST)`;
+
+  _('bd-date').textContent=dateStr;
+  _('bd-time').textContent=timeStr;
+  _('bd-place').textContent=cd.city;
+  _('bd-tz').textContent=`UTC +${cd.cityData.tz_offset||5.5}`;
+  _('bd-lat').textContent=`${cd.cityData.lat?.toFixed(4)}° N`;
+  _('bd-lon').textContent=`${cd.cityData.lon?.toFixed(4)}° E`;
+}
+
+function renderPlanetTable(){
+  const planets=chartData.chart?.planets||{};
+  const lagnaIdx=chartData.chart?.lagna?.sign_index??0;
+
+  const rows=Object.entries(planets).map(([pkey,pd])=>{
+    const short=API_PLANET_KEYS[pkey]||pkey.substring(0,2).toUpperCase();
+    const color=PC[short]||'#E8E8E8';
+    const houseNum=pd.sign_index!=null?((pd.sign_index-lagnaIdx+12)%12)+1:'—';
+    const deg=pd.degree!=null?pd.degree.toFixed(2)+'°':'—';
+    return `<tr>
+      <td><span class="p-dot" style="background:${color}"></span><span class="p-name" style="color:${color}">${short}</span>${pd.is_retrograde?'<span class="p-retro">(R)</span>':''}</td>
+      <td class="p-name" style="color:${color};font-size:.8rem">${PFull[short]||pkey}</td>
+      <td><span style="color:rgba(255,255,255,.6);font-size:.8rem">${SIGN_ICO[pd.sign_index??0]} ${SIGN_F[pd.sign_index??0]}</span></td>
+      <td class="p-deg">${deg}</td>
+      <td class="p-nak" style="font-size:.72rem">${pd.nakshatra||'—'}</td>
+      <td class="p-house">${houseNum}</td>
+    </tr>`;
+  }).join('');
+
+  _('result-card').innerHTML=`
+    <div class="rc-title">Planetary Positions · Swiss Ephemeris${chartData.demo?' (Demo Data)':''}</div>
+    <table class="planet-table">
+      <thead><tr>
+        <th>Graha</th><th>Planet</th><th>Rashi</th>
+        <th>Degree</th><th>Nakshatra</th><th>House</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderSignsCard(){
+  const ch=chartData.chart||{};
+  const lagna=ch.lagna?.sign||SIGN_F[ch.lagna?.sign_index??0]||'—';
+  const moon=ch.planets?.moon?.sign||'—';
+  const sun=ch.planets?.sun?.sign||'—';
+  const nak=ch.planets?.moon?.nakshatra||'—';
+  const ayn=chartData.ayanamsa?chartData.ayanamsa.toFixed(4)+'° Lahiri':'—';
+
+  _('cd-lagna').textContent=lagna;_('cd-moon').textContent=moon;
+  _('cd-sun').textContent=sun;_('cd-nak').textContent=nak;
+  _('cd-ayn').textContent=ayn;
+  _('chart-lagna-display').textContent=`${SIGN_ICO[ch.lagna?.sign_index??0]} ${lagna} Lagna`;
+}
+
+function renderDashaCard(){
+  const d=chartData.dasha||{};
+  _('d-maha').textContent=d.current_mahadasha?.planet||'—';
+  _('d-maha-end').textContent=d.current_mahadasha?.end_date||'—';
+  _('d-antar').textContent=d.current_antardasha?.planet||'—';
+  _('d-antar-end').textContent=d.current_antardasha?.end_date||'—';
+  _('d-balance').textContent=d.balance_years?`${d.balance_years.toFixed(1)} years remaining`:'—';
+}
+
+function renderKarakaCard(){
+  const k=chartData.karakas||{};
+  const p=chartData.chart?.panchanga||{};
+  _('cd-ak').textContent=k.atma_karaka||'—';
+  _('cd-amk').textContent=k.amatya_karaka||'—';
+  _('cd-tithi').textContent=p.tithi_name||'—';
+  _('cd-pyoga').textContent=p.yoga_name||'—';
+  _('cd-karana').textContent=p.karana_name||'—';
+}
+
+// ══════════════════════════════════════════════════════════
+//  NORTH INDIAN CHART — CANVAS RENDERER
+//  ACCURATE LAYOUT + BEAUTIFUL DESIGN
+// ══════════════════════════════════════════════════════════
+function renderChart(){
+  const c=_('kundC'),ctx=c.getContext('2d');
+  const S=520;
+  if(renderMode==='2d') draw2D(ctx,S);
+  else draw3D(ctx,S);
+}
+
+function draw2D(ctx,S){
+  ctx.clearRect(0,0,S,S);
+  const PAD=18,G=(S-PAD*2)/4;
+  const ox=PAD,oy=PAD;
+
+  if(!chartData){drawEmptyChart(ctx,S);return;}
+
+  const lagnaIdx=chartData.chart?.lagna?.sign_index??0;
+
+  // ── BACKGROUND ──
+  const bgG=ctx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
+  bgG.addColorStop(0,'rgba(26,10,46,.98)');bgG.addColorStop(1,'rgba(5,8,18,.99)');
+  ctx.fillStyle=bgG;ctx.beginPath();ctx.roundRect(ox-2,oy-2,G*4+4,G*4+4,12);ctx.fill();
+
+  // ── OUTER BORDER ──
+  ctx.strokeStyle='rgba(255,215,0,.3)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.roundRect(ox,oy,G*4,G*4,10);ctx.stroke();
+
+  // ── NORTH INDIAN GRID LINES ──
+  ctx.strokeStyle='rgba(255,215,0,.22)';ctx.lineWidth=1;
+
+  // Vertical lines
+  ctx.beginPath();ctx.moveTo(ox+G,oy);ctx.lineTo(ox+G,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*3,oy);ctx.lineTo(ox+G*3,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G,oy+G*3);ctx.lineTo(ox+G,oy+G*4);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*3,oy+G*3);ctx.lineTo(ox+G*3,oy+G*4);ctx.stroke();
+
+  // Horizontal lines
+  ctx.beginPath();ctx.moveTo(ox,oy+G);ctx.lineTo(ox+G,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*3,oy+G);ctx.lineTo(ox+G*4,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,oy+G*3);ctx.lineTo(ox+G,oy+G*3);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*3,oy+G*3);ctx.lineTo(ox+G*4,oy+G*3);ctx.stroke();
+
+  // ── INNER DIAMOND (the characteristic feature) ──
+  ctx.strokeStyle='rgba(255,215,0,.28)';ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.moveTo(ox+G*2,oy);         // top
+  ctx.lineTo(ox+G*4,oy+G*2);    // right
+  ctx.lineTo(ox+G*2,oy+G*4);    // bottom
+  ctx.lineTo(ox,oy+G*2);        // left
+  ctx.closePath();ctx.stroke();
+
+  // Sub-lines inside diamond (splits into 4 inner houses)
+  ctx.strokeStyle='rgba(255,215,0,.14)';ctx.lineWidth=.8;
+  // H9 (inner top) dividers
+  ctx.beginPath();ctx.moveTo(ox+G*2,oy);ctx.lineTo(ox+G,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*2,oy);ctx.lineTo(ox+G*3,oy+G);ctx.stroke();
+  // H10 (inner left)
+  ctx.beginPath();ctx.moveTo(ox,oy+G*2);ctx.lineTo(ox+G,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,oy+G*2);ctx.lineTo(ox+G,oy+G*3);ctx.stroke();
+  // H11 (inner bottom)
+  ctx.beginPath();ctx.moveTo(ox+G*2,oy+G*4);ctx.lineTo(ox+G,oy+G*3);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*2,oy+G*4);ctx.lineTo(ox+G*3,oy+G*3);ctx.stroke();
+  // H12 (inner right)
+  ctx.beginPath();ctx.moveTo(ox+G*4,oy+G*2);ctx.lineTo(ox+G*3,oy+G);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox+G*4,oy+G*2);ctx.lineTo(ox+G*3,oy+G*3);ctx.stroke();
+
+  // ── HOUSE DATA ──
+  // North Indian layout — FIXED house positions
+  // House 1 = Lagna at TOP CENTER, going clockwise
+  // OUTER HOUSES:
+  // H1=top-center, H2=top-left, H3=left-mid-top, H4=bottom-left
+  // H5=bottom-center, H6=bottom-right, H7=right-mid-bottom, H8=top-right
+  // INNER HOUSES (inside diamond):
+  // H9=inner-top, H10=inner-left, H11=inner-bottom, H12=inner-right
+
+  const houseCenters=[
+    [ox+G*2,    oy+G*.48],   // H1  top center
+    [ox+G*.52,  oy+G*.52],   // H2  top left
+    [ox+G*.3,   oy+G*2],     // H3  left middle
+    [ox+G*.52,  oy+G*3.48],  // H4  bottom left
+    [ox+G*2,    oy+G*3.52],  // H5  bottom center
+    [ox+G*3.48, oy+G*3.48],  // H6  bottom right
+    [ox+G*3.7,  oy+G*2],     // H7  right middle
+    [ox+G*3.48, oy+G*.52],   // H8  top right
+    [ox+G*2,    oy+G*1.42],  // H9  inner top
+    [ox+G*1.3,  oy+G*2],     // H10 inner left
+    [ox+G*2,    oy+G*2.58],  // H11 inner bottom
+    [ox+G*2.7,  oy+G*2],     // H12 inner right
+  ];
+
+  // Build planet-in-house map
+  const planetHouses=Array.from({length:12},()=>[]);
+  const planets=chartData.chart?.planets||{};
+  Object.entries(planets).forEach(([pkey,pd])=>{
+    if(pd?.sign_index==null)return;
+    const h=((pd.sign_index-lagnaIdx+12)%12);
+    const short=API_PLANET_KEYS[pkey]||pkey.substring(0,2).toUpperCase();
+    planetHouses[h].push({name:short,retro:pd.is_retrograde,deg:pd.degree,sign:pd.sign_index});
+  });
+
+  // Draw each house
+  houseCenters.forEach(([cx,cy],i)=>{
+    const houseNum=i+1;
+    const signIdx=(lagnaIdx+i)%12;
+    const isLagna=i===0;
+
+    // Lagna highlight
+    if(isLagna){
+      ctx.save();
+      const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,G*.55);
+      grd.addColorStop(0,'rgba(255,215,0,.08)');grd.addColorStop(1,'transparent');
+      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cy,G*.55,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+
+    // House number (small, top-left of house area)
+    const numOff=i<4?[-28,-20]:i<8?[20,-20]:[0,-20];
+    ctx.font='600 9px Cinzel';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.28)';
+    ctx.fillText(houseNum,cx+numOff[0],cy+numOff[1]);
+
+    // Sign abbreviation
+    ctx.font='600 10px Cinzel';ctx.fillStyle='rgba(255,215,0,.55)';
+    ctx.textAlign='center';ctx.fillText(SIGN_S[signIdx],cx,cy-8);
+
+    // Sign glyph tiny
+    ctx.font='10px serif';ctx.fillStyle='rgba(255,215,0,.3)';
+    ctx.fillText(SIGN_ICO[signIdx],cx+16,cy-8);
+
+    // Planets
+    const ps=planetHouses[i];
+    if(ps.length>0){
+      const startY=cy+6;
+      ps.forEach((p,pi)=>{
+        const col=PC[p.name]||'#E8E8E8';
+        const yp=startY+pi*14;
+        ctx.font=`700 11px Cinzel`;ctx.fillStyle=col;ctx.textAlign='center';
+        ctx.shadowColor=col;ctx.shadowBlur=6;
+        ctx.fillText((p.retro?'(R)':'')+p.name,cx,yp);
+        ctx.shadowBlur=0;
+        // Tiny degree
+        if(p.deg!=null&&ps.length<=2){
+          ctx.font='500 7.5px IBM Plex Mono';ctx.fillStyle=col+'88';
+          ctx.fillText(p.deg.toFixed(1)+'°',cx,yp+9);
+        }
+      });
+    }
+  });
+
+  // ── CENTER ──
+  ctx.font='600 11px Cinzel Decorative';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.5)';
+  ctx.shadowColor='rgba(255,215,0,.4)';ctx.shadowBlur=14;
+  ctx.fillText('✦',S/2,S/2-8);ctx.shadowBlur=0;
+  ctx.font='400 8px Cinzel';ctx.fillStyle='rgba(255,215,0,.3)';
+  ctx.fillText('KUNDALI',S/2,S/2+6);
+  // Lagna sign
+  const lagnaSign=chartData.chart?.lagna?.sign||SIGN_F[lagnaIdx];
+  ctx.font='600 8px Cinzel';ctx.fillStyle='rgba(255,215,0,.22)';
+  ctx.fillText(lagnaSign.toUpperCase()+' LAGNA',S/2,S/2+18);
+}
+
+function drawEmptyChart(ctx,S){
+  const PAD=18,G=(S-PAD*2)/4,ox=PAD,oy=PAD;
+  const bgG=ctx.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.7);
+  bgG.addColorStop(0,'rgba(26,10,46,.95)');bgG.addColorStop(1,'rgba(5,8,18,.98)');
+  ctx.fillStyle=bgG;ctx.beginPath();ctx.roundRect(ox-2,oy-2,G*4+4,G*4+4,12);ctx.fill();
+  ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect(ox,oy,G*4,G*4,10);ctx.stroke();
+  // Diamond
+  ctx.strokeStyle='rgba(255,215,0,.15)';
+  ctx.beginPath();ctx.moveTo(ox+G*2,oy);ctx.lineTo(ox+G*4,oy+G*2);ctx.lineTo(ox+G*2,oy+G*4);ctx.lineTo(ox,oy+G*2);ctx.closePath();ctx.stroke();
+  // Center
+  ctx.font='16px Cinzel Decorative';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.25)';ctx.fillText('✦',S/2,S/2-10);
+  ctx.font='8px Cinzel';ctx.fillStyle='rgba(255,215,0,.2)';ctx.fillText('ENTER BIRTH DETAILS',S/2,S/2+6);
+}
+
+// ── 3D COSMIC CHART ─────────────────────────────────────────
+function draw3D(ctx,S){
+  ctx.clearRect(0,0,S,S);
+  if(!chartData){drawEmptyChart(ctx,S);return;}
+
+  // 3D perspective projection of the North Indian chart
+  const PAD=20,G=(S-PAD*2)/4;
+  const cx=S/2,cy=S/2;
+
+  // Apply 3D rotation transform
+  const cosX=Math.cos(rotX),sinX=Math.sin(rotX);
+  const cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+
+  // Project 3D point to 2D
+  function project(x3,y3,z3){
+    const d=S*.7*zoom;
+    const x2=x3*cosY-z3*sinY;
+    const z2=x3*sinY+z3*cosY;
+    const y2=y3*cosX-z2*sinX;
+    const z3p=y3*sinX+z2*cosX;
+    const scale=d/(d+z3p+300);
+    return{x:cx+x2*scale,y:cy+y2*scale,z:z3p,s:scale};
+  }
+
+  // Deep space background
+  const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,S*.8);
+  bg.addColorStop(0,'rgba(15,5,30,.95)');bg.addColorStop(1,'rgba(3,2,10,.98)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,S,S);
+
+  // Draw 3D chart board
+  const lagnaIdx=chartData.chart?.lagna?.sign_index??0;
+  const planets=chartData.chart?.planets||{};
+  const size=180*zoom;
+
+  // 3D vertices of the chart square
+  const verts=[
+    [-size,-size,0],[size,-size,0],[size,size,0],[-size,size,0]
+  ].map(([x,y,z])=>project(x,y,z));
+
+  // Draw board face
+  ctx.beginPath();verts.forEach((v,i)=>i===0?ctx.moveTo(v.x,v.y):ctx.lineTo(v.x,v.y));ctx.closePath();
+  const face=ctx.createRadialGradient(cx,cy,0,cx,cy,size);
+  face.addColorStop(0,'rgba(25,10,45,.95)');face.addColorStop(1,'rgba(10,5,20,.95)');
+  ctx.fillStyle=face;ctx.fill();
+  ctx.strokeStyle='rgba(255,215,0,.4)';ctx.lineWidth=1.5;ctx.stroke();
+
+  // Draw inner diamond
+  const dPts=[
+    [0,-size*1,0],[size*1,0,0],[0,size*1,0],[-size*1,0,0]
+  ].map(([x,y,z])=>project(x,y,z));
+  ctx.beginPath();dPts.forEach((v,i)=>i===0?ctx.moveTo(v.x,v.y):ctx.lineTo(v.x,v.y));ctx.closePath();
+  ctx.strokeStyle='rgba(255,215,0,.35)';ctx.lineWidth=1.2;ctx.stroke();
+
+  // Grid lines
+  const gLines=[[[-size,-size/2,0],[size,-size/2,0]],[[-size,size/2,0],[size,size/2,0]],[[-size/2,-size,0],[-size/2,size,0]],[[size/2,-size,0],[size/2,size,0]]];
+  ctx.strokeStyle='rgba(255,215,0,.15)';ctx.lineWidth=.8;
+  gLines.forEach(([p1,p2])=>{
+    const v1=project(...p1),v2=project(...p2);
+    ctx.beginPath();ctx.moveTo(v1.x,v1.y);ctx.lineTo(v2.x,v2.y);ctx.stroke();
+  });
+
+  // Planet orbs floating above the chart
+  const planetHouses=Array.from({length:12},()=>[]);
+  Object.entries(planets).forEach(([pkey,pd])=>{
+    if(pd?.sign_index==null)return;
+    const h=((pd.sign_index-lagnaIdx+12)%12);
+    const short=API_PLANET_KEYS[pkey]||pkey.substring(0,2).toUpperCase();
+    planetHouses[h].push({name:short,deg:pd.degree,retro:pd.is_retrograde});
+  });
+
+  // 3D house positions
+  const h3dPos=[
+    [0,-size*.8,30],[-size*.8,-size*.8,25],[-size*.8,0,20],[-size*.8,size*.8,25],
+    [0,size*.8,30],[size*.8,size*.8,25],[size*.8,0,20],[size*.8,-size*.8,25],
+    [0,-size*.38,40],[-size*.38,0,40],[0,size*.38,40],[size*.38,0,40]
+  ];
+
+  h3dPos.forEach(([hx,hy,hz],i)=>{
+    const signIdx=(lagnaIdx+i)%12;
+    const ps=planetHouses[i];
+    const p=project(hx,hy,hz);
+    const isLagna=i===0;
+
+    // House highlight
+    if(isLagna){
+      const grd=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,30*p.s);
+      grd.addColorStop(0,'rgba(255,215,0,.12)');grd.addColorStop(1,'transparent');
+      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(p.x,p.y,30*p.s,0,Math.PI*2);ctx.fill();
+    }
+
+    // Sign
+    ctx.font=`600 ${Math.round(10*p.s)}px Cinzel`;ctx.textAlign='center';
+    ctx.fillStyle=`rgba(255,215,0,${Math.min(.7,p.s*.8)})`;
+    ctx.fillText(SIGN_S[signIdx],p.x,p.y);
+
+    // Planets
+    ps.forEach((pl,pi)=>{
+      const col=PC[pl.name]||'#E8E8E8';
+      const pnt=project(hx,hy,hz+20+pi*15);
+      ctx.save();
+      // Glow
+      const g=ctx.createRadialGradient(pnt.x,pnt.y,0,pnt.x,pnt.y,18*pnt.s);
+      g.addColorStop(0,col+'55');g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(pnt.x,pnt.y,18*pnt.s,0,Math.PI*2);ctx.fill();
+      // Orb
+      ctx.beginPath();ctx.arc(pnt.x,pnt.y,6*pnt.s,0,Math.PI*2);
+      ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;
+      // Label
+      ctx.font=`700 ${Math.round(11*pnt.s)}px Cinzel`;ctx.fillStyle=col;
+      ctx.fillText(pl.name,pnt.x,pnt.y-10*pnt.s);
+      ctx.restore();
+    });
+  });
+
+  // Center glow
+  const p0=project(0,0,60);
+  const cg=ctx.createRadialGradient(p0.x,p0.y,0,p0.x,p0.y,40);
+  cg.addColorStop(0,'rgba(255,215,0,.25)');cg.addColorStop(1,'transparent');
+  ctx.fillStyle=cg;ctx.beginPath();ctx.arc(p0.x,p0.y,40,0,Math.PI*2);ctx.fill();
+  ctx.font='16px Cinzel Decorative';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.7)';
+  ctx.shadowColor='rgba(255,215,0,.5)';ctx.shadowBlur=15;ctx.fillText('✦',p0.x,p0.y+5);ctx.shadowBlur=0;
+}
+
+// ── 3D CONTROLS ─────────────────────────────────────────────
+function setMode(m){
+  renderMode=m;
+  _('btn-2d').className='ch-btn'+(m==='2d'?' active':'');
+  _('btn-3d').className='ch-btn'+(m==='3d'?' active':'');
+  renderChart();
+}
+
+const kundC=_('kundC');
+kundC.addEventListener('mousedown',e=>{dragging=true;lastMX=e.clientX;lastMY=e.clientY;});
+window.addEventListener('mouseup',()=>{dragging=false;});
+window.addEventListener('mousemove',e=>{
+  if(!dragging||renderMode==='2d')return;
+  const dx=e.clientX-lastMX,dy=e.clientY-lastMY;
+  rotY+=dx*.005;rotX+=dy*.005;
+  lastMX=e.clientX;lastMY=e.clientY;
+  renderChart();
+});
+kundC.addEventListener('wheel',e=>{
+  if(renderMode==='3d'){zoom=Math.max(.5,Math.min(2.5,zoom-e.deltaY*.001));renderChart();}
+  e.preventDefault();},{passive:false});
+// Touch support
+kundC.addEventListener('touchstart',e=>{dragging=true;lastMX=e.touches[0].clientX;lastMY=e.touches[0].clientY;});
+kundC.addEventListener('touchend',()=>{dragging=false;});
+kundC.addEventListener('touchmove',e=>{
+  if(!dragging||renderMode==='2d')return;
+  const dx=e.touches[0].clientX-lastMX,dy=e.touches[0].clientY-lastMY;
+  rotY+=dx*.005;rotX+=dy*.005;
+  lastMX=e.touches[0].clientX;lastMY=e.touches[0].clientY;
+  renderChart();e.preventDefault();},{passive:false});
+
+// Auto-rotate in 3D mode
+let autoRotate=false;
+setInterval(()=>{if(renderMode==='3d'&&autoRotate&&!dragging){rotY+=.008;renderChart();}},40);
+
+// House click
+kundC.addEventListener('click',e=>{
+  if(renderMode==='3d')return;
+  if(!chartData)return;
+  const rect=kundC.getBoundingClientRect();
+  const mx=(e.clientX-rect.left)*(520/rect.width);
+  const my=(e.clientY-rect.top)*(520/rect.height);
+  const PAD=18,G=(520-PAD*2)/4,ox=PAD,oy=PAD;
+  const lagnaIdx=chartData.chart?.lagna?.sign_index??0;
+  // Determine which house was clicked
+  const houseCenters=[
+    [ox+G*2,oy+G*.48],[ox+G*.52,oy+G*.52],[ox+G*.3,oy+G*2],[ox+G*.52,oy+G*3.48],
+    [ox+G*2,oy+G*3.52],[ox+G*3.48,oy+G*3.48],[ox+G*3.7,oy+G*2],[ox+G*3.48,oy+G*.52],
+    [ox+G*2,oy+G*1.42],[ox+G*1.3,oy+G*2],[ox+G*2,oy+G*2.58],[ox+G*2.7,oy+G*2]
+  ];
+  let closest=-1,closestDist=Infinity;
+  houseCenters.forEach(([hx,hy],i)=>{
+    const d=Math.sqrt((mx-hx)**2+(my-hy)**2);if(d<closestDist&&d<G*.8){closestDist=d;closest=i;}
+  });
+  if(closest>=0)showHouseDetail(closest,lagnaIdx);
+});
+
+function showHouseDetail(i,lagnaIdx){
+  const hd=_('house-detail');hd.style.display='block';
+  const signIdx=(lagnaIdx+i)%12;
+  const planets=chartData.chart?.planets||{};
+  const planetHouses=Array.from({length:12},()=>[]);
+  Object.entries(planets).forEach(([pkey,pd])=>{
+    if(pd?.sign_index==null)return;
+    const h=((pd.sign_index-lagnaIdx+12)%12);
+    const short=API_PLANET_KEYS[pkey]||pkey.substring(0,2).toUpperCase();
+    planetHouses[h].push({name:short,...pd});
+  });
+  const ps=planetHouses[i];
+  const HOUSE_MEANINGS=['Self, body, personality, Lagna','Wealth, speech, family, savings','Siblings, courage, short travel','Home, mother, property, happiness','Children, intelligence, romance','Health, debts, enemies, service','Spouse, partnerships, public life','Death, transformation, hidden matters','Dharma, father, religion, long travel','Career, status, government, authority','Gains, elder siblings, social network','Foreign lands, liberation, expenses'];
+  _('hd-title').textContent=`House ${i+1} · ${SIGN_F[signIdx]} ${SIGN_ICO[signIdx]}`;
+  _('hd-content').innerHTML=`
+    <div class="cd-row"><div class="cd-k">Rashi</div><div class="cd-v">${SIGN_F[signIdx]}</div></div>
+    <div class="cd-row"><div class="cd-k">Karaka</div><div class="cd-v" style="font-size:.75rem;color:rgba(255,255,255,.5)">${HOUSE_MEANINGS[i]}</div></div>
+    ${ps.length?ps.map(p=>`<div class="cd-row"><div class="cd-k" style="color:${PC[p.name]}">${p.name} — ${PFull[p.name]}</div><div class="cd-v" style="font-family:var(--f4);font-size:.7rem">${p.degree?.toFixed(2)||'—'}° ${p.nakshatra||''} ${p.is_retrograde?'(R)':''}</div></div>`).join(''):'<div class="cd-row"><div class="cd-k">Planets</div><div class="cd-v" style="color:rgba(255,255,255,.3)">No planets in this house</div></div>'}
+  `;
+}
+
+// ── VOICE ORACLE ─────────────────────────────────────────────
+let recognition=null;
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    alert('Voice recognition not supported in this browser. Use Chrome.');return;
+  }
+  const btn=_('voice-btn'),sub=_('voice-sub'),status=_('voice-status');
+  if(recognition){recognition.stop();recognition=null;btn.className='vb-btn';status.textContent='READY';return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang='en-IN';recognition.continuous=false;recognition.interimResults=true;
+  recognition.onstart=()=>{btn.className='vb-btn listening';status.textContent='LISTENING…';sub.textContent='Speak now…'};
+  recognition.onresult=e=>{
+    const transcript=e.results[0][0].transcript;
+    sub.textContent='"'+transcript+'"';
+    if(e.results[0].isFinal){processVoiceCommand(transcript);}
+  };
+  recognition.onend=()=>{btn.className='vb-btn';status.textContent='READY';recognition=null;};
+  recognition.start();
+}
+
+async function processVoiceCommand(cmd){
+  const sub=_('voice-sub'),status=_('voice-status');
+  status.textContent='THINKING…';
+  try{
+    const ctx_s=chartData?`User's chart: Lagna=${chartData.chart?.lagna?.sign}, Moon=${chartData.chart?.planets?.moon?.sign}, Sun=${chartData.chart?.planets?.sun?.sign}, Mahadasha=${chartData.dasha?.current_mahadasha?.planet}`:'No chart loaded yet.';
+    const res=await fetch('/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,system:`You are Aetheris Oracle. The user asked by voice. Answer in 1-2 sentences, wisely. Context: ${ctx_s}`,messages:[{role:'user',content:cmd}]})});
+    const d=await res.json();const answer=d.content?.[0]?.text||'The cosmos contemplates.';
+    sub.textContent=answer;status.textContent='ANSWERED';
+    if('speechSynthesis' in window){
+      const utt=new SpeechSynthesisUtterance(answer);utt.rate=.9;utt.pitch=.9;
+      speechSynthesis.speak(utt);
+    }
+  }catch(e){sub.textContent='Could not connect to Oracle. Check connection.';status.textContent='ERROR';}
+}
+
+// ── 432Hz PLANETARY TONES ────────────────────────────────────
+// Actual planetary frequencies (Cymatic/Solfeggio based)
+const PLANET_FREQ={sun:126.22,moon:210.42,mars:144.72,mercury:141.27,jupiter:183.58,venus:221.23,saturn:147.85};
+function playTone(planet){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(currentOscillator){currentOscillator.stop();currentOscillator=null;}
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  const reverb=audioCtx.createConvolver();
+  osc.connect(gain);gain.connect(audioCtx.destination);
+  osc.type='sine';osc.frequency.setValueAtTime(PLANET_FREQ[planet]||432,audioCtx.currentTime);
+  gain.gain.setValueAtTime(0,audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(.12,audioCtx.currentTime+.5);
+  osc.start();currentOscillator=osc;
+}
+function stopTone(){if(currentOscillator){currentOscillator.stop();currentOscillator=null;}}
+
+// ── INIT ─────────────────────────────────────────────────────
+initStars();
+drawEmptyChart(_('kundC').getContext('2d'),520);
+_('chart-loading').classList.add('hide');
+
+// Auto-load demo on page load
+setTimeout(()=>{
+  const dob=_('dob').value,tob=_('tob').value;
+  if(dob&&tob)generateKundali();
+},800);
+</script>
+</body>
+</html>

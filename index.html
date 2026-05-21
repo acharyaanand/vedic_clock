@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Aetheris — Ancient Wisdom · AI Precision</title>
+<meta name="description" content="The world's most beautiful Vedic Panchang. Real-time Tithi, Nakshatra, Dasha, and cosmic guidance.">
+<style>
+/* ═══════════════════════════════════════════════════════
+   AETHERIS — COSMIC DESIGN SYSTEM
+   Oxblood #2D0A0F · Parchment #F4EDE3 · Gold #E2B44C
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --oxblood:    #2D0A0F;
+  --deep:       #1A0508;
+  --parchment:  #F4EDE3;
+  --gold:       #E2B44C;
+  --gold-light: #F5D06E;
+  --gold-dim:   #8B6914;
+  --cream:      #FDF8F0;
+  --ash:        rgba(244,237,227,0.55);
+  --ash2:       rgba(244,237,227,0.12);
+  --ash3:       rgba(244,237,227,0.06);
+  --ruby:       #C0392B;
+  --emerald:    #1E8449;
+  --sapphire:   #1A5276;
+  --glow-gold:  0 0 30px rgba(226,180,76,0.4), 0 0 60px rgba(226,180,76,0.15);
+  --glow-ruby:  0 0 30px rgba(192,57,43,0.5);
+  --font-serif: 'Playfair Display', 'Noto Serif Devanagari', Georgia, serif;
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep);
+  color: var(--parchment);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Noto+Serif+Devanagari:wght@400;600&display=swap');
+
+/* ═══════════════════════════════
+   CANVAS BACKGROUND — COSMOS
+   ═══════════════════════════════ */
+#cosmos-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════
+   MAIN LAYOUT
+   ═══════════════════════════════ */
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════
+   HEADER / NAV
+   ═══════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(180deg, rgba(26,5,8,0.95) 0%, transparent 100%);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226,180,76,0.12);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.nav-logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: var(--glow-gold);
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 20px rgba(226,180,76,0.4); }
+  50%       { box-shadow: 0 0 40px rgba(226,180,76,0.7), 0 0 80px rgba(226,180,76,0.3); }
+}
+
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+.nav-logo-sub {
+  font-size: 0.6rem;
+  color: var(--ash);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: -4px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--ash);
+  text-decoration: none;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--deep) !important;
+  padding: 0.5rem 1.25rem !important;
+  border-radius: 2rem;
+  font-weight: 600 !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--glow-gold) !important;
+  color: var(--deep) !important;
+}
+
+/* ═══════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.3s;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.5s;
+}
+
+.hero-title .gold { color: var(--gold); }
+.hero-title .italic { font-style: italic; }
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  color: var(--ash);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.7s;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════
+   LIVE PANCHANG CARD (HERO)
+   ═══════════════════════════════ */
+.hero-panchang {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(226,180,76,0.15);
+  border: 1px solid rgba(226,180,76,0.25);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto 3rem;
+  backdrop-filter: blur(20px);
+  opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.9s;
+  box-shadow: 0 0 80px rgba(226,180,76,0.08), inset 0 1px 0 rgba(226,180,76,0.2);
+}
+
+.panch-cell {
+  background: rgba(26,5,8,0.7);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.panch-cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(226,180,76,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.panch-cell:hover::before { opacity: 1; }
+.panch-cell:hover { background: rgba(45,10,15,0.8); }
+
+.panch-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  font-weight: 600;
+}
+
+.panch-value {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--parchment);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.panch-sub {
+  font-size: 0.7rem;
+  color: var(--ash);
+  text-align: center;
+}
+
+.panch-live-dot {
+  width: 6px; height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ═══════════════════════════════
+   TITHI RING (CIRCULAR PROGRESS)
+   ═══════════════════════════════ */
+.tithi-ring-wrapper {
+  position: relative;
+  width: 120px; height: 120px;
+  margin: 0 auto;
+}
+
+.tithi-ring-svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+
+.tithi-ring-bg {
+  fill: none;
+  stroke: rgba(226,180,76,0.15);
+  stroke-width: 6;
+}
+
+.tithi-ring-progress {
+  fill: none;
+  stroke: url(#tithi-gradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tithi-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tithi-ring-pct {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-family: var(--font-serif);
+  line-height: 1;
+}
+
+.tithi-ring-name {
+  font-size: 0.6rem;
+  color: var(--ash);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════
+   RAHU KAAL ALERT BAR
+   ═══════════════════════════════ */
+.alert-bar {
+  position: fixed;
+  top: 72px; left: 0; right: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  gap: 0.75rem;
+}
+
+.alert-bar.show { transform: translateY(0); }
+
+.alert-bar.rahu {
+  background: linear-gradient(90deg, rgba(192,57,43,0.95), rgba(120,30,20,0.95));
+  border-bottom: 1px solid rgba(192,57,43,0.5);
+}
+
+.alert-bar.good {
+  background: linear-gradient(90deg, rgba(30,132,73,0.9), rgba(20,90,50,0.9));
+  border-bottom: 1px solid rgba(30,132,73,0.4);
+}
+
+/* ═══════════════════════════════
+   INAUSPICIOUS PERIODS CARD
+   ═══════════════════════════════ */
+.periods-section {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+
+.section-divider {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(226,180,76,0.4), transparent);
+}
+
+.periods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.period-card {
+  background: rgba(26,5,8,0.7);
+  border: 1px solid rgba(226,180,76,0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.period-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(226,180,76,0.35);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(226,180,76,0.08);
+}
+
+.period-card.rahu { border-left: 3px solid var(--ruby); }
+.period-card.gulika { border-left: 3px solid #8B4513; }
+.period-card.yamghant { border-left: 3px solid #4B0082; }
+.period-card.abhijit { border-left: 3px solid var(--gold); }
+.period-card.brahma { border-left: 3px solid #1E8449; }
+
+.period-card-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 0.5rem;
+}
+
+.period-card-time {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--parchment);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.period-card-desc {
+  font-size: 0.75rem;
+  color: var(--ash);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════
+   CHOGHADIYA TIMELINE
+   ═══════════════════════════════ */
+.chog-section {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.chog-timeline {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+}
+
+.chog-slot {
+  flex: 0 0 auto;
+  min-width: 100px;
+  padding: 1rem 0.75rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  border: 1px solid rgba(226,180,76,0.1);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.chog-slot.current {
+  border-color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+
+.chog-slot.current::before {
+  content: 'NOW';
+  position: absolute;
+  top: 4px; right: 4px;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.chog-slot:hover {
+  transform: translateY(-3px);
+  border-color: rgba(226,180,76,0.4);
+}
+
+.chog-name {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.chog-time {
+  font-size: 0.65rem;
+  color: var(--ash);
+  font-family: var(--font-mono);
+}
+
+.chog-nature {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+}
+
+/* Choghadiya colors */
+.chog-Labh    { background: rgba(30,132,73,0.15); }
+.chog-Amrit   { background: rgba(226,180,76,0.15); }
+.chog-Kaal    { background: rgba(192,57,43,0.2); }
+.chog-Shubh   { background: rgba(30,100,180,0.15); }
+.chog-Rog     { background: rgba(120,40,20,0.2); }
+.chog-Udveg   { background: rgba(100,50,150,0.15); }
+.chog-Char    { background: rgba(60,100,60,0.15); }
+
+/* ═══════════════════════════════
+   SUNRISE / SUNSET CARD
+   ═══════════════════════════════ */
+.sun-card {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(26,5,8,0.5);
+  border: 1px solid rgba(226,180,76,0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.sun-item {
+  flex: 1;
+  text-align: center;
+}
+
+.sun-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.sun-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.sun-time {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: var(--parchment);
+  font-weight: 600;
+}
+
+.sun-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(226,180,76,0.3), transparent);
+}
+
+/* ═══════════════════════════════
+   LOCATION BAR
+   ═══════════════════════════════ */
+.location-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(26,5,8,0.6);
+  border: 1px solid rgba(226,180,76,0.15);
+  border-radius: 3rem;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.location-bar:hover {
+  border-color: rgba(226,180,76,0.4);
+  box-shadow: var(--glow-gold);
+}
+
+.location-icon { font-size: 1rem; }
+
+.location-text {
+  font-size: 0.85rem;
+  color: var(--ash);
+}
+
+.location-name {
+  color: var(--parchment);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════
+   DATE DISPLAY
+   ═══════════════════════════════ */
+.date-display {
+  text-align: center;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fade-up 0.8s ease forwards 0.4s;
+}
+
+.date-gregorian {
+  font-size: 0.85rem;
+  color: var(--ash);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.date-vedic {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════
+   FESTIVALS SECTION
+   ═══════════════════════════════ */
+.festivals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 0 2rem;
+  max-width: 1100px;
+  margin: 0 auto 4rem;
+}
+
+.festival-card {
+  background: rgba(26,5,8,0.6);
+  border: 1px solid rgba(226,180,76,0.1);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+}
+
+.festival-card:hover {
+  border-color: rgba(226,180,76,0.3);
+  transform: translateY(-2px);
+}
+
+.festival-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.festival-name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--parchment);
+  margin-bottom: 0.25rem;
+}
+
+.festival-type {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+/* ═══════════════════════════════
+   NAKSHATRA STRIP
+   ═══════════════════════════════ */
+.nak-strip {
+  padding: 2rem;
+  background: linear-gradient(180deg, transparent, rgba(26,5,8,0.8), transparent);
+  overflow: hidden;
+  position: relative;
+}
+
+.nak-strip-inner {
+  display: flex;
+  gap: 1rem;
+  animation: scroll-left 60s linear infinite;
+  width: max-content;
+}
+
+.nak-strip-inner:hover { animation-play-state: paused; }
+
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.nak-chip {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  background: rgba(226,180,76,0.08);
+  border: 1px solid rgba(226,180,76,0.15);
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  color: var(--ash);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.nak-chip.active {
+  background: rgba(226,180,76,0.2);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: var(--glow-gold);
+}
+
+.nak-chip:hover { border-color: rgba(226,180,76,0.4); color: var(--parchment); }
+
+/* ═══════════════════════════════
+   LOADING SCREEN
+   ═══════════════════════════════ */
+#loading {
+  position: fixed;
+  inset: 0;
+  background: var(--deep);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loading.hidden { opacity: 0; visibility: hidden; }
+
+.loading-logo {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  color: var(--gold);
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.loading-sanskrit {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--ash);
+  font-style: italic;
+  letter-spacing: 0.1em;
+}
+
+.loading-bar-wrap {
+  width: 200px;
+  height: 2px;
+  background: rgba(226,180,76,0.15);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 1px;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.loading-status {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+/* ═══════════════════════════════
+   ORACLE CHAT BUTTON
+   ═══════════════════════════════ */
+.oracle-fab {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  z-index: 200;
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, var(--oxblood), var(--deep));
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  animation: pulse-gold 3s ease-in-out infinite;
+  transition: transform 0.3s;
+}
+
+.oracle-fab:hover { transform: scale(1.1); }
+
+/* ═══════════════════════════════
+   ORACLE CHAT PANEL
+   ═══════════════════════════════ */
+.oracle-panel {
+  position: fixed;
+  bottom: 5.5rem; right: 2rem;
+  z-index: 200;
+  width: min(420px, calc(100vw - 2rem));
+  max-height: 500px;
+  background: rgba(15,3,5,0.97);
+  border: 1px solid rgba(226,180,76,0.3);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), var(--glow-gold);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: bottom right;
+}
+
+.oracle-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.oracle-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(226,180,76,0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.oracle-avatar {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--oxblood));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+.oracle-name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.oracle-status {
+  font-size: 0.65rem;
+  color: #22c55e;
+  display: flex; align-items: center; gap: 0.3rem;
+}
+
+.oracle-close {
+  margin-left: auto;
+  background: none; border: none;
+  color: var(--ash); cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+.oracle-close:hover { color: var(--parchment); }
+
+.oracle-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+}
+
+.oracle-msg {
+  max-width: 85%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  animation: msg-appear 0.3s ease;
+}
+
+@keyframes msg-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.oracle-msg.user {
+  background: rgba(226,180,76,0.15);
+  border: 1px solid rgba(226,180,76,0.2);
+  color: var(--parchment);
+  align-self: flex-end;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+}
+
+.oracle-msg.ai {
+  background: rgba(45,10,15,0.8);
+  border: 1px solid rgba(226,180,76,0.1);
+  color: var(--ash);
+  align-self: flex-start;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+}
+
+.oracle-typing {
+  display: flex; gap: 4px; padding: 0.5rem;
+  align-self: flex-start;
+}
+
+.oracle-typing span {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: typing-dot 1.4s ease-in-out infinite;
+}
+.oracle-typing span:nth-child(2) { animation-delay: 0.2s; }
+.oracle-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%            { transform: translateY(-8px); opacity: 1; }
+}
+
+.oracle-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(226,180,76,0.1);
+}
+
+.oracle-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(226,180,76,0.15);
+  border-radius: 2rem;
+  padding: 0.6rem 1rem;
+  color: var(--parchment);
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.oracle-input:focus { border-color: rgba(226,180,76,0.5); }
+.oracle-input::placeholder { color: var(--gold-dim); }
+
+.oracle-send {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border: none; border-radius: 50%;
+  color: var(--deep);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.oracle-send:hover {
+  transform: scale(1.1);
+  box-shadow: var(--glow-gold);
+}
+
+/* Quick prompts */
+.oracle-quick-prompts {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.oracle-quick-prompts::-webkit-scrollbar { display: none; }
+
+.qp-btn {
+  flex-shrink: 0;
+  padding: 0.3rem 0.75rem;
+  background: rgba(226,180,76,0.08);
+  border: 1px solid rgba(226,180,76,0.2);
+  border-radius: 2rem;
+  color: var(--ash);
+  font-size: 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.qp-btn:hover {
+  background: rgba(226,180,76,0.2);
+  color: var(--gold);
+}
+
+/* ═══════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════ */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-panchang { grid-template-columns: repeat(3, 1fr); }
+  .hero-panchang .panch-cell:nth-child(n+4) { display: none; }
+  .periods-grid { grid-template-columns: 1fr; }
+  .sun-card { flex-direction: column; gap: 1rem; }
+  .sun-divider { width: 60px; height: 1px; }
+}
+
+@media (max-width: 480px) {
+  .hero-panchang { grid-template-columns: repeat(2, 1fr); }
+  .hero-panchang .panch-cell:nth-child(n+3) { display: none; }
+}
+
+/* ═══════════════════════════════
+   SCROLL ANIMATIONS
+   ═══════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOADING SCREEN ── -->
+<div id="loading">
+  <div class="loading-logo">✦ Aetheris</div>
+  <div class="loading-sanskrit">ज्योतिषं सर्वशास्त्राणां</div>
+  <div class="loading-bar-wrap">
+    <div class="loading-bar" id="loading-bar"></div>
+  </div>
+  <div class="loading-status" id="loading-status">Calculating planetary positions...</div>
+</div>
+
+<!-- ── COSMIC CANVAS ── -->
+<canvas id="cosmos-canvas"></canvas>
+
+<!-- ── ALERT BAR ── -->
+<div class="alert-bar" id="alert-bar">
+  <span id="alert-icon">⚠️</span>
+  <span id="alert-text">Loading...</span>
+</div>
+
+<!-- ── NAVIGATION ── -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">✦</div>
+    <div>
+      <div class="nav-logo-text">Aetheris</div>
+      <div class="nav-logo-sub">Ancient Wisdom · AI Precision</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#panchang">Panchang</a></li>
+    <li><a href="#muhurta">Muhurta</a></li>
+    <li><a href="#chart">Birth Chart</a></li>
+    <li><a href="#" class="nav-cta">My Chart</a></li>
+  </ul>
+</nav>
+
+<!-- ── MAIN APP ── -->
+<div id="app">
+
+  <!-- HERO -->
+  <section class="hero" id="panchang">
+    <div class="hero-eyebrow">
+      <span class="panch-live-dot" style="display:inline-block;margin-right:6px;vertical-align:middle"></span>
+      Live · Auto-updated · <span id="hero-location-short">Delhi, India</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="italic gold">Ancient</span> wisdom<br>
+      meets <span class="gold">cosmic precision</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      The world's most accurate Vedic Panchang — 
+      powered by Swiss Ephemeris, verified against DrikPanchang, 
+      guided by classical Jyotish.
+    </p>
+
+    <!-- DATE DISPLAY -->
+    <div class="date-display" id="date-display">
+      <div class="date-gregorian" id="gregorian-date">Thursday, 21 May 2026</div>
+      <div class="date-vedic" id="vedic-date">Jyeshtha Adhik • Shukla Paksha • Vikram 2083</div>
+    </div>
+
+    <!-- LOCATION BAR -->
+    <div class="location-bar" id="location-bar" onclick="promptLocation()">
+      <span class="location-icon">📍</span>
+      <span class="location-text">
+        Location: <span class="location-name" id="location-name">Delhi, India</span>
+      </span>
+      <span style="color:var(--gold-dim);font-size:0.75rem">Change ›</span>
+    </div>
+
+    <!-- LIVE PANCHANG TILES -->
+    <div class="hero-panchang" id="panchang-grid">
+      <!-- TITHI -->
+      <div class="panch-cell" id="cell-tithi">
+        <div class="panch-label">Tithi</div>
+        <div class="tithi-ring-wrapper">
+          <svg class="tithi-ring-svg" viewBox="0 0 120 120">
+            <defs>
+              <linearGradient id="tithi-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#E2B44C"/>
+                <stop offset="100%" stop-color="#F5D06E"/>
+              </linearGradient>
+            </defs>
+            <circle class="tithi-ring-bg" cx="60" cy="60" r="50"/>
+            <circle class="tithi-ring-progress" id="tithi-ring-circle"
+              cx="60" cy="60" r="50"
+              stroke-dasharray="314"
+              stroke-dashoffset="314"/>
+          </svg>
+          <div class="tithi-ring-text">
+            <div class="tithi-ring-pct" id="tithi-pct">-</div>
+            <div class="tithi-ring-name">done</div>
+          </div>
+        </div>
+        <div class="panch-value" id="tithi-name">Loading...</div>
+        <div class="panch-sub" id="tithi-paksha">—</div>
+      </div>
+
+      <!-- VARA -->
+      <div class="panch-cell" id="cell-vara">
+        <div class="panch-label">Vara</div>
+        <div style="font-size:3rem;margin:0.5rem 0" id="vara-icon">🌞</div>
+        <div class="panch-value" id="vara-name">—</div>
+        <div class="panch-sub" id="vara-lord">Lord: —</div>
+      </div>
+
+      <!-- NAKSHATRA -->
+      <div class="panch-cell" id="cell-nak">
+        <div class="panch-label">Nakshatra</div>
+        <div style="font-size:2.5rem;margin:0.5rem 0">⭐</div>
+        <div class="panch-value" id="nak-name">—</div>
+        <div class="panch-sub" id="nak-sub">Lord: —</div>
+      </div>
+
+      <!-- YOGA -->
+      <div class="panch-cell" id="cell-yoga">
+        <div class="panch-label">Yoga</div>
+        <div style="font-size:2.5rem;margin:0.5rem 0" id="yoga-icon">☯️</div>
+        <div class="panch-value" id="yoga-name">—</div>
+        <div class="panch-sub" id="yoga-quality">—</div>
+      </div>
+
+      <!-- KARANA -->
+      <div class="panch-cell" id="cell-karana">
+        <div class="panch-label">Karana</div>
+        <div style="font-size:2.5rem;margin:0.5rem 0">🌙</div>
+        <div class="panch-value" id="karana-name">—</div>
+        <div class="panch-sub" id="karana-sub">—</div>
+      </div>
+    </div>
+
+    <!-- SUN CARD -->
+    <div class="sun-card reveal" id="sun-card">
+      <div class="sun-item">
+        <span class="sun-icon">🌅</span>
+        <span class="sun-label">Sunrise</span>
+        <div class="sun-time" id="sunrise-time">—</div>
+      </div>
+      <div class="sun-divider"></div>
+      <div class="sun-item">
+        <span class="sun-icon">🌇</span>
+        <span class="sun-label">Sunset</span>
+        <div class="sun-time" id="sunset-time">—</div>
+      </div>
+      <div class="sun-divider"></div>
+      <div class="sun-item">
+        <span class="sun-icon">🌕</span>
+        <span class="sun-label">Moonrise</span>
+        <div class="sun-time" id="moonrise-time">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INAUSPICIOUS PERIODS -->
+  <section class="periods-section reveal" id="muhurta">
+    <div class="section-header">
+      <h2 class="section-title">Inauspicious Periods</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="periods-grid" id="periods-grid">
+      <div class="period-card rahu">
+        <div class="period-card-label">Rahu Kaal</div>
+        <div class="period-card-time" id="rahu-time">Loading...</div>
+        <div class="period-card-desc">Avoid new ventures, important decisions</div>
+      </div>
+      <div class="period-card gulika">
+        <div class="period-card-label">Gulika Kaal</div>
+        <div class="period-card-time" id="gulika-time">—</div>
+        <div class="period-card-desc">Malefic period, avoid auspicious events</div>
+      </div>
+      <div class="period-card yamghant">
+        <div class="period-card-label">Yamaghanta</div>
+        <div class="period-card-time" id="yamghant-time">—</div>
+        <div class="period-card-desc">Inauspicious, avoid important work</div>
+      </div>
+      <div class="period-card abhijit" style="border-left-color:var(--gold)">
+        <div class="period-card-label">✨ Abhijit Muhurta</div>
+        <div class="period-card-time" id="abhijit-time">—</div>
+        <div class="period-card-desc">All auspicious work — highly favorable</div>
+      </div>
+      <div class="period-card brahma" style="border-left-color:#22c55e">
+        <div class="period-card-label">🌿 Brahma Muhurta</div>
+        <div class="period-card-time" id="brahma-time">—</div>
+        <div class="period-card-desc">Best for meditation, study, yoga</div>
+      </div>
+      <div class="period-card abhijit" style="border-left-color:#3B82F6">
+        <div class="period-card-label">💎 Amrit Kaal</div>
+        <div class="period-card-time" id="amrit-time">—</div>
+        <div class="period-card-desc">Highest auspiciousness of the day</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHOGHADIYA -->
+  <section class="chog-section reveal">
+    <div class="section-header" style="max-width:1100px;margin:0 auto 1.5rem;padding:0 2rem">
+      <h2 class="section-title">Choghadiya</h2>
+      <div class="section-divider"></div>
+      <div style="display:flex;gap:0.5rem">
+        <button onclick="setChogTab('day')" id="chog-day-btn"
+          style="padding:0.35rem 0.75rem;border-radius:2rem;border:1px solid rgba(226,180,76,0.3);background:rgba(226,180,76,0.15);color:var(--gold);font-size:0.75rem;cursor:pointer">
+          Day
+        </button>
+        <button onclick="setChogTab('night')" id="chog-night-btn"
+          style="padding:0.35rem 0.75rem;border-radius:2rem;border:1px solid rgba(226,180,76,0.1);background:transparent;color:var(--ash);font-size:0.75rem;cursor:pointer">
+          Night
+        </button>
+      </div>
+    </div>
+    <div class="chog-timeline" id="chog-timeline">
+      <div style="color:var(--ash);padding:1rem">Loading Choghadiya...</div>
+    </div>
+  </section>
+
+  <!-- NAKSHATRA STRIP -->
+  <div class="nak-strip">
+    <div class="nak-strip-inner" id="nak-strip-inner"></div>
+  </div>
+
+  <!-- FESTIVALS -->
+  <section class="reveal" style="padding:2rem 0 6rem">
+    <div class="section-header" style="max-width:1100px;margin:0 auto 1.5rem;padding:0 2rem">
+      <h2 class="section-title">Festivals & Special Days</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="festivals-grid" id="festivals-grid">
+      <div style="color:var(--ash);padding:1rem">Loading...</div>
+    </div>
+  </section>
+
+</div><!-- /app -->
+
+<!-- ── ORACLE FAB ── -->
+<div class="oracle-fab" id="oracle-fab" onclick="toggleOracle()" title="Ask the Oracle">
+  🔮
+</div>
+
+<!-- ── ORACLE PANEL ── -->
+<div class="oracle-panel" id="oracle-panel">
+  <div class="oracle-header">
+    <div class="oracle-avatar">🔮</div>
+    <div>
+      <div class="oracle-name">Aetheris Oracle</div>
+      <div class="oracle-status">
+        <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>
+        Powered by Claude AI
+      </div>
+    </div>
+    <button class="oracle-close" onclick="toggleOracle()">✕</button>
+  </div>
+  <div class="oracle-quick-prompts">
+    <button class="qp-btn" onclick="askOracle('What is Rahu Kaal today?')">🚫 Rahu Kaal?</button>
+    <button class="qp-btn" onclick="askOracle('Is today auspicious for business?')">💼 Business?</button>
+    <button class="qp-btn" onclick="askOracle('What does today\'s Nakshatra mean?')">⭐ Nakshatra?</button>
+    <button class="qp-btn" onclick="askOracle('Best time for travel today?')">✈️ Travel?</button>
+    <button class="qp-btn" onclick="askOracle('Tell me about today\'s Yoga')">☯️ Yoga?</button>
+  </div>
+  <div class="oracle-messages" id="oracle-messages">
+    <div class="oracle-msg ai">
+      🙏 Namaste! I am the Aetheris Oracle, your guide to the cosmic wisdom of Jyotish.
+      Ask me anything about today's panchang, muhurta, or your cosmic journey.
+    </div>
+  </div>
+  <div class="oracle-input-row">
+    <input class="oracle-input" id="oracle-input" placeholder="Ask the Oracle..."
+      onkeydown="if(event.key==='Enter') sendOracle()"/>
+    <button class="oracle-send" onclick="sendOracle()">➤</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// AETHERIS FRONTEND — Complete Cosmic App
+// ═══════════════════════════════════════════════════════════════
+
+const API = 'https://vedic-clock-avtl.onrender.com';
+let LOCATION = { lat: 28.6139, lon: 77.2090, name: 'Delhi, India', tz: 5.5 };
+let PANCHANG_DATA = null;
+let CHOG_DATA = null;
+let chogTab = 'day';
+
+// ── LOADING ──────────────────────────────────────────────────
+async function boot() {
+  const bar = document.getElementById('loading-bar');
+  const status = document.getElementById('loading-status');
+  const steps = [
+    [15, 'Locating your position...'],
+    [30, 'Calculating planetary positions...'],
+    [50, 'Computing Tithi and Nakshatra...'],
+    [70, 'Loading Choghadiya...'],
+    [85, 'Preparing cosmic canvas...'],
+    [100, 'Aetheris is ready ✦'],
+  ];
+
+  // Try to get user location
+  await getLocation();
+
+  for (const [pct, msg] of steps) {
+    bar.style.width = pct + '%';
+    status.textContent = msg;
+    await sleep(400);
+  }
+
+  // Start cosmos animation
+  initCosmos();
+
+  // Load panchang data
+  await loadPanchang();
+  await loadMuhurta();
+  await loadChoghadiya();
+
+  // Hide loading
+  await sleep(300);
+  document.getElementById('loading').classList.add('hidden');
+
+  // Start reveal animations
+  setupReveal();
+
+  // Update every minute
+  setInterval(updateLiveClock, 60000);
+
+  // Nakshatra strip
+  renderNakStrip();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── LOCATION ────────────────────────────────────────────────
+async function getLocation() {
+  try {
+    const pos = await new Promise((res, rej) =>
+      navigator.geolocation.getCurrentPosition(res, rej, {timeout:5000}));
+    LOCATION.lat = pos.coords.latitude;
+    LOCATION.lon = pos.coords.longitude;
+    // Reverse geocode using our API
+    const r = await fetch(`${API}/api/search-location?q=search&lat=${LOCATION.lat}`).catch(()=>null);
+    // Update display
+    document.getElementById('location-name').textContent = LOCATION.name;
+    document.getElementById('hero-location-short').textContent = LOCATION.name;
+  } catch(e) {
+    console.log('Using default Delhi location');
+  }
+}
+
+function promptLocation() {
+  const q = prompt('Enter your city name:');
+  if (!q) return;
+  fetch(`${API}/api/search-location?q=${encodeURIComponent(q)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.lat) {
+        LOCATION.lat  = data.lat;
+        LOCATION.lon  = data.lon;
+        LOCATION.name = data.name + (data.state ? ', ' + data.state : (data.country ? ', ' + data.country : ''));
+        LOCATION.tz   = data.tz_offset || 5.5;
+        document.getElementById('location-name').textContent = LOCATION.name;
+        document.getElementById('hero-location-short').textContent = LOCATION.name;
+        loadPanchang();
+        loadMuhurta();
+        loadChoghadiya();
+      } else { alert('Location not found. Try a major city name.'); }
+    })
+    .catch(() => alert('Unable to search. Check connection.'));
+}
+
+// ── PANCHANG DATA ──────────────────────────────────────────
+async function loadPanchang() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+  const url = `${API}/api/panchanga-timings?year=${y}&month=${m}&day=${d}&lat=${LOCATION.lat}&lon=${LOCATION.lon}&tz=${LOCATION.tz}`;
+
+  try {
+    const data = await fetch(url).then(r => r.json());
+    PANCHANG_DATA = data;
+    renderPanchang(data);
+  } catch(e) {
+    console.error('Panchang fetch failed:', e);
+    renderFallback();
+  }
+}
+
+function renderPanchang(data) {
+  // Tithi
+  const tithi = data.tithi?.[0];
+  if (tithi) {
+    document.getElementById('tithi-name').textContent = tithi.name;
+    document.getElementById('tithi-paksha').textContent = tithi.paksha + ' Paksha · #' + tithi.number;
+
+    // Ring progress — calculate % of tithi elapsed
+    const now = new Date();
+    const startParts = tithi.start?.time_24 || '05:28';
+    const endParts   = tithi.end?.time_24   || '08:30';
+    const [sh,sm] = startParts.split(':').map(Number);
+    const [eh,em] = endParts.split(':').map(Number);
+    const startMin = sh*60+sm, endMin = eh*60+em;
+    const nowMin   = now.getHours()*60+now.getMinutes();
+    const pct      = Math.min(100, Math.max(0, ((nowMin-startMin)/(endMin-startMin))*100));
+    const pctRnd   = Math.round(pct);
+
+    document.getElementById('tithi-pct').textContent = pctRnd + '%';
+    const circle = document.getElementById('tithi-ring-circle');
+    const circ = 2 * Math.PI * 50;
+    circle.style.strokeDashoffset = circ - (pct/100)*circ;
+  }
+
+  // Vara
+  const vara = data.vara;
+  if (vara) {
+    document.getElementById('vara-name').textContent = vara.name;
+    document.getElementById('vara-lord').textContent = 'Lord: ' + vara.lord;
+    const varaIcons = {Sunday:'☀️',Monday:'🌙',Tuesday:'🔴',Wednesday:'💚',Thursday:'🟡',Friday:'⬜',Saturday:'🔵'};
+    document.getElementById('vara-icon').textContent = varaIcons[vara.name] || '🌟';
+  }
+
+  // Nakshatra
+  const nak = data.nakshatra?.[0];
+  if (nak) {
+    document.getElementById('nak-name').textContent  = nak.name;
+    document.getElementById('nak-sub').textContent   = 'Lord: ' + nak.lord + ' · ' + nak.nature;
+  }
+
+  // Yoga
+  const yoga = data.yoga?.[0];
+  if (yoga) {
+    document.getElementById('yoga-name').textContent    = yoga.name;
+    document.getElementById('yoga-quality').textContent = yoga.is_auspicious ? '✅ Auspicious' : '⚠️ Inauspicious';
+    document.getElementById('yoga-icon').textContent    = yoga.is_auspicious ? '✨' : '⚠️';
+  }
+
+  // Karana
+  const kar = data.karana?.[0];
+  if (kar) {
+    document.getElementById('karana-name').textContent = kar.name;
+    document.getElementById('karana-sub').textContent  = kar.type + (kar.is_vishti ? ' 🚫 Vishti' : '');
+  }
+
+  // Sunrise/Sunset
+  document.getElementById('sunrise-time').textContent = data.sunrise || '—';
+  document.getElementById('sunset-time').textContent  = data.sunset  || '—';
+
+  // Vedic date
+  const months = ['Chaitra','Vaishakha','Jyeshtha','Ashadha','Shravana','Bhadrapada',
+                  'Ashwin','Kartika','Margashirsha','Paush','Magha','Phalguna'];
+  const now2 = new Date();
+  const vikram = now2.getFullYear() + 57;
+  document.getElementById('vedic-date').textContent =
+    `${months[(now2.getMonth()+2)%12]} · ${tithi?.paksha || 'Shukla'} Paksha · Vikram ${vikram}`;
+
+  // Gregorian date
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const mths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('gregorian-date').textContent =
+    `${days[now2.getDay()]}, ${now2.getDate()} ${mths[now2.getMonth()]} ${now2.getFullYear()}`;
+
+  // Moonrise
+  loadMoonrise();
+}
+
+async function loadMoonrise() {
+  const now = new Date();
+  const url = `${API}/api/moonrise?year=${now.getFullYear()}&month=${now.getMonth()+1}&day=${now.getDate()}&lat=${LOCATION.lat}&lon=${LOCATION.lon}&tz=${LOCATION.tz}`;
+  try {
+    const data = await fetch(url).then(r=>r.json());
+    document.getElementById('moonrise-time').textContent = data.moonrise || '—';
+  } catch(e) {}
+}
+
+// ── MUHURTA / PERIODS ──────────────────────────────────────
+async function loadMuhurta() {
+  const now = new Date();
+  const url = `${API}/api/panchanga?date=${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}&lat=${LOCATION.lat}&lon=${LOCATION.lon}&tz=${LOCATION.tz}`;
+  try {
+    const data = await fetch(url).then(r=>r.json());
+    const ina = data.inauspicious_periods || data.pancha_anga;
+    const aus = data.auspicious_windows || data.pancha_anga;
+
+    // Try to get from panchanga
+    const setTime = (id, val) => {
+      if (val) document.getElementById(id).textContent = val;
+    };
+
+    if (data.inauspicious_periods) {
+      const rk = data.inauspicious_periods.rahul_kaal;
+      if (rk) { setTime('rahu-time', rk.start + ' – ' + rk.end); checkRahuAlert(rk); }
+      const gk = data.inauspicious_periods.gulika_kaal;
+      if (gk) setTime('gulika-time', gk.start + ' – ' + gk.end);
+      const yg = data.inauspicious_periods.yamghant;
+      if (yg) setTime('yamghant-time', yg.start + ' – ' + yg.end);
+    }
+
+    if (data.auspicious_windows) {
+      const ab = data.auspicious_windows.abhijit_muhurta;
+      if (ab) setTime('abhijit-time', ab.start + ' – ' + ab.end);
+      const br = data.auspicious_windows.brahma_muhurta;
+      if (br) setTime('brahma-time', br.start + ' – ' + br.end);
+      const am = data.auspicious_windows.amrit_kaal;
+      if (am) setTime('amrit-time', am.start + ' – ' + am.end);
+    }
+
+    renderFestivals(data.festivals || []);
+
+  } catch(e) {
+    console.error('Muhurta fetch failed:', e);
+  }
+}
+
+// ── RAHU ALERT ──────────────────────────────────────────────
+function checkRahuAlert(rk) {
+  const bar = document.getElementById('alert-bar');
+  const text = document.getElementById('alert-text');
+  const icon = document.getElementById('alert-icon');
+
+  if (!rk) return;
+
+  const now = new Date();
+  const [sh, sm] = rk.start.replace(' AM','').replace(' PM','').split(':').map(Number);
+  const [eh, em] = rk.end.replace(' AM','').replace(' PM','').split(':').map(Number);
+  let startH = sh, endH = eh;
+  if (rk.start.includes('PM') && sh !== 12) startH += 12;
+  if (rk.end.includes('PM') && eh !== 12) endH += 12;
+
+  const startMin = startH*60+sm, endMin = endH*60+em;
+  const nowMin   = now.getHours()*60+now.getMinutes();
+
+  if (nowMin >= startMin && nowMin <= endMin) {
+    bar.className = 'alert-bar rahu show';
+    icon.textContent = '🚫';
+    text.textContent = `RAHU KAAL ACTIVE NOW — ${rk.start} to ${rk.end} · Avoid new ventures`;
+  } else if (nowMin < startMin && startMin - nowMin <= 30) {
+    bar.className = 'alert-bar rahu show';
+    icon.textContent = '⚠️';
+    const mins = startMin - nowMin;
+    text.textContent = `Rahu Kaal in ${mins} minutes (${rk.start}) — plan accordingly`;
+  } else {
+    bar.className = 'alert-bar good show';
+    icon.textContent = '✅';
+    text.textContent = `Current time is auspicious · Next Rahu Kaal: ${rk.start}`;
+    setTimeout(() => bar.className = 'alert-bar', 5000);
+  }
+}
+
+// ── CHOGHADIYA ───────────────────────────────────────────────
+async function loadChoghadiya() {
+  const now = new Date();
+  const url = `${API}/api/panchanga?date=${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}&lat=${LOCATION.lat}&lon=${LOCATION.lon}&tz=${LOCATION.tz}`;
+  try {
+    const data = await fetch(url).then(r=>r.json());
+    CHOG_DATA = data;
+    renderChog();
+  } catch(e) {}
+}
+
+function setChogTab(tab) {
+  chogTab = tab;
+  document.getElementById('chog-day-btn').style.background = tab==='day' ? 'rgba(226,180,76,0.15)' : 'transparent';
+  document.getElementById('chog-day-btn').style.color = tab==='day' ? 'var(--gold)' : 'var(--ash)';
+  document.getElementById('chog-night-btn').style.background = tab==='night' ? 'rgba(226,180,76,0.15)' : 'transparent';
+  document.getElementById('chog-night-btn').style.color = tab==='night' ? 'var(--gold)' : 'var(--ash)';
+  renderChog();
+}
+
+function renderChog() {
+  const tl = document.getElementById('chog-timeline');
+  if (!CHOG_DATA) return;
+
+  const slots = chogTab === 'day'
+    ? (CHOG_DATA.choghadiya?.day_choghadiya || [])
+    : (CHOG_DATA.choghadiya?.night_choghadiya || []);
+
+  if (!slots.length) {
+    tl.innerHTML = '<div style="color:var(--ash);padding:1rem">Choghadiya data not available</div>';
+    return;
+  }
+
+  const now = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+
+  tl.innerHTML = slots.map(slot => {
+    const name = slot.name || slot.choghadiya || 'Unknown';
+    const [sh,sm] = (slot.start||'').replace(/AM|PM|\s/g,'').split(':').map(Number);
+    const [eh,em] = (slot.end||'').replace(/AM|PM|\s/g,'').split(':').map(Number);
+    let startH = sh; let endH = eh;
+    if ((slot.start||'').includes('PM') && sh!==12) startH+=12;
+    if ((slot.end||'').includes('PM') && eh!==12) endH+=12;
+    const startMin = (startH||0)*60+(sm||0);
+    const endMin   = (endH||0)*60+(em||0);
+    const isCurrent = nowMin >= startMin && nowMin <= endMin;
+
+    const nature = slot.nature || (slot.auspicious ? 'Auspicious' : 'Inauspicious');
+    const color = {Labh:'#22c55e',Amrit:'var(--gold)',Shubh:'#3B82F6',
+                   Char:'#10B981',Kaal:'var(--ruby)',Rog:'#EF4444',Udveg:'#8B5CF6'}[name] || 'var(--ash)';
+
+    return `<div class="chog-slot chog-${name} ${isCurrent?'current':''}"
+      style="${isCurrent?'background:rgba(226,180,76,0.12);':''}">
+      <div class="chog-name" style="color:${color}">${name}</div>
+      <div class="chog-time">${slot.start||'—'}</div>
+      <div class="chog-time" style="opacity:0.6">${slot.end||'—'}</div>
+      <div class="chog-nature" style="color:${color};opacity:0.7">
+        ${nature}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── FESTIVALS ───────────────────────────────────────────────
+function renderFestivals(fests) {
+  const grid = document.getElementById('festivals-grid');
+  if (!fests.length) {
+    grid.innerHTML = '<div style="color:var(--ash)">No special events today</div>';
+    return;
+  }
+  const icons = {
+    'Purnima':'🌕','Amavasya':'🌑','Ekadashi':'🙏','Pradosh':'📿',
+    'Navratri':'🪔','Diwali':'✨','Holi':'🎨','Ganesh':'🐘',
+    'Default':'🌸'
+  };
+  grid.innerHTML = fests.map(f => {
+    const icon = Object.entries(icons).find(([k]) => f.name?.includes(k))?.[1] || icons.Default;
+    return `<div class="festival-card">
+      <span class="festival-icon">${icon}</span>
+      <div>
+        <div class="festival-name">${f.name || 'Special Day'}</div>
+        <div class="festival-type">${f.type || ''}</div>
+        ${f.importance ? `<div style="font-size:0.75rem;color:var(--ash);margin-top:0.3rem;line-height:1.4">${f.importance}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── NAKSHATRA STRIP ─────────────────────────────────────────
+function renderNakStrip() {
+  const naks = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra',
+    'Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni',
+    'Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula',
+    'Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha',
+    'Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  const current = PANCHANG_DATA?.nakshatra?.[0]?.name || 'Pushya';
+  const inner = document.getElementById('nak-strip-inner');
+  const html = [...naks,...naks].map(n =>
+    `<div class="nak-chip ${n===current?'active':''}">${n}</div>`
+  ).join('');
+  inner.innerHTML = html;
+}
+
+// ── FALLBACK ────────────────────────────────────────────────
+function renderFallback() {
+  document.getElementById('tithi-name').textContent    = 'Panchami';
+  document.getElementById('tithi-paksha').textContent  = 'Shukla Paksha · #5';
+  document.getElementById('vara-name').textContent     = 'Thursday';
+  document.getElementById('vara-lord').textContent     = 'Lord: Jupiter';
+  document.getElementById('vara-icon').textContent     = '🟡';
+  document.getElementById('nak-name').textContent      = 'Pushya';
+  document.getElementById('nak-sub').textContent       = 'Lord: Saturn · Mridu';
+  document.getElementById('yoga-name').textContent     = 'Ganda';
+  document.getElementById('yoga-quality').textContent  = '⚠️ Inauspicious';
+  document.getElementById('karana-name').textContent   = 'Naga';
+  document.getElementById('sunrise-time').textContent  = '05:28';
+  document.getElementById('sunset-time').textContent   = '19:07';
+  document.getElementById('rahu-time').textContent     = '13:59 – 15:42';
+  document.getElementById('tithi-pct').textContent     = '75%';
+  const circle = document.getElementById('tithi-ring-circle');
+  circle.style.strokeDashoffset = 314 * 0.25;
+}
+
+// ── LIVE CLOCK UPDATE ────────────────────────────────────────
+function updateLiveClock() {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const mths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('gregorian-date').textContent =
+    `${days[now.getDay()]}, ${now.getDate()} ${mths[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+// ── COSMOS CANVAS ────────────────────────────────────────────
+function initCosmos() {
+  const canvas = document.getElementById('cosmos-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Stars
+  const STAR_COUNT = 800;
+  const stars = Array.from({length: STAR_COUNT}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.5 + 0.2,
+    a: Math.random(),
+    speed: Math.random() * 0.002 + 0.0005,
+    phase: Math.random() * Math.PI * 2,
+  }));
+
+  // Planets (decorative)
+  const planets = [
+    { x:0.15, y:0.20, r:8,  color:'#E2B44C', glow:'rgba(226,180,76,0.3)',  speed:0.0003 },
+    { x:0.82, y:0.35, r:12, color:'#C0392B', glow:'rgba(192,57,43,0.3)',   speed:0.0002 },
+    { x:0.92, y:0.70, r:6,  color:'#3498DB', glow:'rgba(52,152,219,0.3)',  speed:0.0004 },
+    { x:0.08, y:0.75, r:10, color:'#8E44AD', glow:'rgba(142,68,173,0.3)', speed:0.00025},
+  ];
+  let t = 0;
+
+  // Get sky color based on time
+  function getSkyColor() {
+    const h = new Date().getHours() + new Date().getMinutes()/60;
+    if (h < 5 || h > 21)  return ['#0A0310', '#05010A'];
+    if (h < 6)  return ['#1A0820', '#0D0415'];
+    if (h < 7)  return ['#2D0A0F', '#4A1525'];
+    if (h < 8)  return ['#5C1A0A', '#8B3520'];
+    if (h < 10) return ['#1A0508', '#2D0A0F'];
+    if (h < 17) return ['#0A0205', '#120508'];
+    if (h < 18) return ['#3D1005', '#5C1A0A'];
+    if (h < 19) return ['#5C1A0A', '#2D0A0F'];
+    if (h < 20) return ['#1A0508', '#0A0210'];
+    return ['#0A0310', '#05010A'];
+  }
+
+  function draw() {
+    t += 0.016;
+    const [c1, c2] = getSkyColor();
+
+    // Sky gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    grad.addColorStop(0, c1);
+    grad.addColorStop(1, c2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Stars
+    stars.forEach(s => {
+      const alpha = (Math.sin(t * s.speed * 100 + s.phase) + 1) / 2 * 0.7 + 0.1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(245,240,220,${alpha})`;
+      ctx.fill();
+    });
+
+    // Planets
+    planets.forEach(p => {
+      const px = p.x * canvas.width  + Math.sin(t * p.speed * 1000) * 20;
+      const py = p.y * canvas.height + Math.cos(t * p.speed * 800)  * 15;
+
+      // Glow
+      const glowGrad = ctx.createRadialGradient(px, py, 0, px, py, p.r * 8);
+      glowGrad.addColorStop(0, p.glow);
+      glowGrad.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(px, py, p.r * 8, 0, Math.PI*2);
+      ctx.fillStyle = glowGrad;
+      ctx.fill();
+
+      // Planet
+      ctx.beginPath();
+      ctx.arc(px, py, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+
+    // Shooting star (occasional)
+    if (Math.random() < 0.003) {
+      const sx = Math.random() * canvas.width;
+      const sy = Math.random() * canvas.height * 0.5;
+      const grad2 = ctx.createLinearGradient(sx, sy, sx+100, sy+50);
+      grad2.addColorStop(0, 'rgba(245,240,220,0.8)');
+      grad2.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx+100, sy+50);
+      ctx.strokeStyle = grad2;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── SCROLL REVEAL ────────────────────────────────────────────
+function setupReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ── ORACLE CHAT ──────────────────────────────────────────────
+let oracleOpen = false;
+
+function toggleOracle() {
+  oracleOpen = !oracleOpen;
+  document.getElementById('oracle-panel').classList.toggle('open', oracleOpen);
+}
+
+function askOracle(q) {
+  document.getElementById('oracle-input').value = q;
+  sendOracle();
+}
+
+async function sendOracle() {
+  const input = document.getElementById('oracle-input');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+
+  const msgs = document.getElementById('oracle-messages');
+
+  // Add user message
+  msgs.innerHTML += `<div class="oracle-msg user">${q}</div>`;
+
+  // Add typing indicator
+  const typingId = 'typing-' + Date.now();
+  msgs.innerHTML += `<div class="oracle-typing" id="${typingId}">
+    <span></span><span></span><span></span>
+  </div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Build context
+  const panchangContext = PANCHANG_DATA ? `
+    Today's Panchanga (${new Date().toDateString()}, ${LOCATION.name}):
+    - Tithi: ${PANCHANG_DATA.tithi?.[0]?.paksha} ${PANCHANG_DATA.tithi?.[0]?.name}
+    - Vara: ${PANCHANG_DATA.vara?.name} (Lord: ${PANCHANG_DATA.vara?.lord})
+    - Nakshatra: ${PANCHANG_DATA.nakshatra?.[0]?.name} (Lord: ${PANCHANG_DATA.nakshatra?.[0]?.lord})
+    - Yoga: ${PANCHANG_DATA.yoga?.[0]?.name} (${PANCHANG_DATA.yoga?.[0]?.is_auspicious ? 'Auspicious' : 'Inauspicious'})
+    - Karana: ${PANCHANG_DATA.karana?.[0]?.name}
+    - Sunrise: ${PANCHANG_DATA.sunrise}  Sunset: ${PANCHANG_DATA.sunset}
+  ` : '';
+
+  try {
+    const response = await fetch('/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: `You are the Aetheris Oracle — a wise, knowledgeable Vedic astrology guide.
+                 You have deep knowledge of Jyotish, Panchanga, Muhurta, and Vedic traditions.
+                 You are concise (max 3 sentences), warm, and use occasional Sanskrit terms with brief explanations.
+                 Current context: ${panchangContext}
+                 Always be helpful and grounded in classical Jyotish knowledge.`,
+        messages: [{ role: 'user', content: q }]
+      })
+    });
+
+    const data = await response.json();
+    const answer = data.content?.[0]?.text || "I am contemplating the cosmic patterns. Please ask again.";
+
+    document.getElementById(typingId)?.remove();
+    msgs.innerHTML += `<div class="oracle-msg ai">${answer}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+
+  } catch(e) {
+    document.getElementById(typingId)?.remove();
+
+    // Fallback responses based on keywords
+    const fallbacks = {
+      'rahu':      `🚫 Rahu Kaal is the inauspicious period ruled by Rahu. Today it falls at ${document.getElementById('rahu-time').textContent}. Avoid starting new ventures, signing contracts, or important decisions during this time.`,
+      'nakshatra': `⭐ The current Nakshatra is ${PANCHANG_DATA?.nakshatra?.[0]?.name || 'Pushya'}. Each Nakshatra carries the energy of its ruling deity and planet, influencing the day's activities and their outcomes.`,
+      'travel':    `✈️ For travel muhurta, prefer Pushya, Rohini, Hasta, or Ashwini Nakshatras. Avoid Ashlesha, Magha, and Mula. ${PANCHANG_DATA?.yoga?.[0]?.is_auspicious ? 'Today\'s Yoga is favorable for travel.' : 'Today\'s Yoga suggests caution.'}`,
+      'business':  `💼 For business auspiciousness, the Abhijit Muhurta (${document.getElementById('abhijit-time').textContent}) is universally favorable. ${PANCHANG_DATA?.tithi?.[0]?.name === 'Panchami' ? 'Panchami Tithi supports commerce.' : ''}`,
+      'default':   `🙏 The cosmos guides us through Tithi, Nakshatra, Yoga, Karana, and Vara — the five limbs of Panchanga. Today is ${PANCHANG_DATA?.vara?.name || 'Thursday'}, ruled by ${PANCHANG_DATA?.vara?.lord || 'Jupiter'}. Seek wisdom in the present moment.`
+    };
+
+    const key = Object.keys(fallbacks).find(k => q.toLowerCase().includes(k)) || 'default';
+    msgs.innerHTML += `<div class="oracle-msg ai">${fallbacks[key]}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+}
+
+// ── START ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aetheris — Classical Vedic Astrology</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN SYSTEM — ASTROMATA IMPERIAL ── */
+:root {
+  --ox950:#2D0A0F; --ox900:#1F0509; --ox800:#4A0E17; --ox700:#5E1622;
+  --gold500:#E2B44C; --gold300:#F3D78C;
+  --p100:#F4EDE3; --p200:#FBF6EF; --bronze:#C4A87C;
+  --ink800:#2C2A26; --ink600:#5E5854; --ink500:#6B6560; --cream:#FDF8F0;
+  --ss:#2D5A3D; --sw:#8B6914; --sd:#5A1A1A;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --shadow-card:0 2px 12px rgba(45,10,15,.08);
+  --shadow-el:0 8px 32px rgba(45,10,15,.16);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{background:var(--p100);color:var(--ink800);font-family:var(--sans);font-size:1rem;font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER — oxblood authority ── */
+header{background:var(--ox950);color:var(--cream);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--ox800)}
+.hinner{max-width:1300px;margin:0 auto;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-seal{width:42px;height:42px;border:1px solid var(--gold500);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.brand-seal::before{content:'✦';color:var(--gold500);font-size:1.1rem}
+.brand-seal::after{content:'';position:absolute;inset:-4px;border:1px solid rgba(226,180,76,.25);animation:ring-pulse 4s infinite}
+@keyframes ring-pulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.06)}}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:1.7rem;color:var(--gold300);letter-spacing:.06em;line-height:1}
+.brand-sub{font-size:.72rem;font-weight:500;color:rgba(253,248,240,.45);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem}
+.hlive{display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:500;color:rgba(253,248,240,.5);letter-spacing:.06em}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--ss);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── NAV ── */
+nav{background:var(--ox800);border-bottom:1px solid var(--ox700);overflow-x:auto}
+.ninner{max-width:1300px;margin:0 auto;padding:0 2rem;display:flex}
+.nt{padding:.8rem 1.2rem;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(253,248,240,.5);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s var(--ease);flex-shrink:0}
+.nt:hover{color:var(--gold300);background:rgba(226,180,76,.06)}
+.nt.on{color:var(--gold500);border-bottom-color:var(--gold500);background:rgba(226,180,76,.08)}
+
+/* ── WRAP ── */
+.wrap{max-width:1300px;margin:0 auto;padding:2rem}
+.pane{display:none}.pane.on{display:block}
+
+/* ── GOLD DIVIDER ── */
+.gdiv{height:1px;background:linear-gradient(90deg,transparent,var(--gold500),transparent);border:none;margin:1.5rem 0;opacity:.4}
+
+/* ── SECTION LABEL ── */
+.slbl{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink500);display:flex;align-items:center;gap:.7rem;margin:1.8rem 0 .9rem}
+.slbl::after{content:'';flex:1;height:1px;background:var(--bronze);opacity:.5}
+
+/* ── CARDS ── */
+.card{background:var(--p200);border:1px solid var(--bronze);border-radius:14px;box-shadow:var(--shadow-card)}
+.card-dark{background:var(--ox800);color:var(--cream);border:1px solid var(--ox700);border-radius:14px}
+.card-dark h1,.card-dark h2,.card-dark h3{color:var(--cream)}
+
+/* ── PANCHANGA LAYOUT ── */
+.pl{display:grid;grid-template-columns:265px 1fr;gap:1.5rem}
+@media(max-width:820px){.pl{grid-template-columns:1fr}}
+
+/* ── CALENDAR ── */
+.cal-wrap{padding:1.2rem}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.cal-nav{background:transparent;border:1px solid var(--bronze);color:var(--ink600);width:28px;height:28px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all .15s var(--ease)}
+.cal-nav:hover{background:var(--ox800);border-color:var(--ox800);color:var(--gold500)}
+.cal-month{font-family:var(--serif);font-weight:600;font-size:1rem;color:var(--ink800);letter-spacing:.03em}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.cdname{text-align:center;font-size:.68rem;font-weight:600;color:var(--ink500);padding:.25rem 0;letter-spacing:.05em}
+.cd{text-align:center;padding:.3rem .1rem;font-size:.82rem;cursor:pointer;color:var(--ink600);border-radius:4px;transition:all .12s var(--ease)}
+.cd:hover{background:rgba(74,14,23,.08);color:var(--ox800)}
+.cd.today{color:var(--ox800);font-weight:600;position:relative}
+.cd.today::after{content:'';position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;background:var(--gold500);border-radius:50%}
+.cd.sel{background:var(--ox800);color:var(--gold500);font-weight:700}
+.cd.empty{cursor:default;pointer-events:none}
+
+/* ── LOCATION ── */
+.loc-pad{padding:1.1rem 1.2rem}
+.flabel{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink600);display:block;margin-bottom:.4rem}
+.srow{display:flex;gap:.5rem;margin-bottom:.4rem}
+.inp{background:var(--p200);border:1px solid var(--bronze);border-radius:8px;color:var(--ink800);padding:.5rem .75rem;font-family:var(--sans);font-size:.9rem;width:100%;outline:none;transition:border-color .15s var(--ease)}
+.inp:focus{border-color:var(--ox800);outline:2px solid var(--ox800);outline-offset:2px}
+.inp::placeholder{color:var(--ink500)}
+.gbtn{background:var(--ox800);color:var(--gold500);border:none;padding:.5rem .9rem;font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:8px;flex-shrink:0;transition:background .15s var(--ease)}
+.gbtn:hover{background:var(--ox900)}
+.cdrop{max-height:160px;overflow-y:auto;border:1px solid var(--bronze);border-radius:8px;background:var(--p200);display:none;margin-top:.3rem;box-shadow:var(--shadow-el)}
+.copt{padding:.4rem .75rem;font-size:.85rem;cursor:pointer;border-bottom:1px solid rgba(196,168,124,.3);transition:background .1s}
+.copt:hover{background:rgba(74,14,23,.06);color:var(--ox800)}
+.copt small{color:var(--ink500);font-size:.72rem}
+.loc-txt{font-size:.75rem;font-weight:500;color:var(--ink500);margin-top:.35rem}
+.loc-date{font-family:var(--serif);font-size:.95rem;font-weight:600;color:var(--ink800);margin-top:.15rem}
+
+/* ── FIVE LIMBS ── */
+.fl{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:1.4rem}
+@media(max-width:700px){.fl{grid-template-columns:repeat(3,1fr)}}
+.lc{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:.9rem;position:relative;overflow:hidden;transition:box-shadow .2s var(--ease),transform .15s var(--ease)}
+.lc:hover{box-shadow:var(--shadow-card);transform:translateY(-1px)}
+.lc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold500),transparent);opacity:.5}
+.lk{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink500);margin-bottom:.35rem}
+.lv{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink800);line-height:1.2}
+.ls{font-size:.72rem;color:var(--ink500);margin-top:.2rem}
+
+/* ── TIME CARDS ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:.6rem;margin-bottom:1.4rem}
+.tc{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:.85rem;position:relative}
+.tc.good{border-left:3px solid var(--ss)}.tc.warn{border-left:3px solid var(--sd)}.tc.info{border-left:3px solid var(--gold500)}
+.tk{font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink500);margin-bottom:.3rem}
+.tv{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink800);letter-spacing:.02em}
+.td{font-size:.72rem;color:var(--ink500);margin-top:.2rem}
+
+/* ── FESTIVAL ── */
+.fi{background:var(--p200);border:1px solid var(--bronze);border-left:3px solid var(--gold500);border-radius:0 10px 10px 0;padding:.7rem 1rem;margin-bottom:.5rem}
+.fn{font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--ink800)}
+.fd{font-size:.75rem;color:var(--ink500);margin-top:.2rem}
+
+/* ── CAL INFO ── */
+.cigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.5rem;margin-bottom:1.4rem}
+.ci{background:var(--p200);border:1px solid var(--bronze);border-radius:8px;padding:.6rem .8rem;text-align:center}
+.cik{font-size:.63rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink500)}
+.civ{font-size:.88rem;font-weight:500;color:var(--ink800);margin-top:.2rem}
+
+/* ── CHOGHADIYA ── */
+.chog2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.4rem}
+@media(max-width:600px){.chog2{grid-template-columns:1fr}}
+.chbox{background:var(--p200);border:1px solid var(--bronze);border-radius:14px;padding:1rem}
+.chtitle{font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--ink800);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bronze)}
+.chrow{display:flex;justify-content:space-between;align-items:center;padding:.3rem .4rem;border-radius:6px;transition:background .1s;font-size:.85rem}
+.chrow:hover{background:rgba(74,14,23,.04)}
+.chrow.now{background:rgba(74,14,23,.06);border-left:2px solid var(--gold500);padding-left:.5rem}
+.chname{font-family:var(--serif);font-weight:700;font-size:.9rem}
+.chname.amrit{color:var(--ss)}.chname.labh,.chname.shubh{color:var(--ox800)}.chname.char{color:var(--ink600)}
+.chname.udveg,.chname.kaal,.chname.rog{color:var(--ink500)}
+.chtime{font-size:.72rem;font-weight:500;color:var(--ink500)}
+
+/* ── BIRTH CHART ── */
+.cl{display:grid;grid-template-columns:285px 1fr;gap:1.5rem}
+@media(max-width:900px){.cl{grid-template-columns:1fr}}
+.fp{background:var(--p200);border:1px solid var(--bronze);border-radius:14px;padding:1.4rem;box-shadow:var(--shadow-card)}
+.fptitle{font-family:var(--serif);font-weight:700;font-size:1.15rem;color:var(--ink800);margin-bottom:1.1rem;padding-bottom:.6rem;border-bottom:1px solid var(--bronze)}
+.fg{margin-bottom:.75rem}
+.fg label{font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink600);display:block;margin-bottom:.3rem}
+.fg input,.fg select{width:100%;background:var(--p200);border:1px solid var(--bronze);border-radius:8px;color:var(--ink800);padding:.48rem .7rem;font-family:var(--sans);font-size:.9rem;outline:none;transition:border-color .15s var(--ease)}
+.fg input:focus,.fg select:focus{border-color:var(--ox800);outline:2px solid var(--ox800);outline-offset:2px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.cbtn{width:100%;margin-top:.9rem;padding:.85rem;background:var(--ox800);color:var(--gold500);border:none;border-radius:8px;font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s var(--ease),box-shadow .2s var(--ease)}
+.cbtn:hover{background:var(--ox900);box-shadow:var(--shadow-el)}
+.cbtn:active{transform:translateY(1px)}
+.cbtn:disabled{background:var(--bronze);color:var(--p200);cursor:not-allowed}
+
+/* ── PLANET CARDS ── */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.65rem;margin-bottom:1.4rem}
+.pc{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:.95rem;border-left:3px solid var(--bronze);transition:box-shadow .2s var(--ease),transform .15s var(--ease)}
+.pc:hover{box-shadow:var(--shadow-card);transform:translateY(-1px)}
+.pc.s{border-left-color:var(--ss)}.pc.m{border-left-color:var(--gold500)}.pc.w{border-left-color:rgba(196,168,124,.4)}
+.pchead{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem}
+.pcsym{font-size:1.1rem;color:var(--ox800)}
+.pcname{font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--ink800)}
+.pcplace{font-size:.82rem;font-weight:500;color:var(--ink800);margin-bottom:.2rem}
+.pcmeta{font-size:.72rem;color:var(--ink500);line-height:1.55}
+.sbar{height:3px;background:var(--bronze);opacity:.3;border-radius:2px;margin-top:.6rem;overflow:hidden}
+.sfill{height:100%;background:linear-gradient(90deg,var(--ox800),var(--gold500));transition:width 1.2s cubic-bezier(.4,0,.2,1);border-radius:2px}
+.badge{font-size:.62rem;font-weight:600;padding:.1rem .35rem;border-radius:4px;letter-spacing:.04em;margin-left:.2rem}
+.br{background:rgba(74,14,23,.08);color:var(--ox800);border:1px solid rgba(74,14,23,.2)}
+.bv{background:rgba(226,180,76,.15);color:var(--sw);border:1px solid rgba(226,180,76,.4)}
+
+/* ── PREDICTIONS ── */
+.pred{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:1rem 1.2rem;margin-bottom:.7rem;border-left:3px solid var(--bronze);transition:box-shadow .15s var(--ease)}
+.pred:hover{box-shadow:var(--shadow-card)}
+.pred.pf,.pred.pe{border-left-color:var(--ss)}
+.pred.pt{border-left-color:var(--gold500)}
+.pred.ph{border-left-color:var(--sw)}
+.pred.pq,.pred.pm{border-left-color:var(--sd)}
+.phead{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem}
+.pp{font-family:var(--serif);font-weight:700;font-size:1rem;color:var(--ink800)}
+.ploc{font-size:.72rem;font-weight:500;color:var(--ink500)}
+.plvl{font-size:.65rem;font-weight:600;padding:.12rem .4rem;border-radius:4px;letter-spacing:.04em}
+.lf,.le{background:rgba(45,90,61,.1);color:var(--ss);border:1px solid rgba(45,90,61,.3)}
+.lt{background:rgba(226,180,76,.12);color:var(--sw);border:1px solid rgba(226,180,76,.35)}
+.lh{background:rgba(139,105,20,.1);color:var(--sw);border:1px solid rgba(139,105,20,.3)}
+.lq,.lm{background:rgba(90,26,26,.1);color:var(--sd);border:1px solid rgba(90,26,26,.3)}
+.ptext{font-size:.88rem;line-height:1.7;color:var(--ink800)}
+.pdig{font-size:.75rem;color:var(--ink500);margin-top:.35rem;font-style:italic}
+.pcite{font-size:.65rem;font-weight:500;color:var(--ink500);margin-top:.25rem;letter-spacing:.03em}
+
+/* ── YOGAS ── */
+.ygrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.6rem}
+.yc{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:.9rem}
+.yn{font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--ink800);margin-bottom:.3rem}
+.yr{font-size:.8rem;color:var(--ink600);line-height:1.55}
+.ycite{font-size:.65rem;color:var(--ink500);margin-top:.3rem;letter-spacing:.03em}
+
+/* ── DARK SECTION (oxblood) ── */
+.dark-section{background:var(--ox950);color:var(--cream);padding:2rem;border-radius:14px;margin-bottom:1.4rem}
+.dark-section h2,.dark-section h3{font-family:var(--serif);color:var(--cream)}
+.dark-section .slbl{color:rgba(253,248,240,.5)}
+.dark-section .slbl::after{background:rgba(226,180,76,.2)}
+
+/* ── DASHA ── */
+.dcur{background:var(--ox800);color:var(--cream);border-radius:14px;padding:1.4rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;position:relative;box-shadow:var(--shadow-el)}
+.dcur::after{content:'ACTIVE';position:absolute;top:.7rem;right:.9rem;font-size:.62rem;font-weight:600;color:var(--gold500);letter-spacing:.12em}
+.dcurp{font-family:var(--serif);font-weight:700;font-size:2.2rem;color:var(--gold300);line-height:1}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:.5rem .75rem;border-bottom:1px solid rgba(196,168,124,.2);font-size:.85rem;transition:background .1s;border-radius:4px}
+.drow:hover{background:rgba(74,14,23,.04)}
+.drow.act{background:rgba(226,180,76,.08);border-left:2px solid var(--gold500);padding-left:.9rem}
+.dp{font-family:var(--serif);font-weight:600;font-size:.9rem;color:var(--ink600)}
+.drow.act .dp{color:var(--ink800)}
+.dd{font-size:.72rem;font-weight:500;color:var(--ink500)}
+
+/* ── MATCHING ── */
+.mscore{background:var(--ox950);color:var(--cream);border-radius:14px;padding:2.5rem;text-align:center;position:relative;overflow:hidden;margin-bottom:1.2rem;grid-column:1/-1}
+.mscore::before{content:'KUNDALI MILAN';position:absolute;top:.7rem;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:600;letter-spacing:.2em;color:rgba(253,248,240,.35);white-space:nowrap;text-transform:uppercase}
+.mscore::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--gold500),transparent);opacity:.4}
+.msnum{font-family:var(--serif);font-weight:700;font-size:5rem;color:var(--gold300);line-height:1}
+.msmax{font-size:.8rem;font-weight:500;color:rgba(253,248,240,.5);letter-spacing:.08em;margin-top:.2rem;text-transform:uppercase}
+.msverdict{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--cream);margin-top:.5rem}
+.krow{display:flex;align-items:center;padding:.45rem 0;border-bottom:1px solid rgba(196,168,124,.2)}
+.kname{font-size:.72rem;font-weight:600;color:var(--ink600);width:100px;flex-shrink:0;letter-spacing:.03em}
+.kbar{flex:1;margin:0 .8rem;height:3px;background:var(--bronze);opacity:.3;border-radius:2px;overflow:hidden}
+.kfill{height:100%;background:linear-gradient(90deg,var(--ox800),var(--gold500));transition:width 1s var(--ease);border-radius:2px}
+.kscore{font-size:.72rem;font-weight:600;color:var(--ox800);width:35px;text-align:right;flex-shrink:0}
+.knotes{font-size:.7rem;color:var(--ink500);padding:.15rem 0 .4rem}
+
+/* ── DOSHA ── */
+.dc{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:1.1rem}
+.dc.bad{border-left:3px solid var(--sd)}.dc.ok{border-left:3px solid var(--ss)}
+.dcname{font-family:var(--serif);font-weight:700;font-size:1rem;color:var(--ink800);margin-bottom:.4rem}
+.dcdesc{font-size:.86rem;line-height:1.65;color:var(--ink800)}
+.remedy{font-size:.75rem;color:var(--ink600);margin-top:.5rem;padding-top:.4rem;border-top:1px solid var(--bronze);line-height:1.7}
+
+/* ── SPECIAL YOGAS ── */
+.syoga{background:var(--p200);border:1px solid var(--bronze);border-radius:10px;padding:.9rem 1rem}
+.syoga.gd{border-left:3px solid var(--ss)}.syoga.bd{border-left:3px solid var(--sd)}.syoga.au{border-left:3px solid var(--gold500)}
+.syn{font-family:var(--serif);font-weight:700;color:var(--ink800);font-size:.95rem;margin-bottom:.3rem}
+.syd{font-size:.78rem;color:var(--ink600);line-height:1.55}
+
+/* ── NAVAMSHA ── */
+.nav-box{background:var(--p200);border:1px solid var(--bronze);border-radius:14px;padding:1.1rem 1.2rem}
+.nrow{display:flex;align-items:center;gap:.7rem;padding:.32rem 0;border-bottom:1px solid rgba(196,168,124,.2);font-size:.85rem}
+.nplanet{font-family:var(--serif);font-weight:700;color:var(--ink800);width:70px;flex-shrink:0}
+.narrow{color:var(--bronze);font-size:.8rem}
+.nd9{font-size:.85rem;color:var(--ink800)}
+
+/* ── MISC ── */
+.err{background:rgba(90,26,26,.06);border:1px solid var(--sd);border-radius:8px;padding:.65rem 1rem;color:var(--sd);font-size:.8rem;margin:.5rem 0;display:none}
+.err.on{display:block}
+.ldr{text-align:center;padding:2.5rem;color:var(--ink500);font-family:var(--serif);font-size:1rem;font-style:italic;letter-spacing:.04em;display:none}
+.ldr.on{display:block}
+.ldr::after{content:'';display:block;width:40px;height:1px;background:var(--gold500);margin:.7rem auto 0;animation:ldr-line 1.5s ease-in-out infinite;opacity:.6}
+@keyframes ldr-line{0%{width:10px;opacity:.2}50%{width:70px;opacity:.7}100%{width:10px;opacity:.2}}
+.empty-box{text-align:center;padding:4rem 2rem;color:var(--ink500);font-family:var(--serif);font-size:1.05rem;background:var(--p200);border:1px solid var(--bronze);border-radius:14px}
+.empty-box .big{font-size:2rem;color:var(--bronze);display:block;margin-bottom:.8rem;opacity:.6}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--p100)}
+::-webkit-scrollbar-thumb{background:var(--bronze);border-radius:3px}
+select option{background:var(--p200);color:var(--ink800)}
+
+/* ── LAGNA LINE ── */
+.lagna-bar{background:var(--ox800);color:var(--cream);border-radius:10px;padding:.9rem 1.3rem;margin-bottom:1rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.lagna-lbl{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,248,240,.55);margin-bottom:.2rem}
+.lagna-val{font-family:var(--serif);font-weight:700;font-size:1.3rem;color:var(--gold300)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hinner">
+    <div class="brand">
+      <div class="brand-seal"></div>
+      <div>
+        <div class="brand-name">Aetheris</div>
+        <div class="brand-sub">Ancient Wisdom · AI Precision</div>
+      </div>
+    </div>
+    <div class="hlive"><div class="ldot"></div><span id="hstat">Connecting</span></div>
+  </div>
+</header>
+
+<nav>
+  <div class="ninner">
+    <div class="nt on" onclick="show('panchanga',this)">☽ Daily Panchanga</div>
+    <div class="nt" onclick="show('kundali',this)">✦ Birth Chart</div>
+    <div class="nt" onclick="show('muhurta',this)">⏱ Muhurta</div>
+    <div class="nt" onclick="show('matching',this)">◎ Kundali Matching</div>
+    <div class="nt" onclick="show('dasha',this)">⌛ Dasha</div>
+    <div class="nt" onclick="show('dosha',this)">◈ Sade Sati & Dosha</div>
+  </div>
+</nav>
+
+<!-- PANCHANGA -->
+<div id="pane-panchanga" class="pane on">
+<div class="wrap">
+  <div class="pl">
+    <div>
+      <div class="card" style="margin-bottom:.6rem"><div class="cal-wrap">
+        <div class="cal-top">
+          <button class="cal-nav" onclick="calStep(-1)">‹</button>
+          <div class="cal-month" id="calLbl"></div>
+          <button class="cal-nav" onclick="calStep(1)">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div></div>
+      <div class="card"><div class="loc-pad">
+        <div class="flabel">Location</div>
+        <div class="srow">
+          <input class="inp" id="pCity" placeholder="Search city..." oninput="cityS(this.value,'pDrop','pLat','pLon','pTz','pLocTxt')">
+          <button class="gbtn" onclick="gps()">GPS</button>
+        </div>
+        <div class="cdrop" id="pDrop"></div>
+        <input type="hidden" id="pLat" value="28.6139">
+        <input type="hidden" id="pLon" value="77.2090">
+        <input type="hidden" id="pTz" value="5.5">
+        <div class="loc-txt" id="pLocTxt">Delhi, India · 28.61°N 77.21°E</div>
+        <div class="loc-date" id="pDateTxt"></div>
+      </div></div>
+    </div>
+    <div>
+      <div class="ldr on" id="pLdr">Consulting classical texts</div>
+      <div class="err" id="pErr"></div>
+      <div id="pOut" style="display:none">
+        <div class="slbl">Pancha Anga — Five Limbs</div>
+        <div class="fl" id="fiveLimbs"></div>
+        <div class="slbl">Auspicious Windows</div>
+        <div class="tgrid" id="ausGrid"></div>
+        <div class="slbl">Inauspicious Periods</div>
+        <div class="tgrid" id="inaGrid"></div>
+        <div id="festSec" style="display:none">
+          <div class="slbl">Festivals & Special Days</div>
+          <div id="festList"></div>
+        </div>
+        <div class="slbl">Hindu Calendar</div>
+        <div class="cigrid" id="calInfo"></div>
+        <div class="slbl">Activity Guide</div>
+        <div id="actGuide"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- KUNDALI -->
+<div id="pane-kundali" class="pane">
+<div class="wrap">
+  <div class="cl">
+    <div>
+      <div class="fp">
+        <div class="fptitle">Birth Details</div>
+        <div class="fg"><label>Full Name</label><input id="kName" value="Native"></div>
+        <div class="f2">
+          <div class="fg"><label>Year</label><input type="number" id="kY" value="1990"></div>
+          <div class="fg"><label>Month</label><input type="number" id="kM" value="1" min="1" max="12"></div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label>Day</label><input type="number" id="kD" value="15" min="1" max="31"></div>
+          <div class="fg"><label>Hour (0–23)</label><input type="number" id="kH" value="10" min="0" max="23"></div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label>Minute</label><input type="number" id="kMin" value="30" min="0" max="59"></div>
+          <div class="fg"><label>Ayanamsa</label>
+            <select id="kAyan"><option value="lahiri">Lahiri</option><option value="raman">Raman</option></select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Birth City</label>
+          <input class="inp" style="width:100%;border-radius:8px" id="kCity" placeholder="Search city..." oninput="cityS(this.value,'kDrop','kLat','kLon',null,'kLocTxt')">
+          <div class="cdrop" id="kDrop"></div>
+          <div class="loc-txt" id="kLocTxt" style="margin-top:.3rem"></div>
+        </div>
+        <div class="f2">
+          <div class="fg"><label>Latitude</label><input type="number" id="kLat" value="28.6139" step=".0001"></div>
+          <div class="fg"><label>Longitude</label><input type="number" id="kLon" value="77.2090" step=".0001"></div>
+        </div>
+        <button class="cbtn" id="kBtn" onclick="calcChart()">Calculate Birth Chart</button>
+        <div class="err" id="kErr"></div>
+        <div class="ldr" id="kLdr">Calculating positions</div>
+      </div>
+    </div>
+    <div>
+      <div class="empty-box" id="kPlaceholder"><span class="big">✦</span>Enter birth data to reveal the chart<br><span style="font-size:.75rem;font-style:italic;margin-top:.4rem;display:block">Every prediction cited to exact classical shloka</span></div>
+      <div id="kOut" style="display:none">
+        <div id="kLagna"></div>
+        <div class="slbl">Planetary Positions & Shadbala</div>
+        <div class="pgrid" id="pgrid"></div>
+        <div class="slbl">Classical Predictions — Scaled by Strength</div>
+        <div id="predList"></div>
+        <div class="slbl">Yogas & Doshas</div>
+        <div class="ygrid" id="yogaList"></div>
+        <div class="slbl">Navamsha D9</div>
+        <div id="navOut"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MUHURTA -->
+<div id="pane-muhurta" class="pane">
+<div class="wrap">
+  <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1.4rem">
+    <div><div class="flabel">Date</div><input type="date" id="mDate" class="inp" style="width:auto;border-radius:8px;padding:.5rem .75rem"></div>
+    <div style="flex:1;min-width:200px">
+      <div class="flabel">City</div>
+      <input class="inp" id="mCity" placeholder="Search city..." oninput="cityS(this.value,'mDrop','mLat','mLon','mTz',null)">
+      <div class="cdrop" id="mDrop"></div>
+    </div>
+    <input type="hidden" id="mLat" value="28.6139"><input type="hidden" id="mLon" value="77.2090"><input type="hidden" id="mTz" value="5.5">
+    <button class="cbtn" style="width:auto;padding:.5rem 1.4rem;margin-top:0" onclick="loadMuhurta()">Calculate</button>
+  </div>
+  <div class="ldr" id="mLdr">Computing Choghadiya</div>
+  <div id="mOut">
+    <div class="chog2">
+      <div class="chbox"><div class="chtitle">☀ Day Choghadiya</div><div id="dayChog"></div></div>
+      <div class="chbox"><div class="chtitle">☽ Night Choghadiya</div><div id="nightChog"></div></div>
+    </div>
+    <div class="slbl">Special Yogas & Alerts</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem" id="mYogas"></div>
+  </div>
+</div>
+</div>
+
+<!-- MATCHING -->
+<div id="pane-matching" class="pane">
+<div class="wrap">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem">
+    <div class="fp"><div class="fptitle">Boy's Details</div>
+      <div class="fg"><label>Name</label><input id="bName" value="Groom"></div>
+      <div class="fg"><label>Birth Nakshatra (1–27)</label><input type="number" id="bNak" value="5" min="1" max="27"></div>
+      <div class="fg"><label>Moon Sign (1=Aries … 12=Pisces)</label><input type="number" id="bMoon" value="2" min="1" max="12"></div>
+    </div>
+    <div class="fp"><div class="fptitle">Girl's Details</div>
+      <div class="fg"><label>Name</label><input id="gName" value="Bride"></div>
+      <div class="fg"><label>Birth Nakshatra (1–27)</label><input type="number" id="gNak" value="12" min="1" max="27"></div>
+      <div class="fg"><label>Moon Sign (1=Aries … 12=Pisces)</label><input type="number" id="gMoon" value="7" min="1" max="12"></div>
+    </div>
+  </div>
+  <button class="cbtn" style="max-width:300px;margin:0 auto .3rem;display:block" onclick="doMatch()">Calculate Compatibility</button>
+  <div class="ldr" id="matchLdr">Computing 10 Kutas</div>
+  <div id="matchOut" style="display:none;margin-top:1.2rem">
+    <div style="display:grid;gap:1rem">
+      <div class="mscore"><div class="msnum" id="mNum">—</div><div class="msmax">/ 36 Points</div><div class="msverdict" id="mVerdict"></div><div id="mNadi" style="margin-top:.4rem;font-size:.8rem;font-weight:500"></div></div>
+      <div class="card" style="padding:1.2rem">
+        <div class="slbl" style="margin-top:0">10 Kuta Analysis</div>
+        <div id="kutaList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- DASHA -->
+<div id="pane-dasha" class="pane">
+<div class="wrap">
+  <div class="empty-box" id="dPlaceholder"><span class="big">⌛</span>Calculate birth chart first<br><span style="font-size:.8rem;font-style:italic;margin-top:.4rem;display:block">Dasha data loads automatically after chart calculation</span></div>
+  <div id="dOut" style="display:none">
+    <div class="dcur" id="dCur"></div>
+    <div class="card" style="padding:1.2rem">
+      <div class="slbl" style="margin-top:0">Vimshottari Dasha — 120 Years</div>
+      <div id="dList"></div>
+      <div style="margin-top:.7rem;font-size:.68rem;font-weight:500;color:var(--ink500);letter-spacing:.04em">Source: BPHS Vimshottari Dasha Adhyaya | Maharishi Parashara</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- DOSHA -->
+<div id="pane-dosha" class="pane">
+<div class="wrap">
+  <div class="fp" style="max-width:520px;margin-bottom:1.4rem">
+    <div class="fptitle">Dosha Calculator</div>
+    <div class="f2">
+      <div class="fg"><label>Moon Rashi (1–12)</label><input type="number" id="dMoon" value="3" min="1" max="12"></div>
+      <div class="fg"><label>Saturn Longitude (0–360)</label><input type="number" id="dSat" value="90" min="0" max="360" step=".1"></div>
+    </div>
+    <div class="f2">
+      <div class="fg"><label>Mars House (1–12)</label><input type="number" id="dMars" value="7" min="1" max="12"></div>
+      <div class="fg"><label>Lagna Sign</label>
+        <select id="dLagna">
+          <option value="aries">Aries</option><option value="taurus">Taurus</option><option value="gemini">Gemini</option>
+          <option value="cancer">Cancer</option><option value="leo">Leo</option><option value="virgo">Virgo</option>
+          <option value="libra">Libra</option><option value="scorpio">Scorpio</option><option value="sagittarius">Sagittarius</option>
+          <option value="capricorn">Capricorn</option><option value="aquarius">Aquarius</option><option value="pisces">Pisces</option>
+        </select>
+      </div>
+    </div>
+    <button class="cbtn" onclick="calcDosha()">Analyze Doshas</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem" id="doshaOut"></div>
+</div>
+</div>
+
+<footer style="background:var(--ox950);color:var(--cream);text-align:center;padding:1.4rem 2rem;margin-top:3rem">
+  <div style="font-size:.72rem;font-weight:500;color:rgba(253,248,240,.4);letter-spacing:.07em;text-transform:uppercase">
+    Aetheris v5.0 · Laghu Jatakam (Varahamihira) · Phaldipika (Mantreswara/Ojha) · BPHS (Parashara) · 806,650 characters read from classical texts
+  </div>
+</footer>
+
+<script>
+const API=window.location.origin;
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let cY,cM,sel,pCache={},chartData=null,cT;
+
+window.onload=()=>{
+  const n=new Date();
+  cY=n.getFullYear();cM=n.getMonth();
+  sel={y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate()};
+  renderCal();updDate();loadP();
+  document.getElementById('mDate').value=n.toISOString().slice(0,10);
+  setTimeout(loadMuhurta,300);
+  ping();
+};
+
+async function ping(){
+  try{
+    const r=await fetch(`${API}/api/status`);const d=await r.json();
+    const ok=Object.values(d.modules||{}).filter(Boolean).length;
+    const tot=Object.keys(d.modules||{}).length;
+    document.getElementById('hstat').textContent=`${ok}/${tot} modules active`;
+  }catch(e){document.getElementById('hstat').textContent='Connecting...';}
+}
+
+function show(name,el){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pane-'+name).classList.add('on');
+  el.classList.add('on');
+}
+
+function renderCal(){
+  document.getElementById('calLbl').textContent=MN[cM]+' '+cY;
+  const g=document.getElementById('calGrid');g.innerHTML='';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const e=document.createElement('div');e.className='cdname';e.textContent=d;g.appendChild(e);});
+  const first=new Date(cY,cM,1).getDay(),days=new Date(cY,cM+1,0).getDate(),now=new Date();
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cd empty';g.appendChild(e);}
+  for(let d=1;d<=days;d++){
+    const el=document.createElement('div');el.className='cd';el.textContent=d;
+    if(cY===now.getFullYear()&&cM===now.getMonth()&&d===now.getDate())el.classList.add('today');
+    if(sel&&cY===sel.y&&cM+1===sel.m&&d===sel.d)el.classList.add('sel');
+    el.onclick=()=>{sel={y:cY,m:cM+1,d};document.querySelectorAll('.cd.sel').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');updDate();loadP();};
+    g.appendChild(el);
+  }
+}
+function calStep(n){cM+=n;if(cM<0){cM=11;cY--;}if(cM>11){cM=0;cY++;}renderCal();}
+function updDate(){
+  if(!sel)return;
+  const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const dt=new Date(sel.y,sel.m-1,sel.d);
+  document.getElementById('pDateTxt').textContent=`${WD[dt.getDay()]}, ${sel.d} ${MS[sel.m-1]} ${sel.y}`;
+}
+
+function cityS(q,dropId,latId,lonId,tzId,txtId){
+  clearTimeout(cT);
+  const box=document.getElementById(dropId);
+  if(q.length<2){box.style.display='none';return;}
+  cT=setTimeout(async()=>{
+    try{
+      const r=await fetch(`${API}/api/city-search?q=${encodeURIComponent(q)}`);
+      const data=await r.json();
+      if(!data.results?.length){box.style.display='none';return;}
+      box.innerHTML='';
+      data.results.forEach(c=>{
+        const el=document.createElement('div');el.className='copt';
+        el.innerHTML=`${c.city} <small>${c.state}</small>`;
+        el.onclick=()=>{
+          document.getElementById(latId).value=c.latitude;
+          document.getElementById(lonId).value=c.longitude;
+          if(tzId)document.getElementById(tzId).value=c.timezone_offset;
+          if(txtId)document.getElementById(txtId).textContent=`${c.city}, ${c.state} · ${c.latitude}°N ${c.longitude}°E`;
+          const inp=document.getElementById(dropId).previousElementSibling;
+          if(inp&&inp.tagName==='INPUT')inp.value=c.city;
+          box.style.display='none';
+          if(dropId==='pDrop')loadP();
+          if(dropId==='mDrop')loadMuhurta();
+        };
+        box.appendChild(el);
+      });
+      box.style.display='block';
+    }catch(e){}
+  },280);
+}
+function gps(){
+  if(!navigator.geolocation){alert('GPS not available');return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    document.getElementById('pLat').value=p.coords.latitude.toFixed(4);
+    document.getElementById('pLon').value=p.coords.longitude.toFixed(4);
+    document.getElementById('pLocTxt').textContent=`Your location · ${p.coords.latitude.toFixed(3)}°N ${p.coords.longitude.toFixed(3)}°E`;
+    loadP();
+  },()=>alert('GPS failed — please search city manually.'));
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.cdrop')&&!e.target.classList.contains('inp')&&!e.target.closest('.fg input'))
+    document.querySelectorAll('.cdrop').forEach(b=>b.style.display='none');
+});
+
+async function loadP(){
+  if(!sel)return;
+  const lat=document.getElementById('pLat').value,lon=document.getElementById('pLon').value,tz=document.getElementById('pTz').value;
+  const k=`${sel.y}-${sel.m}-${sel.d}-${lat}-${lon}`;
+  document.getElementById('pLdr').classList.add('on');
+  document.getElementById('pOut').style.display='none';
+  document.getElementById('pErr').classList.remove('on');
+  if(pCache[k]){renderP(pCache[k]);document.getElementById('pLdr').classList.remove('on');return;}
+  try{
+    const r=await fetch(`${API}/api/panchanga?year=${sel.y}&month=${sel.m}&day=${sel.d}&lat=${lat}&lon=${lon}&tz_offset=${tz}`);
+    if(!r.ok)throw new Error('API error '+r.status);
+    const d=await r.json();pCache[k]=d;renderP(d);
+  }catch(e){document.getElementById('pErr').textContent='Error: '+e.message;document.getElementById('pErr').classList.add('on');}
+  finally{document.getElementById('pLdr').classList.remove('on');}
+}
+function renderP(d){
+  const pa=d.pancha_anga||{},ast=d.astronomy||{},aus=d.auspicious||{},ina=d.inauspicious||{},cal=d.calendar||{};
+  document.getElementById('fiveLimbs').innerHTML=[
+    {k:'Tithi',v:pa.tithi?.name||'—',s:pa.tithi?.paksha||''},
+    {k:'Vara',v:pa.vara?.hindi||pa.vara?.name||'—',s:'Lord: '+(pa.vara?.lord||'')},
+    {k:'Nakshatra',v:pa.nakshatra?.name||'—',s:`Pada ${pa.nakshatra?.pada||''} · ${pa.nakshatra?.lord||''}`},
+    {k:'Yoga',v:pa.yoga?.name||'—',s:pa.yoga?.is_auspicious?'Auspicious':'Inauspicious'},
+    {k:'Karana',v:pa.karana?.name||'—',s:''},
+  ].map(l=>`<div class="lc"><div class="lk">${l.k}</div><div class="lv">${l.v}</div>${l.s?`<div class="ls">${l.s}</div>`:''}</div>`).join('');
+  document.getElementById('ausGrid').innerHTML=[
+    {k:'Brahma Muhurta',v:`${aus.brahma_muhurta?.start||'—'} – ${aus.brahma_muhurta?.end||''}`,d:'Meditation & study',c:'good'},
+    {k:'Abhijit Muhurta',v:`${aus.abhijit_muhurta?.start||'—'} – ${aus.abhijit_muhurta?.end||''}`,d:'All auspicious work',c:'good'},
+    {k:'Amrit Kaal',v:`${aus.amrit_kaal?.start||'—'} – ${aus.amrit_kaal?.end||''}`,d:'Highest auspiciousness',c:'good'},
+    {k:'Sunrise',v:ast.sunrise||'—',d:ast.day_length||'',c:'info'},
+    {k:'Sunset',v:ast.sunset||'—',d:'Moonrise: '+(ast.moonrise||'—'),c:'info'},
+  ].map(t=>`<div class="tc ${t.c}"><div class="tk">${t.k}</div><div class="tv">${t.v}</div><div class="td">${t.d}</div></div>`).join('');
+  document.getElementById('inaGrid').innerHTML=[
+    {k:'Rahul Kaal',v:`${ina.rahul_kaal?.start||'—'} – ${ina.rahul_kaal?.end||''}`,d:'Avoid new ventures'},
+    {k:'Gulika Kaal',v:`${ina.gulika_kaal?.start||'—'} – ${ina.gulika_kaal?.end||''}`,d:'Avoid starting new things'},
+    {k:'Yamghant',v:`${ina.yamghant?.start||'—'} – ${ina.yamghant?.end||''}`,d:'Avoid auspicious work'},
+  ].map(t=>`<div class="tc warn"><div class="tk">${t.k}</div><div class="tv">${t.v}</div><div class="td">${t.d}</div></div>`).join('');
+  const fests=[...(d.festivals||[]),...(d.tithi_specials||[])];
+  if(fests.length){document.getElementById('festSec').style.display='block';document.getElementById('festList').innerHTML=fests.map(f=>`<div class="fi"><div class="fn">${f.name}</div><div class="fd">${f.importance||f.activities||''}</div></div>`).join('');}
+  const pk=d.panchaka||{};
+  document.getElementById('calInfo').innerHTML=[
+    {k:'Ayana',v:cal.ayana||'—'},{k:'Ritu',v:(cal.ritu||'').split('(')[0].trim()||'—'},{k:'Masa',v:cal.masa||'—'},
+    {k:'Sun in',v:ast.sun_rashi||'—'},{k:'Moon in',v:ast.moon_rashi||'—'},
+    {k:'Vikram Samvat',v:cal.vikram_samvat||'—'},{k:'Shaka Samvat',v:cal.shaka_samvat||'—'},
+    {k:'Panchaka',v:pk.is_panchaka?'⚠ Yes':'✓ No'},
+  ].map(x=>`<div class="ci"><div class="cik">${x.k}</div><div class="civ">${x.v}</div></div>`).join('');
+  const am=d.activity_muhurta||{};
+  document.getElementById('actGuide').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.5rem">
+    ${[['Travel',am.travel],['Marriage',am.marriage],['Business',am.business],['Medical',am.medical],['Property',am.property]].filter(([,v])=>v).map(([n,v])=>`
+    <div class="tc ${v.suitable?'good':'warn'}"><div class="tk">${n}</div><div class="tv" style="font-size:.88rem">${v.suitable?'✓ Suitable':'✗ Avoid'}</div></div>`).join('')}
+  </div>`;
+  document.getElementById('pOut').style.display='block';
+}
+
+async function calcChart(){
+  const btn=document.getElementById('kBtn');btn.disabled=true;
+  document.getElementById('kLdr').classList.add('on');
+  document.getElementById('kErr').classList.remove('on');
+  document.getElementById('kPlaceholder').style.display='none';
+  document.getElementById('kOut').style.display='none';
+  try{
+    const body={birth_details:{name:document.getElementById('kName').value||'Native',year:+document.getElementById('kY').value,month:+document.getElementById('kM').value,day:+document.getElementById('kD').value,hour:+document.getElementById('kH').value,minute:+document.getElementById('kMin').value,second:0,latitude:+document.getElementById('kLat').value,longitude:+document.getElementById('kLon').value,timezone:'Asia/Kolkata',ayanamsa:document.getElementById('kAyan').value,house_system:'whole_sign'},include_panchanga:true,include_muhurta:false,target_month_offset:1};
+    const r=await fetch(`${API}/api/vedic-chart`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok)throw new Error((await r.json()).detail||'Server error');
+    chartData=await r.json();renderChart(chartData);renderDasha(chartData.dasha);
+  }catch(e){document.getElementById('kErr').textContent='Error: '+e.message;document.getElementById('kErr').classList.add('on');document.getElementById('kPlaceholder').style.display='block';}
+  finally{btn.disabled=false;document.getElementById('kLdr').classList.remove('on');}
+}
+function renderChart(d){
+  const SYM={sun:'☉',moon:'☽',mars:'♂',mercury:'☿',jupiter:'♃',venus:'♀',saturn:'♄',rahu:'☊',ketu:'☋',ascendant:'↑'};
+  document.getElementById('kLagna').innerHTML=`<div class="lagna-bar">
+    <div><div class="lagna-lbl">Lagna</div><div class="lagna-val">${d.lagna?.sign||'—'} ${d.lagna?.degree||''}°</div></div>
+    ${d.strongest_planet?.planet?`<div><div class="lagna-lbl">Strongest Planet</div><div class="lagna-val" style="font-size:1.05rem;color:var(--gold500)">${d.strongest_planet.planet} (${Math.round(d.strongest_planet.strength_pct||0)}%)</div></div>`:''}
+    <div style="margin-left:auto;text-align:right"><div class="lagna-lbl">Ayanamsa</div><div style="font-size:.8rem;font-weight:500;color:rgba(253,248,240,.55)">Lahiri · Whole Sign</div></div>
+  </div>`;
+  const pl=d.planets||{},sb=d.shadbala||{},nav=d.navamsha||{};
+  document.getElementById('pgrid').innerHTML=Object.entries(pl).filter(([n])=>n!=='midheaven').map(([name,p])=>{
+    const s=sb[name]||{},pct=Math.round(s.strength_pct||0),d9=(nav.d9_chart||{})[name]||{};
+    const cls=pct>=100?'s':pct<50?'w':'m';
+    return `<div class="pc ${cls}"><div class="pchead"><span class="pcsym">${SYM[name]||'✦'}</span><span class="pcname">${name.charAt(0).toUpperCase()+name.slice(1)}</span>${p.is_retrograde?'<span class="badge br">℞</span>':''}${d9.is_vargottama?'<span class="badge bv">V</span>':''}</div>
+    <div class="pcplace">${p.sign||''} ${p.degree||''}° · House ${p.house||'?'}</div>
+    <div class="pcmeta">${p.nakshatra||''} Pada ${p.nakshatra_pada||''}${s.dignity?'<br>'+s.dignity:''}${pct?' · '+pct+'%':''}</div>
+    ${pct?`<div class="sbar"><div class="sfill" style="width:${Math.min(100,pct)}%"></div></div>`:''}</div>`}).join('');
+  document.getElementById('predList').innerHTML=(d.predictions||[]).filter(p=>!p.error).map(pred=>{
+    const lc=(pred.result_level||'').toLowerCase().charAt(0);
+    const pc={f:'pf pe',e:'pf pe',t:'pt',h:'ph',q:'pq pm',m:'pq pm'};
+    const lc2={f:'lf',e:'le',t:'lt',h:'lh',q:'lq',m:'lm'};
+    return `<div class="pred ${pc[lc]||''}"><div class="phead"><span class="pp">${pred.planet}</span><span class="ploc">House ${pred.house} · ${pred.sign} ${pred.degree}°</span><span class="plvl ${lc2[lc]||''}">${pred.result_level} (${Math.round(pred.strength_pct||0)}%)</span></div><div class="ptext">${pred.prediction||'—'}</div>${pred.dig_insight?`<div class="pdig">${pred.dig_insight}</div>`:''}<div class="pcite">${pred.citations?.result_source||''}</div></div>`}).join('');
+  const yogas=[...(d.yogas||[]),...(d.doshas||[])];
+  document.getElementById('yogaList').innerHTML=yogas.length?yogas.map(y=>`<div class="yc"><div class="yn">${y.name}</div><div class="yr">${y.result||''}</div><div class="ycite">${y.citation||''}</div></div>`).join(''):`<div style="color:var(--ink500);font-style:italic;font-size:.88rem">No significant yogas detected.</div>`;
+  const nv=d.navamsha||{};
+  document.getElementById('navOut').innerHTML=`<div class="nav-box"><div style="display:flex;align-items:baseline;gap:.8rem;margin-bottom:.6rem"><span style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink500)">D9 Lagna</span><span style="font-family:var(--serif);font-weight:700;font-size:1.05rem;color:var(--ink800)">${nv.navamsha_lagna||'—'}</span><span style="font-size:.8rem;color:var(--ink500)">${nv.navamsha_lagna_type||''}</span></div><div style="font-size:.82rem;color:var(--ink600);font-style:italic;margin-bottom:.6rem">${nv.navamsha_lagna_result||''}</div>${nv.vargottama_planets?.length?`<div style="font-size:.75rem;font-weight:600;color:var(--sw);margin-bottom:.5rem;letter-spacing:.03em">Vargottama: ${nv.vargottama_planets.join(', ')} — double results</div>`:''}${Object.entries(nv.d9_chart||{}).slice(0,9).map(([n,v])=>`<div class="nrow"><span class="nplanet">${n.charAt(0).toUpperCase()+n.slice(1)}</span><span class="narrow">→</span><span class="nd9">${v.d9_sign||'—'}</span>${v.is_vargottama?'<span class="badge bv" style="font-size:.62rem;margin-left:.4rem">V</span>':''}</div>`).join('')}<div style="margin-top:.5rem;font-size:.65rem;font-weight:500;color:var(--ink500);letter-spacing:.03em">${nv.citation||''}</div></div>`;
+  document.getElementById('kOut').style.display='block';
+}
+
+function renderDasha(dasha){
+  if(!dasha)return;
+  document.getElementById('dPlaceholder').style.display='none';
+  document.getElementById('dOut').style.display='block';
+  const cur=dasha.current_period||{};
+  if(cur.mahadasha){
+    document.getElementById('dCur').innerHTML=`<div><div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,248,240,.5);margin-bottom:.2rem">Current Mahadasha</div><div class="dcurp">${cur.mahadasha}</div>${cur.antardasha?`<div style="font-size:.82rem;font-weight:500;color:rgba(253,248,240,.6);margin-top:.2rem">${cur.antardasha} Antardasha</div>`:''}</div>`;
+  }
+  document.getElementById('dList').innerHTML=(dasha.periods||[]).map(p=>`<div class="drow ${p.planet===cur.mahadasha?'act':''}"><span class="dp">${p.planet||''}</span><span class="dd">${(p.start_date||'').slice(0,10)} → ${(p.end_date||'').slice(0,10)}</span><span style="font-size:.72rem;font-weight:500;color:var(--ink500)">${p.years||''}y</span></div>`).join('');
+}
+
+async function loadMuhurta(){
+  const dv=document.getElementById('mDate').value,lat=document.getElementById('mLat').value,lon=document.getElementById('mLon').value,tz=document.getElementById('mTz').value;
+  if(!dv)return;const[y,m,da]=dv.split('-');
+  document.getElementById('mLdr').classList.add('on');
+  try{
+    const r=await fetch(`${API}/api/panchanga?year=${y}&month=${m}&day=${da}&lat=${lat}&lon=${lon}&tz_offset=${tz}`);
+    if(!r.ok)throw new Error('Failed');renderMuhurta(await r.json());
+  }catch(e){}finally{document.getElementById('mLdr').classList.remove('on');}
+}
+function renderMuhurta(d){
+  const pa=d.pancha_anga||{},ast=d.astronomy||{};
+  const VM={Sunday:0,Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5,Saturday:6};
+  const wd=VM[pa.vara?.name||'Wednesday']||3;
+  const DC=[[['Udveg','udveg'],['Char','char'],['Labh','labh'],['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh'],['Rog','rog'],['Udveg','udveg']],[['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh'],['Rog','rog'],['Udveg','udveg'],['Char','char'],['Labh','labh'],['Amrit','amrit']],[['Rog','rog'],['Udveg','udveg'],['Char','char'],['Labh','labh'],['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh'],['Rog','rog']],[['Labh','labh'],['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh'],['Rog','rog'],['Udveg','udveg'],['Char','char'],['Labh','labh']],[['Shubh','shubh'],['Rog','rog'],['Udveg','udveg'],['Char','char'],['Labh','labh'],['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh']],[['Char','char'],['Labh','labh'],['Amrit','amrit'],['Kaal','kaal'],['Shubh','shubh'],['Rog','rog'],['Udveg','udveg'],['Char','char']],[['Kaal','kaal'],['Shubh','shubh'],['Rog','rog'],['Udveg','udveg'],['Char','char'],['Labh','labh'],['Amrit','amrit'],['Kaal','kaal']]];
+  const NC=[[['Shubh','shubh'],['Amrit','amrit'],['Char','char'],['Rog','rog'],['Kaal','kaal'],['Labh','labh'],['Udveg','udveg'],['Shubh','shubh']],[['Char','char'],['Rog','rog'],['Kaal','kaal'],['Labh','labh'],['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit'],['Char','char']],[['Kaal','kaal'],['Labh','labh'],['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit'],['Char','char'],['Rog','rog'],['Kaal','kaal']],[['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit'],['Char','char'],['Rog','rog'],['Kaal','kaal'],['Labh','labh'],['Udveg','udveg']],[['Amrit','amrit'],['Char','char'],['Rog','rog'],['Kaal','kaal'],['Labh','labh'],['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit']],[['Labh','labh'],['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit'],['Char','char'],['Rog','rog'],['Kaal','kaal'],['Labh','labh']],[['Rog','rog'],['Kaal','kaal'],['Labh','labh'],['Udveg','udveg'],['Shubh','shubh'],['Amrit','amrit'],['Char','char'],['Rog','rog']]];
+  function ph(t){if(!t)return 6;const p=t.split(':');return +p[0]+ +p[1]/60+(p[2]?+p[2]/3600:0);}
+  function addH(base,h){const t=base+h;const hh=Math.floor(t%24),mm=Math.floor((t%1)*60);return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;}
+  const sr=ph(ast.sunrise||'05:30'),ss=ph(ast.sunset||'19:00');
+  const dp=(ss-sr)/8,np=(24-ss+sr)/8;
+  const now=new Date(),nh=now.getHours()+now.getMinutes()/60;
+  document.getElementById('dayChog').innerHTML=DC[wd].map(([name,cls],i)=>{const st=sr+i*dp,isNow=nh>=st&&nh<st+dp;return `<div class="chrow ${isNow?'now':''}"><span class="chname ${cls}">${name}</span><span class="chtime">${addH(sr,i*dp)} – ${addH(sr,(i+1)*dp)}</span></div>`;}).join('');
+  document.getElementById('nightChog').innerHTML=NC[wd].map(([name,cls],i)=>`<div class="chrow"><span class="chname ${cls}">${name}</span><span class="chtime">${addH(ss,i*np)} – ${addH(ss,(i+1)*np)}</span></div>`).join('');
+  const nak=pa.nakshatra?.number||0,vara=pa.vara?.name||'',yogas=[];
+  if(vara==='Thursday'&&nak===8)yogas.push({n:'Guru Pushya Yoga',c:'gd',d:'Thursday + Pushya — extremely auspicious for education, investments, guru vandana.'});
+  if(vara==='Sunday'&&nak===8)yogas.push({n:'Ravi Pushya Yoga',c:'gd',d:'Sunday + Pushya — rarest and most powerful yoga. Gold purchase, new ventures.'});
+  const fests=d.festivals||[];fests.forEach(f=>yogas.push({n:f.name,c:'au',d:f.importance||''}));
+  const sp=d.tithi_specials||[];sp.forEach(s=>yogas.push({n:s.name,c:'au',d:s.activities||s.importance||''}));
+  if(d.panchaka?.is_panchaka)yogas.push({n:'Panchaka Dosha',c:'bd',d:d.panchaka.warning||'Avoid construction, south travel, marriage.'});
+  document.getElementById('mYogas').innerHTML=yogas.length?yogas.map(y=>`<div class="syoga ${y.c}"><div class="syn">${y.n}</div><div class="syd">${y.d}</div></div>`).join(''):`<div style="color:var(--ink500);font-style:italic;font-size:.88rem">No special yogas today.</div>`;
+}
+
+async function doMatch(){
+  document.getElementById('matchLdr').classList.add('on');document.getElementById('matchOut').style.display='none';
+  try{
+    const bn=+document.getElementById('bNak').value,gn=+document.getElementById('gNak').value,bm=+document.getElementById('bMoon').value,gm=+document.getElementById('gMoon').value;
+    const r=await fetch(`${API}/api/kundali-matching?boy_nak=${bn}&girl_nak=${gn}&boy_moon=${bm}&girl_moon=${gm}`);
+    if(!r.ok)throw new Error('Failed');
+    const data=await r.json();
+    document.getElementById('mNum').textContent=data.total_score||'—';
+    document.getElementById('mVerdict').textContent=data.verdict||'';
+    document.getElementById('mNadi').innerHTML=data.nadi_dosha?`<span style="color:var(--cream);background:var(--sd);padding:.2rem .6rem;border-radius:4px">⚠ ${data.nadi_dosha_note}</span>`:`<span style="color:var(--cream);background:var(--ss);padding:.2rem .6rem;border-radius:4px">✓ ${data.nadi_dosha_note}</span>`;
+    document.getElementById('kutaList').innerHTML=(data.kutas||[]).map(k=>`<div class="krow"><span class="kname">${k.kuta}</span><div class="kbar"><div class="kfill" style="width:${(k.score/k.max)*100}%"></div></div><span class="kscore">${k.score}/${k.max}</span></div><div class="knotes">${k.notes||''}</div>`).join('');
+    document.getElementById('matchOut').style.display='block';
+  }catch(e){}finally{document.getElementById('matchLdr').classList.remove('on');}
+}
+
+async function calcDosha(){
+  const moon=+document.getElementById('dMoon').value,sat=+document.getElementById('dSat').value,mars=+document.getElementById('dMars').value,lagna=document.getElementById('dLagna').value;
+  try{
+    const r=await fetch(`${API}/api/sade-sati?moon_rashi=${moon}&saturn_lon=${sat}`);
+    if(!r.ok)throw new Error('Failed');
+    const ss=await r.json();
+    const hasMd=[1,2,4,7,8,12].includes(mars);
+    document.getElementById('doshaOut').innerHTML=`
+      <div class="dc ${ss.is_sade_sati||ss.is_dhaiya?'bad':'ok'}">
+        <div class="dcname">Sade Sati</div>
+        <div class="dcdesc">Moon in ${ss.moon_rashi||'—'} · Saturn in ${ss.saturn_rashi||'—'}<br>
+          ${ss.is_sade_sati?`<span style="color:var(--sd);font-weight:600">⚠ Active — ${ss.sade_sati_phase}</span>`:`<span style="color:var(--ss);font-weight:600">✓ Not currently active</span>`}
+          ${ss.is_dhaiya?`<br><span style="color:var(--sw);font-weight:600">⚠ Dhaiya: ${ss.dhaiya_type}</span>`:''}
+        </div>
+        ${ss.remedies?.length?`<div class="remedy">${ss.remedies.join('<br>')}</div>`:''}
+        <div style="font-size:.65rem;font-weight:500;color:var(--ink500);margin-top:.4rem;letter-spacing:.03em">Source: BPHS Shani Adhyaya | Jataka Parijata</div>
+      </div>
+      <div class="dc ${hasMd?'bad':'ok'}">
+        <div class="dcname">Mangal Dosha</div>
+        <div class="dcdesc">Mars in house ${mars} · Lagna: ${lagna.charAt(0).toUpperCase()+lagna.slice(1)}<br>
+          ${hasMd?`<span style="color:var(--sd);font-weight:600">⚠ Mangal Dosha present in house ${mars}</span>`:`<span style="color:var(--ss);font-weight:600">✓ No Mangal Dosha</span>`}
+        </div>
+        <div style="font-size:.65rem;font-weight:500;color:var(--ink500);margin-top:.4rem;letter-spacing:.03em">Source: Phaldipika | Mantreswara | Marriage Adhyaya</div>
+      </div>`;
+  }catch(e){document.getElementById('doshaOut').innerHTML=`<div style="color:var(--ink500);font-style:italic">Error fetching data.</div>`;}
+}
+</script>
+</body>
+</html>

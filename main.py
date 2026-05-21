@@ -629,3 +629,148 @@ async def search_world_city(q: str):
     if not r:
         raise HTTPException(404, f"'{q}' not found in world cities database")
     return r
+
+@app.post("/api/ashtakavarga")
+async def get_ashtakavarga(req: VedicChartRequest):
+    """
+    Complete Ashtakavarga calculation.
+    Returns Prashtara (individual) + Sarvashtakavarga (total) tables.
+    All 7 planets + Sarva (total) per sign.
+    Classical formula from BPHS Ch.66-75.
+    """
+    if not ASHTA_OK:
+        raise HTTPException(500, "Ashtakavarga module not available")
+    if not ENGINE_OK:
+        raise HTTPException(500, "Engine not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        lagna_lon = planets.get("ascendant", {}).get("longitude", 0)
+        ashta = calc_prashtara_ashtakavarga(planets, lagna_lon)
+        
+        SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                 "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
+        
+        # Format output
+        result = {}
+        for planet in ["sun","moon","mars","mercury","jupiter","venus","saturn","sarva"]:
+            scores = ashta.get(planet, [0]*12)
+            result[planet] = {
+                "scores": {SIGNS[i]: scores[i] for i in range(12)},
+                "total": sum(scores),
+            }
+        result["table"] = format_ashtakavarga_table(ashta)
+        return result
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/mandi-gulika")
+async def get_mandi_gulika(year: int, month: int, day: int,
+                            lat: float = 28.6139, lon: float = 77.2090,
+                            tz: float = 5.5):
+    """
+    Exact Mandi and Gulika positions using classical BPHS formula.
+    Based on day duration, weekday, and Sun's longitude.
+    """
+    if not ASHTA_OK:
+        raise HTTPException(500, "Ashtakavarga module not available")
+    try:
+        return calc_mandi_gulika(year, month, day, lat, lon, tz)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.post("/api/pratyantar-dasha")
+async def get_pratyantar_dasha(req: VedicChartRequest):
+    """
+    Complete 3-level Dasha: Mahadasha > Antardasha > Pratyantar.
+    Formula from Vimshottari Dasha system — BPHS Ch.46.
+    """
+    if not DASHA_OK or not ASHTA_OK:
+        raise HTTPException(500, "Dasha module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        moon_lon = planets.get("moon", {}).get("longitude", 0)
+        from datetime import datetime
+        birth_dt = datetime(bd.year, bd.month, bd.day, bd.hour, bd.minute)
+        result = calc_full_dasha_with_pratyantar(moon_lon, birth_dt, num_maha=3)
+        return {"dashas": result, "system": "Vimshottari", "total_years": 120}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/samvat")
+async def get_samvat(year: int, month: int):
+    """
+    Shaka Samvat, Vikram Samvat, Kali Yuga year with names.
+    Verified against DrikPanchang.
+    """
+    if not ASHTA_OK:
+        raise HTTPException(500, "Ashtakavarga module not available")
+    try:
+        return calc_samvat(year, month)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/special-yogas")
+async def get_special_yogas(year: int, month: int, day: int,
+                             lat: float = 28.6139, lon: float = 77.2090,
+                             tz: float = 5.5):
+    """
+    Special Panchanga Yogas for a day:
+    Ravi Yoga, Amrita Yoga, Sarvartha Siddhi, Guru Pushya, Ravi Pushya,
+    Dwipushkara, Tripushkara, Ganda Moola, Panchaka.
+    Exactly as shown on DrikPanchang daily panchanga.
+    """
+    if not ASHTA_OK or not TIMINGS_OK:
+        raise HTTPException(500, "Modules not available")
+    try:
+        # Get panchanga first
+        data = get_panchanga_with_timings(year, month, day, lat, lon, tz)
+        tithi_num = data["tithi"][0]["number"]
+        
+        # Nakshatra index
+        NAK_NAMES = ["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra",
+                     "Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni",
+                     "Uttara Phalguni","Hasta","Chitra","Swati","Vishakha",
+                     "Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha",
+                     "Shravana","Dhanishtha","Shatabhisha","Purva Bhadrapada",
+                     "Uttara Bhadrapada","Revati"]
+        nak_name = data["nakshatra"][0]["name"]
+        nak_idx = NAK_NAMES.index(nak_name) if nak_name in NAK_NAMES else 0
+        
+        VARA_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        vara_name = data["vara"]["name"]
+        vara_num = VARA_NAMES.index(vara_name) if vara_name in VARA_NAMES else 0
+        
+        YOGA_NAMES = ["Vishkumbha","Priti","Ayushman","Saubhagya","Shobhana","Atiganda",
+                      "Sukarma","Dhriti","Shoola","Ganda","Vriddhi","Dhruva","Vyaghata",
+                      "Harshana","Vajra","Siddhi","Vyatipata","Variyana","Parigha","Shiva",
+                      "Siddha","Sadhya","Shubha","Shukla","Brahma","Indra","Vaidhriti"]
+        yoga_name = data["yoga"][0]["name"]
+        yoga_idx = YOGA_NAMES.index(yoga_name) if yoga_name in YOGA_NAMES else 0
+        
+        yogas, shaka, vikram = calc_special_panchanga_yogas(
+            year, month, day, tithi_num, nak_idx, vara_num, yoga_idx)
+        samvat = calc_samvat(year, month)
+        lunar = calc_lunar_month(tithi_num, month, day)
+        
+        return {
+            "date": f"{year}-{month:02d}-{day:02d}",
+            "special_yogas": yogas,
+            "samvat": samvat,
+            "lunar_month": lunar,
+            "panchanga_summary": {
+                "tithi": f"{data['tithi'][0]['paksha']} {data['tithi'][0]['name']}",
+                "nakshatra": nak_name,
+                "yoga": yoga_name,
+                "vara": vara_name,
+            }
+        }
+    except Exception as e:
+        raise HTTPException(500, str(e))

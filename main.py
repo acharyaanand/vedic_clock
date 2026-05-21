@@ -99,6 +99,12 @@ except Exception as e:
     INDIA_DB_OK = False
 
 try:
+    from world_cities import search_world_location, search_location, get_tz_offset, WORLD_CITIES
+    WORLD_DB_OK = True
+except Exception as e:
+    WORLD_DB_OK = False
+
+try:
     from astro_features import calc_sade_sati, calc_mangal_dosha, calc_kundali_matching, calc_ashtakavarga_transit
     ASTRO_OK = True
 except Exception as e:
@@ -583,3 +589,43 @@ async def get_india_states():
     if not INDIA_DB_OK:
         raise HTTPException(500, "India districts DB not available")
     return {"states": get_states(), "total": len(get_states())}
+
+@app.get("/api/search-location")
+async def search_any_location(q: str, year: int = None, month: int = None, day: int = None):
+    """
+    Master location search — India + World.
+    Returns lat/lon + timezone + DST-correct offset.
+    620+ India districts/cities + 375+ world cities.
+    Pass year/month/day for DST-correct offset on a specific date.
+    """
+    from datetime import date as _date
+    if not year:
+        today = _date.today()
+        year, month, day = today.year, today.month, today.day
+    
+    # Try India first
+    if INDIA_DB_OK:
+        r = search_india_location(q)
+        if r:
+            return r
+    
+    # Then world
+    if WORLD_DB_OK:
+        r = search_world_location(q)
+        if r:
+            if year:
+                from world_cities import get_tz_offset
+                r['tz_offset'] = get_tz_offset(r['timezone'], year, month, day)
+            return r
+    
+    raise HTTPException(404, f"Location '{q}' not found. Try a nearby major city.")
+
+@app.get("/api/world-location")
+async def search_world_city(q: str):
+    """Search world cities outside India."""
+    if not WORLD_DB_OK:
+        raise HTTPException(500, "World cities DB not available")
+    r = search_world_location(q)
+    if not r:
+        raise HTTPException(404, f"'{q}' not found in world cities database")
+    return r

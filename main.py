@@ -93,6 +93,12 @@ except Exception as e:
     TIMINGS_OK = False
 
 try:
+    from india_districts import search_india_location, get_all_districts, get_states
+    INDIA_DB_OK = True
+except Exception as e:
+    INDIA_DB_OK = False
+
+try:
     from astro_features import calc_sade_sati, calc_mangal_dosha, calc_kundali_matching, calc_ashtakavarga_transit
     ASTRO_OK = True
 except Exception as e:
@@ -546,3 +552,34 @@ async def get_panchanga_timings(
         return data
     except Exception as e:
         raise HTTPException(500, str(e))
+
+@app.get("/api/india-location")
+async def search_india_city(q: str):
+    """
+    Search any India district/city. Returns Google-standard lat/lon.
+    Covers all 28 states + 8 UTs, 620+ locations.
+    Supports aliases: Bombay→Mumbai, Madras→Chennai, Vizag→Visakhapatnam etc.
+    """
+    if not INDIA_DB_OK:
+        raise HTTPException(500, "India districts DB not available")
+    result = search_india_location(q)
+    if not result:
+        raise HTTPException(404, f"Location '{q}' not found in India database")
+    return result
+
+@app.get("/api/india-districts")
+async def get_india_districts(state: str = None):
+    """Return all India districts/cities, optionally filtered by state."""
+    if not INDIA_DB_OK:
+        raise HTTPException(500, "India districts DB not available")
+    all_locs = get_all_districts()
+    if state:
+        all_locs = [l for l in all_locs if state.lower() in l["state"].lower()]
+    return {"total": len(all_locs), "locations": all_locs}
+
+@app.get("/api/india-states")
+async def get_india_states():
+    """Return all 37 India states and Union Territories."""
+    if not INDIA_DB_OK:
+        raise HTTPException(500, "India districts DB not available")
+    return {"states": get_states(), "total": len(get_states())}

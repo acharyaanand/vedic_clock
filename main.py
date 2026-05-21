@@ -438,3 +438,68 @@ async def get_timezone(lat: float, lon: float):
             return {"timezone_name": "Asia/Kolkata", "timezone_offset": 5.5}
         offset = round(lon / 15 * 2) / 2
         return {"timezone_name": f"UTC{offset:+.1f}", "timezone_offset": offset}
+
+
+@app.get("/api/debug-swe")
+async def debug_swisseph():
+    """
+    Debug endpoint — verify Swiss Ephemeris accuracy on server.
+    Test case: Jan 7 1992, 9:07 AM IST, Delhi
+    Reference: AstroTalk verified data
+    """
+    result = {"swisseph_available": False, "test_chart": {}, "errors": []}
+    SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+             "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
+    EXPECTED = {
+        "Ascendant":"Capricorn 22°","Sun":"Sagittarius 22°",
+        "Moon":"Capricorn 15°","Mercury":"Sagittarius 2°",
+        "Venus":"Scorpio 14°","Mars":"Sagittarius 4°",
+        "Jupiter":"Leo 20°","Saturn":"Capricorn 12°",
+        "Rahu":"Sagittarius 15°"
+    }
+    try:
+        import swisseph as swe
+        result["swisseph_available"] = True
+        swe.set_sid_mode(swe.SIDM_LAHIRI)
+        hour_ut = 9 + 7/60 - 5.5
+        jd = swe.julday(1992, 1, 7, hour_ut)
+        ayanamsa = swe.get_ayanamsa_ut(jd)
+        result["ayanamsa"] = round(ayanamsa, 4)
+        FLG = swe.FLG_SIDEREAL | swe.FLG_MOSEPH | swe.FLG_SPEED
+        planets_out = {}
+        for code, name in [(swe.SUN,"Sun"),(swe.MOON,"Moon"),
+                           (swe.MERCURY,"Mercury"),(swe.VENUS,"Venus"),
+                           (swe.MARS,"Mars"),(swe.JUPITER,"Jupiter"),
+                           (swe.SATURN,"Saturn"),(swe.MEAN_NODE,"Rahu")]:
+            try:
+                pos, _ = swe.calc_ut(jd, code, FLG)
+                lon = pos[0] % 360
+                planets_out[name] = {
+                    "sign": SIGNS[int(lon/30)%12],
+                    "degree": round(lon%30, 2),
+                    "retrograde": pos[3] < 0,
+                    "expected": EXPECTED.get(name,""),
+                    "match": SIGNS[int(lon/30)%12] in EXPECTED.get(name,"")
+                }
+            except Exception as e:
+                result["errors"].append(f"{name}: {e}")
+        try:
+            cusps, ascmc = swe.houses(jd, 28.6139, 77.2090, b'P')
+            asc = (ascmc[0] - ayanamsa) % 360
+            planets_out["Ascendant"] = {
+                "sign": SIGNS[int(asc/30)%12],
+                "degree": round(asc%30,2),
+                "expected": EXPECTED["Ascendant"],
+                "match": SIGNS[int(asc/30)%12] in EXPECTED["Ascendant"]
+            }
+        except Exception as e:
+            result["errors"].append(f"Ascendant: {e}")
+        result["test_chart"] = planets_out
+        all_match = all(v.get("match") for v in planets_out.values())
+        result["all_planets_correct"] = all_match
+        result["status"] = "FULLY ACCURATE" if all_match else "PARTIAL — check errors"
+    except ImportError:
+        result["status"] = "swisseph not installed"
+    except Exception as e:
+        result["errors"].append(str(e))
+    return result

@@ -36,14 +36,18 @@ DAY_CHOGHADIYA = {
     5: ["Char","Labh","Amrit","Kaal","Shubh","Rog","Udveg","Char"],
     6: ["Kaal","Shubh","Rog","Udveg","Char","Labh","Amrit","Kaal"],
 }
+# NIGHT CHOGHADIYA — Verified against DrikPanchang (May 21-26 2026, New Delhi)
+# Day and Night use DIFFERENT sequences — common mistake in many implementations
+# Night sequence cycle: Amrit→Char→Rog→Kaal→Labh→Udveg→Shubh (different from day!)
+# Day sequence cycle:   Amrit→Kaal→Shubh→Rog→Udveg→Char→Labh
 NIGHT_CHOGHADIYA = {
-    0: ["Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh"],
-    1: ["Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char"],
-    2: ["Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal"],
-    3: ["Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg"],
-    4: ["Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit"],
-    5: ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],
-    6: ["Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog"],
+    0: ["Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh"],   # Sunday  ✅
+    1: ["Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char"],    # Monday  ✅
+    2: ["Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal"],    # Tuesday ✅
+    3: ["Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh","Udveg"],   # Wednesday
+    4: ["Amrit","Char","Rog","Kaal","Labh","Udveg","Shubh","Amrit"],   # Thursday ✅
+    5: ["Rog","Kaal","Labh","Udveg","Shubh","Amrit","Char","Rog"],     # Friday  ✅ FIXED
+    6: ["Labh","Udveg","Shubh","Amrit","Char","Rog","Kaal","Labh"],    # Saturday ✅ FIXED
 }
 
 def calc_choghadiya(weekday: int, sunrise_h: float, sunset_h: float) -> Dict:

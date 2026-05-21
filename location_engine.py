@@ -28,6 +28,11 @@ import math
 
 INDIA_DB: Dict[str, Dict] = {
 
+    # ── ADDITIONAL VERIFIED CITIES (from ClickAstro reports) ──────
+    "nirsa":             {"lat":23.4700,"lon":86.4200,"tz":5.5,"state":"Jharkhand","district":"Dhanbad"},
+    "chittur":           {"lat":11.0300,"lon":76.3900,"tz":5.5,"state":"Kerala","district":"Palakkad"},
+    "sogi":              {"lat":14.5600,"lon":75.5700,"tz":5.5,"state":"Karnataka","district":"Vijayanagara"},
+
     # ── UTTAR PRADESH ──────────────────────────────────────────
     "lucknow":           {"lat":26.8467,"lon":80.9462,"tz":5.5,"state":"Uttar Pradesh","district":"Lucknow"},
     "kanpur":            {"lat":26.4499,"lon":80.3319,"tz":5.5,"state":"Uttar Pradesh","district":"Kanpur Nagar"},
@@ -241,15 +246,15 @@ INDIA_DB: Dict[str, Dict] = {
     "vapi":              {"lat":20.3893,"lon":72.9106,"tz":5.5,"state":"Gujarat","district":"Valsad"},
 
     # ── KARNATAKA ──────────────────────────────────────────────
-    "bengaluru":         {"lat":12.9716,"lon":77.5946,"tz":5.5,"state":"Karnataka","district":"Bangalore Urban"},
-    "bangalore":         {"lat":12.9716,"lon":77.5946,"tz":5.5,"state":"Karnataka","district":"Bangalore Urban"},
+    "bengaluru":         {"lat":12.5800,"lon":77.3300,"tz":5.5,"state":"Karnataka","district":"Bangalore Urban"},
+    "bangalore":         {"lat":12.5800,"lon":77.3300,"tz":5.5,"state":"Karnataka","district":"Bangalore Urban"},
     "mysuru":            {"lat":12.2958,"lon":76.6394,"tz":5.5,"state":"Karnataka","district":"Mysuru"},
     "mysore":            {"lat":12.2958,"lon":76.6394,"tz":5.5,"state":"Karnataka","district":"Mysuru"},
     "hubli":             {"lat":15.3647,"lon":75.1240,"tz":5.5,"state":"Karnataka","district":"Dharwad"},
     "hubballi":          {"lat":15.3647,"lon":75.1240,"tz":5.5,"state":"Karnataka","district":"Dharwad"},
     "dharwad":           {"lat":15.4589,"lon":75.0078,"tz":5.5,"state":"Karnataka","district":"Dharwad"},
-    "mangaluru":         {"lat":12.9141,"lon":74.8560,"tz":5.5,"state":"Karnataka","district":"Dakshina Kannada"},
-    "mangalore":         {"lat":12.9141,"lon":74.8560,"tz":5.5,"state":"Karnataka","district":"Dakshina Kannada"},
+    "mangaluru":         {"lat":12.5400,"lon":74.5000,"tz":5.5,"state":"Karnataka","district":"Dakshina Kannada"},
+    "mangalore":         {"lat":12.5400,"lon":74.5000,"tz":5.5,"state":"Karnataka","district":"Dakshina Kannada"},
     "kalaburagi":        {"lat":17.3297,"lon":76.8343,"tz":5.5,"state":"Karnataka","district":"Kalaburagi"},
     "gulbarga":          {"lat":17.3297,"lon":76.8343,"tz":5.5,"state":"Karnataka","district":"Kalaburagi"},
     "belagavi":          {"lat":15.8497,"lon":74.4977,"tz":5.5,"state":"Karnataka","district":"Belagavi"},
@@ -288,7 +293,7 @@ INDIA_DB: Dict[str, Dict] = {
     "tiruchirappalli":   {"lat":10.7905,"lon":78.7047,"tz":5.5,"state":"Tamil Nadu","district":"Tiruchirappalli"},
     "trichy":            {"lat":10.7905,"lon":78.7047,"tz":5.5,"state":"Tamil Nadu","district":"Tiruchirappalli"},
     "tirupur":           {"lat":11.1085,"lon":77.3411,"tz":5.5,"state":"Tamil Nadu","district":"Tiruppur"},
-    "salem":             {"lat":11.6643,"lon":78.1460,"tz":5.5,"state":"Tamil Nadu","district":"Salem"},
+    "salem":             {"lat":11.3900,"lon":78.1100,"tz":5.5,"state":"Tamil Nadu","district":"Salem"},
     "tirunelveli":       {"lat":8.7139,"lon":77.7567,"tz":5.5,"state":"Tamil Nadu","district":"Tirunelveli"},
     "vellore":           {"lat":12.9165,"lon":79.1325,"tz":5.5,"state":"Tamil Nadu","district":"Vellore"},
     "erode":             {"lat":11.3410,"lon":77.7172,"tz":5.5,"state":"Tamil Nadu","district":"Erode"},
@@ -365,11 +370,11 @@ INDIA_DB: Dict[str, Dict] = {
     "trichur":           {"lat":10.5276,"lon":76.2144,"tz":5.5,"state":"Kerala","district":"Thrissur"},
     "kollam":            {"lat":8.8932,"lon":76.6141,"tz":5.5,"state":"Kerala","district":"Kollam"},
     "quilon":            {"lat":8.8932,"lon":76.6141,"tz":5.5,"state":"Kerala","district":"Kollam"},
-    "palakkad":          {"lat":10.7867,"lon":76.6548,"tz":5.5,"state":"Kerala","district":"Palakkad"},
-    "palghat":           {"lat":10.7867,"lon":76.6548,"tz":5.5,"state":"Kerala","district":"Palakkad"},
+    "palakkad":          {"lat":10.4600,"lon":76.3900,"tz":5.5,"state":"Kerala","district":"Palakkad"},
+    "palghat":           {"lat":10.4600,"lon":76.3900,"tz":5.5,"state":"Kerala","district":"Palakkad"},
     "malappuram":        {"lat":11.0510,"lon":76.0711,"tz":5.5,"state":"Kerala","district":"Malappuram"},
-    "kannur":            {"lat":11.8745,"lon":75.3704,"tz":5.5,"state":"Kerala","district":"Kannur"},
-    "cannanore":         {"lat":11.8745,"lon":75.3704,"tz":5.5,"state":"Kerala","district":"Kannur"},
+    "kannur":            {"lat":11.5200,"lon":75.2100,"tz":5.5,"state":"Kerala","district":"Kannur"},
+    "cannanore":         {"lat":11.5200,"lon":75.2100,"tz":5.5,"state":"Kerala","district":"Kannur"},
     "kasaragod":         {"lat":12.4996,"lon":74.9869,"tz":5.5,"state":"Kerala","district":"Kasaragod"},
     "alappuzha":         {"lat":9.4981,"lon":76.3388,"tz":5.5,"state":"Kerala","district":"Alappuzha"},
     "alleppey":          {"lat":9.4981,"lon":76.3388,"tz":5.5,"state":"Kerala","district":"Alappuzha"},
@@ -403,7 +408,7 @@ INDIA_DB: Dict[str, Dict] = {
     "alipurduar":        {"lat":26.4876,"lon":89.5275,"tz":5.5,"state":"West Bengal","district":"Alipurduar"},
 
     # ── PUNJAB ─────────────────────────────────────────────────
-    "amritsar":          {"lat":31.6340,"lon":74.8723,"tz":5.5,"state":"Punjab","district":"Amritsar"},
+    "amritsar":          {"lat":31.3700,"lon":74.5100,"tz":5.5,"state":"Punjab","district":"Amritsar"},
     "ludhiana":          {"lat":30.9010,"lon":75.8573,"tz":5.5,"state":"Punjab","district":"Ludhiana"},
     "jalandhar":         {"lat":31.3260,"lon":75.5762,"tz":5.5,"state":"Punjab","district":"Jalandhar"},
     "patiala":           {"lat":30.3398,"lon":76.3869,"tz":5.5,"state":"Punjab","district":"Patiala"},
@@ -526,7 +531,7 @@ INDIA_DB: Dict[str, Dict] = {
 
     # ── ODISHA ─────────────────────────────────────────────────
     "bhubaneswar":       {"lat":20.2961,"lon":85.8245,"tz":5.5,"state":"Odisha","district":"Khordha"},
-    "cuttack":           {"lat":20.4625,"lon":85.8830,"tz":5.5,"state":"Odisha","district":"Cuttack"},
+    "cuttack":           {"lat":20.2600,"lon":85.5100,"tz":5.5,"state":"Odisha","district":"Cuttack"},
     "rourkela":          {"lat":22.2604,"lon":84.8536,"tz":5.5,"state":"Odisha","district":"Sundargarh"},
     "berhampur":         {"lat":19.3149,"lon":84.7941,"tz":5.5,"state":"Odisha","district":"Ganjam"},
     "sambalpur":         {"lat":21.4669,"lon":83.9756,"tz":5.5,"state":"Odisha","district":"Sambalpur"},
@@ -623,24 +628,58 @@ INDIA_DB: Dict[str, Dict] = {
 # Build aliases and alternate spellings
 ALIASES = {
     # Common misspellings / alternate spellings
-    "bengalure": "bengaluru", "bangalore ":"bengaluru",
-    "bombay": "mumbai", "calcuta": "kolkata",
+    "bengalure": "bengaluru", "bangalore ": "bengaluru", "blr": "bengaluru",
+    "bombay": "mumbai", "calcuta": "kolkata", "calcutta": "kolkata",
     "pondicherry": "puducherry", "pondy": "puducherry",
     "mysuru": "mysore", "mysore city": "mysore",
-    "vizag": "visakhapatnam", "vizak": "visakhapatnam",
-    "allahbad": "allahabad", "prayagraj": "allahabad",
-    "varnasi": "varanasi", "benares": "varanasi",
-    "ayodhya": "ayodhya", "ram nagar": "ayodhya",
+    "vizag": "visakhapatnam", "vizak": "visakhapatnam", "vishakapatnam": "visakhapatnam",
+    "allahbad": "allahabad", "alahabad": "allahabad",
+    "varnasi": "varanasi", "benares": "varanasi", "benaras": "varanasi",
     "haridwaar": "haridwar", "hardwar": "haridwar",
     "dehradoon": "dehradun", "dera dun": "dehradun",
     "trivandrum": "thiruvananthapuram",
     "cochin": "kochi", "ernakulam": "kochi",
     "calicut": "kozhikode",
-    "ooty": "udagamandalam", "udagamandalam": "ooty",
+    "gurgaon": "gurugram",
+    # Punjab city common spellings
+    "bhatinda": "bathinda", "batinda": "bathinda", "bhathinda": "bathinda",
+    "firozpur": "firozpur", "ferozepur": "firozpur",
+    # MP cities
+    "vidisa": "vidisha", "vidissha": "vidisha",
+    "ujain": "ujjain", "ujjaini": "ujjain",
+    "jabalpur": "jabalpur", "jubbulpore": "jabalpur",
+    "bhopal city": "bhopal",
+    "gwalior city": "gwalior",
+    # UP
+    "allahabad": "allahabad", "pryagraj": "prayagraj",
+    "lucknow city": "lucknow", "lko": "lucknow",
+    "kanpur city": "kanpur", "cawnpore": "kanpur",
+    "meerut city": "meerut",
+    "agra city": "agra",
+    "varanasi city": "varanasi",
+    "mathura city": "mathura",
+    # Rajasthan
+    "jaipur city": "jaipur", "pink city": "jaipur",
+    "jodhpur city": "jodhpur",
+    "udaipur city": "udaipur",
+    # Other
+    "chennai city": "chennai", "madras city": "chennai",
+    "hyderabad city": "hyderabad",
+    "delhi city": "delhi", "new delhi city": "new delhi",
+    "mumbai city": "mumbai",
+    "pune city": "pune",
+    "surat city": "surat",
+    "kolkata city": "kolkata",
+    "patna city": "patna",
+    "ranchi city": "ranchi",
     "shimla city": "shimla",
     "noida city": "noida",
-    "gurgaon": "gurugram",
     "faridabad city": "faridabad",
+    # Sacred places alt names
+    "kasi": "kashi", "kashivishwanath": "varanasi",
+    "vrindaban": "vrindavan", "brindavan": "vrindavan",
+    "tirupathi": "tirupati",
+    "nasik": "nashik",
 }
 
 # World cities with verified coordinates
@@ -749,8 +788,19 @@ WORLD_DB: Dict[str, Dict] = {
 
 
 def _normalize(q: str) -> str:
-    """Normalize query for lookup."""
-    return q.lower().strip().replace("  ", " ")
+    """Normalize query for lookup — handles extra spaces, punctuation."""
+    import re
+    q = q.lower().strip()
+    q = re.sub(r'\s+', ' ', q)
+    q = re.sub(r'[,\.]', '', q)
+    q = q.replace(' city','').replace(' town','').replace(' district','').strip()
+    # Strip state abbreviations like "Vidisha MP" → "Vidisha"
+    state_abbrs = [' mp',' up',' mh',' gj',' ka',' tn',' kl',' wb',' hr',' pb',' rj',' ap',' ts']
+    for abbr in state_abbrs:
+        if q.endswith(abbr):
+            q = q[:-len(abbr)].strip()
+            break
+    return q
 
 
 def search_location(query: str, limit: int = 10) -> List[Dict]:

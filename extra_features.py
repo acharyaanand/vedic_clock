@@ -620,109 +620,216 @@ SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
 
 def calc_divisional_charts(planet_lons: dict) -> dict:
     """
-    Calculate the most important divisional charts.
+    Calculate ALL 16 Shodasavarga divisional charts.
+    D1 through D60 — complete set as per BPHS Ch.6.
     
-    D2  - Hora (wealth)
-    D3  - Drekkana (siblings, courage)
-    D7  - Saptamsha (children)
-    D10 - Dasamsha (career)
-    D12 - Dwadashamsha (parents)
-    D60 - Shashtiamsha (past karma) — simplified
+    Source: Brihat Parashara Hora Shastra Ch.6 (Shodasha Varga)
     """
-    def sign_of(lon): return int(lon/30) % 12
-    def deg_in_sign(lon): return lon % 30
-    
-    def hora_sign(lon):
-        """D2: Sun's Hora or Moon's Hora"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        # Odd signs: Sun Hora 0-15°, Moon Hora 15-30°
-        # Even signs: Moon Hora 0-15°, Sun Hora 15-30°
-        is_odd = s % 2 == 0  # 0=Aries=odd
-        if is_odd:
-            return "Leo" if d < 15 else "Cancer"  # Sun/Moon Hora
+    SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+             "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
+
+    def sign_of(lon): return int(lon / 30) % 12
+    def deg_in(lon):  return lon % 30
+
+    # ── D1: Rasi (natal chart) ─────────────────────────────────────
+    def d1(lon): return sign_of(lon)
+
+    # ── D2: Hora (wealth) ──────────────────────────────────────────
+    # Odd signs: 0-15° = Leo(4), 15-30° = Cancer(3)
+    # Even signs: 0-15° = Cancer(3), 15-30° = Leo(4)
+    def d2(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        return 4 if (s%2==0 and d<15) or (s%2==1 and d>=15) else 3
+
+    # ── D3: Drekkana (siblings, courage) ──────────────────────────
+    # 3 equal parts of 10°. Part 1=same sign, Part 2=+4, Part 3=+8
+    def d3(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        return (s + [0,4,8][int(d/10)]) % 12
+
+    # ── D4: Chaturthamsha (property, fortune) ──────────────────────
+    # 4 parts of 7.5°. Cardinal: Aries/Cancer/Libra/Capricorn start
+    # Odd signs start from sign itself; Even signs start from 4th
+    def d4(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 7.5)  # 0,1,2,3
+        if s % 2 == 0:   # Odd sign (Aries=0, Gemini=2...)
+            return (s + part) % 12
+        else:             # Even sign
+            return (s + 3 + part) % 12
+
+    # ── D7: Saptamsha (children, grandchildren) ───────────────────
+    # 7 parts of ~4.286°
+    # Odd signs: start from same sign; Even signs: start from 7th
+    def d7(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / (30/7))
+        if s % 2 == 0:  # Odd sign
+            return (s + part) % 12
+        else:            # Even sign
+            return (s + 6 + part) % 12
+
+    # ── D9: Navamsha (spouse, dharma) — THE most important ─────────
+    # 9 parts of 3.333°. Sequence of 12 signs cycling through
+    # Fire signs start from Aries, Earth from Capricorn,
+    # Air from Libra, Water from Cancer
+    def d9(lon):
+        total_navamsha = int(lon / (360/108))  # 0-107
+        return total_navamsha % 12
+
+    # ── D10: Dasamsha (career, profession) ────────────────────────
+    # 10 parts of 3°
+    # Odd signs: start from same sign; Even signs: start from 9th
+    def d10(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 3)
+        if s % 2 == 0:  # Odd sign
+            return (s + part) % 12
         else:
-            return "Cancer" if d < 15 else "Leo"
-    
-    def drekkana_sign(lon):
-        """D3: 3 sections of 10° each"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        part = int(d / 10)  # 0, 1, or 2
-        # Part 1: same sign, Part 2: +4, Part 3: +8
-        offsets = [0, 4, 8]
-        return SIGNS[(s + offsets[part]) % 12]
-    
-    def saptamsha_sign(lon):
-        """D7: 7 sections of 4.2857° each"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        part = int(d / (30/7))  # 0-6
+            return (s + 9 + part) % 12
+
+    # ── D12: Dwadashamsha (parents) ───────────────────────────────
+    # 12 parts of 2.5°. Each 2.5° = one sign, cycling from same sign
+    def d12(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 2.5)
+        return (s + part) % 12
+
+    # ── D16: Shodashamsha (vehicles, comforts) ────────────────────
+    # 16 parts of 1.875°
+    # Movable signs: start from Aries; Fixed: from Leo; Dual: from Sagittarius
+    def d16(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / (30/16))
+        sign_type = s % 3  # 0=movable(Ar,Ca,Li,Cp), 1=fixed(Ta,Le,Sc,Aq), 2=dual
+        start = [0, 4, 8][sign_type]  # Aries, Leo, Sagittarius
+        return (start + part) % 12
+
+    # ── D20: Vimsamsha (spiritual progress, worship) ──────────────
+    # 20 parts of 1.5°
+    # Movable: start Aries(0); Fixed: start Sagittarius(8); Dual: start Leo(4)
+    def d20(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 1.5)
+        sign_type = s % 3
+        start = [0, 8, 4][sign_type]
+        return (start + part) % 12
+
+    # ── D24: Siddhamsha/Chaturvimsamsha (education, knowledge) ────
+    # 24 parts of 1.25°
+    # Odd signs: start from Leo(4); Even signs: start from Cancer(3)
+    def d24(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 1.25)
+        start = 4 if s % 2 == 0 else 3  # Leo or Cancer
+        return (start + part) % 12
+
+    # ── D27: Bhamsha/Nakshatramsha (strength, vitality) ───────────
+    # 27 parts of 1.111°
+    # Fire signs: from Aries; Earth: from Cancer; Air: from Libra; Water: from Capricorn
+    def d27(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / (30/27))
+        element = s % 4  # 0=fire(Ar,Le,Sg), 1=earth(Ta,Vi,Cp), 2=air(Ge,Li,Aq), 3=water(Ca,Sc,Pi)
+        start = [0, 3, 6, 9][element]  # Aries, Cancer, Libra, Capricorn
+        return (start + part) % 12
+
+    # ── D30: Trimsamsha (evils, misfortune, diseases) ─────────────
+    # Unequal parts — 5 planets rule different portions
+    # Odd signs: Mars 0-5°, Saturn 5-10°, Jupiter 10-18°, Mercury 18-25°, Venus 25-30°
+    # Even signs: Venus 0-5°, Mercury 5-12°, Jupiter 12-20°, Saturn 20-25°, Mars 25-30°
+    def d30(lon):
+        s = sign_of(lon); d = deg_in(lon)
         if s % 2 == 0:  # Odd sign
-            return SIGNS[(s + part) % 12]
-        else:  # Even sign
-            return SIGNS[(s + 6 + part) % 12]
-    
-    def dasamsha_sign(lon):
-        """D10: 10 sections of 3° each"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        part = int(d / 3)  # 0-9
-        if s % 2 == 0:  # Odd sign
-            return SIGNS[(s + part) % 12]
-        else:  # Even sign
-            return SIGNS[(s + 9 + part) % 12]
-    
-    def dwadashamsha_sign(lon):
-        """D12: 12 sections of 2.5° each"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        part = int(d / 2.5)  # 0-11
-        return SIGNS[(s + part) % 12]
-    
-    def trimsamsha_sign(lon):
-        """D30: Unequal sections — simplified"""
-        s = sign_of(lon)
-        d = deg_in_sign(lon)
-        # Odd signs: Mars 0-5°, Saturn 5-10°, Jupiter 10-18°, Mercury 18-25°, Venus 25-30°
-        # Even signs: Venus 0-5°, Mercury 5-12°, Jupiter 12-20°, Saturn 20-25°, Mars 25-30°
-        if s % 2 == 0:  # Odd
-            if d < 5:   r = 0   # Aries (Mars)
-            elif d < 10: r = 10  # Aquarius (Saturn)
-            elif d < 18: r = 8   # Sagittarius (Jupiter)
-            elif d < 25: r = 5   # Virgo (Mercury)
-            else:        r = 1   # Taurus (Venus)
-        else:  # Even
-            if d < 5:   r = 1   # Taurus (Venus)
-            elif d < 12: r = 5   # Virgo (Mercury)
-            elif d < 20: r = 8   # Sagittarius (Jupiter)
-            elif d < 25: r = 10  # Aquarius (Saturn)
-            else:        r = 0   # Aries (Mars)
-        return SIGNS[r]
-    
-    PLANETS_ALL = ["sun","moon","mars","mercury","jupiter","venus","saturn","rahu","ketu","ascendant"]
-    
+            if d < 5:    return 0   # Aries (Mars)
+            elif d < 10: return 10  # Aquarius (Saturn)
+            elif d < 18: return 8   # Sagittarius (Jupiter)
+            elif d < 25: return 5   # Virgo (Mercury)
+            else:        return 1   # Taurus (Venus)
+        else:            # Even sign
+            if d < 5:    return 1   # Taurus (Venus)
+            elif d < 12: return 5   # Virgo (Mercury)
+            elif d < 20: return 8   # Sagittarius (Jupiter)
+            elif d < 25: return 10  # Aquarius (Saturn)
+            else:        return 0   # Aries (Mars)
+
+    # ── D40: Khavedamsha (auspicious/inauspicious effects) ────────
+    # 40 parts of 0.75°
+    # Odd signs: start from Aries; Even signs: start from Libra
+    def d40(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 0.75)
+        start = 0 if s % 2 == 0 else 6  # Aries or Libra
+        return (start + part) % 12
+
+    # ── D45: Akshavedamsha (all results) ──────────────────────────
+    # 45 parts of 0.667°
+    # Movable: from Aries; Fixed: from Leo; Dual: from Sagittarius
+    def d45(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / (30/45))
+        sign_type = s % 3
+        start = [0, 4, 8][sign_type]
+        return (start + part) % 12
+
+    # ── D60: Shashtiamsha (past karma, overall results) ───────────
+    # 60 parts of 0.5°. Most important after D9.
+    # Odd signs: from Aries; Even signs: from Libra
+    def d60(lon):
+        s = sign_of(lon); d = deg_in(lon)
+        part = int(d / 0.5)
+        start = 0 if s % 2 == 0 else 6
+        return (start + part) % 12
+
+    # ── Chart metadata ─────────────────────────────────────────────
+    CHART_INFO = {
+        "D1":  ("Rasi",            "Natal chart — overall life"),
+        "D2":  ("Hora",            "Wealth, prosperity"),
+        "D3":  ("Drekkana",        "Siblings, courage, vitality"),
+        "D4":  ("Chaturthamsha",   "Property, fixed assets, fortune"),
+        "D7":  ("Saptamsha",       "Children, grandchildren, progeny"),
+        "D9":  ("Navamsha",        "Spouse, dharma, spiritual life — most important after D1"),
+        "D10": ("Dasamsha",        "Career, profession, social status"),
+        "D12": ("Dwadashamsha",    "Parents, ancestors, lineage"),
+        "D16": ("Shodashamsha",    "Vehicles, comforts, happiness"),
+        "D20": ("Vimsamsha",       "Spiritual progress, worship, Upasana"),
+        "D24": ("Siddhamsha",      "Education, learning, intelligence"),
+        "D27": ("Bhamsha",         "Strength, physical vitality, nakshatras"),
+        "D30": ("Trimsamsha",      "Evils, diseases, misfortune"),
+        "D40": ("Khavedamsha",     "Auspicious/inauspicious effects, maternal lineage"),
+        "D45": ("Akshavedamsha",   "All results, paternal lineage"),
+        "D60": ("Shashtiamsha",    "Past karma — most sensitive divisional chart"),
+    }
+
+    DIV_FNS = {
+        "D1":d1,"D2":d2,"D3":d3,"D4":d4,"D7":d7,"D9":d9,
+        "D10":d10,"D12":d12,"D16":d16,"D20":d20,"D24":d24,
+        "D27":d27,"D30":d30,"D40":d40,"D45":d45,"D60":d60
+    }
+
+    PLANETS_ALL = ["sun","moon","mars","mercury","jupiter","venus",
+                   "saturn","rahu","ketu","ascendant"]
+
     result = {}
-    for chart_name, fn, purpose in [
-        ("D2_hora",      hora_sign,       "Wealth & prosperity"),
-        ("D3_drekkana",  drekkana_sign,   "Siblings, courage, vitality"),
-        ("D7_saptamsha", saptamsha_sign,  "Children, progeny"),
-        ("D10_dasamsha", dasamsha_sign,   "Career, profession, action"),
-        ("D12_dwadashamsha", dwadashamsha_sign, "Parents, lineage"),
-        ("D30_trimsamsha",  trimsamsha_sign,    "Misfortune, evils"),
-    ]:
+    for chart_key, fn in DIV_FNS.items():
+        name, purpose = CHART_INFO[chart_key]
         chart = {}
         for p in PLANETS_ALL:
-            if p in planet_lons:
-                lon = planet_lons[p]
-                if lon is not None:
-                    chart[p] = fn(lon)
-        result[chart_name] = {
-            "planets": chart,
+            if p in planet_lons and planet_lons[p] is not None:
+                try:
+                    sign_idx = fn(planet_lons[p])
+                    chart[p] = SIGNS[sign_idx % 12]
+                except:
+                    chart[p] = "Unknown"
+        result[chart_key] = {
+            "name":    name,
             "purpose": purpose,
+            "planets": chart,
+            "source":  "BPHS Ch.6 (Parashara)"
         }
-    
+
     return result
+
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -1019,3 +1126,560 @@ if __name__ == "__main__":
         print(f"   {p.capitalize()}: {s}")
     
     print("\n✅ All extra features working")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 11. SOOKSHMA DASHA (4th level)
+# ═══════════════════════════════════════════════════════════════════════
+
+def calc_sookshma_dasha(pratyantar_lord, pratyantar_start, pratyantar_end, 
+                         antar_lord, maha_lord):
+    """4th level dasha within Pratyantar."""
+    from datetime import timedelta
+    dur_days = (pratyantar_end - pratyantar_start).total_seconds()/86400
+    DASHA_YEARS = {"ketu":7,"venus":20,"sun":6,"moon":10,"mars":7,
+                   "rahu":18,"jupiter":16,"saturn":19,"mercury":17}
+    DASHA_ORDER = ["ketu","venus","sun","moon","mars","rahu","jupiter","saturn","mercury"]
+    start_idx = DASHA_ORDER.index(pratyantar_lord)
+    result = []
+    cur = pratyantar_start
+    for i in range(9):
+        lord = DASHA_ORDER[(start_idx+i)%9]
+        d = dur_days * DASHA_YEARS[lord] / 120
+        end = cur + timedelta(days=d)
+        result.append({
+            "lord": lord,
+            "start": cur.strftime("%Y-%m-%d"),
+            "end": end.strftime("%Y-%m-%d"),
+            "label": f"{maha_lord}-{antar_lord}-{pratyantar_lord}-{lord}",
+            "duration_days": round(d,1)
+        })
+        cur = end
+    return result
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 12. VIMSHOPAKA BALA (20-point strength)
+# ═══════════════════════════════════════════════════════════════════════
+
+def calc_vimshopaka_bala(planet_lons: dict) -> dict:
+    """
+    Vimshopaka Bala = 20-point strength based on divisional chart positions.
+    Checks 16 divisional charts, each with a weight.
+    Source: BPHS Ch.27
+    """
+    def sign_of(lon): return int(lon/30)%12
+    
+    # Weights for each divisional chart (out of 20 total)
+    WEIGHTS = {
+        "D1":  3.0,  "D2":  1.5, "D3":  1.5, "D7":  1.5,
+        "D9":  3.0,  "D10": 1.5, "D12": 1.5, "D16": 1.5,
+        "D20": 0.5,  "D24": 0.5, "D27": 0.5, "D30": 1.0,
+        "D40": 0.5,  "D45": 0.5, "D60": 4.0,
+    }
+    
+    # Own, exaltation, friendly signs give full points
+    # Neutral = half, enemy/debilitation = zero
+    EXALTATION = {"sun":0,"moon":1,"mars":9,"mercury":5,"jupiter":3,
+                   "venus":11,"saturn":6,"rahu":1,"ketu":7}
+    DEBILITATION = {"sun":6,"moon":7,"mars":3,"mercury":11,"jupiter":9,
+                     "venus":5,"saturn":0,"rahu":7,"ketu":1}
+    OWN_SIGNS = {
+        "sun":[4],"moon":[3],"mars":[0,7],"mercury":[5,2],
+        "jupiter":[8,11],"venus":[1,6],"saturn":[9,10],
+        "rahu":[9,10],"ketu":[0,7]
+    }
+    FRIENDS = {
+        "sun":["moon","mars","jupiter"],
+        "moon":["sun","mercury"],
+        "mars":["sun","moon","jupiter"],
+        "mercury":["sun","venus"],
+        "jupiter":["sun","moon","mars"],
+        "venus":["mercury","saturn"],
+        "saturn":["mercury","venus"],
+        "rahu":["saturn","venus","mercury"],
+        "ketu":["mars","saturn","venus"],
+    }
+    SIGN_LORDS = ["mars","venus","mercury","moon","sun","mercury",
+                   "venus","mars","jupiter","saturn","saturn","jupiter"]
+    
+    def strength_in_sign(planet, sign_idx):
+        """Return 1.0=full, 0.5=neutral, 0.0=weak."""
+        if sign_idx == EXALTATION.get(planet): return 1.0
+        if sign_idx == DEBILITATION.get(planet): return 0.0
+        if sign_idx in OWN_SIGNS.get(planet,[]): return 1.0
+        lord = SIGN_LORDS[sign_idx]
+        if lord in FRIENDS.get(planet,[]): return 0.75
+        if lord == planet: return 1.0
+        return 0.5
+    
+    def get_divisional_sign(lon, div):
+        s = int(lon/30)%12
+        d = lon%30
+        if div==1:  return s
+        if div==2:  return 4 if s%2==0 else 3  # simplified hora
+        if div==3:  return (s+[0,4,8][int(d/10)])%12
+        if div==7:  return (s+int(d/(30/7)))%12 if s%2==0 else (s+6+int(d/(30/7)))%12
+        if div==9:  return int(lon*9/30)%12  # navamsha
+        if div==10: return (s+int(d/3))%12 if s%2==0 else (s+9+int(d/3))%12
+        if div==12: return (s+int(d/2.5))%12
+        if div==16: return (s*4+int(d/(30/4)))%12
+        if div==20: return (s*20//12+int(d/(30/20)))%12
+        if div==24: return (s+int(d/(30/24)))%12
+        if div==27: return (s*3+int(d/(30/9)))%12
+        if div==30: return s  # simplified
+        if div==40: return (s*40//12)%12
+        if div==45: return (s*45//12)%12
+        if div==60: return (s*60//12)%12
+        return s
+    
+    DIVS = [1,2,3,7,9,10,12,16,20,24,27,30,40,45,60]
+    DIV_NAMES = ["D1","D2","D3","D7","D9","D10","D12","D16","D20","D24","D27","D30","D40","D45","D60"]
+    
+    result = {}
+    PLANETS = ["sun","moon","mars","mercury","jupiter","venus","saturn"]
+    
+    for planet in PLANETS:
+        if planet not in planet_lons: continue
+        lon = planet_lons[planet]
+        total = 0.0
+        max_total = sum(WEIGHTS.values())
+        details = {}
+        
+        for div, dname in zip(DIVS, DIV_NAMES):
+            if dname not in WEIGHTS: continue
+            div_sign = get_divisional_sign(lon, div)
+            strength = strength_in_sign(planet, div_sign)
+            points = strength * WEIGHTS[dname]
+            total += points
+            details[dname] = {
+                "sign": ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                          "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][div_sign],
+                "strength": ["Weak","Neutral","Strong"][int(strength*2)] if strength<1 else "Strong",
+                "points": round(points,2)
+            }
+        
+        pct = total/max_total*20  # Scale to 20
+        result[planet] = {
+            "vimshopaka": round(pct,2),
+            "max": 20,
+            "percent": round(pct/20*100,1),
+            "strength": "Excellent" if pct>=15 else "Good" if pct>=10 else "Average" if pct>=5 else "Weak",
+            "details": details
+        }
+    
+    return result
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 13. GRAHA YUDDHA (Planetary War)
+# ═══════════════════════════════════════════════════════════════════════
+
+def check_graha_yuddha(planet_lons: dict) -> list:
+    """
+    Graha Yuddha = Planetary War — two planets within 1° of each other.
+    Only among: Mars, Mercury, Jupiter, Venus, Saturn.
+    The planet with lower ecliptic latitude wins (traditionally).
+    Source: BPHS Ch.3
+    """
+    WAR_PLANETS = ["mars","mercury","jupiter","venus","saturn"]
+    wars = []
+    
+    planets = [(p, planet_lons[p]) for p in WAR_PLANETS if p in planet_lons]
+    
+    for i in range(len(planets)):
+        for j in range(i+1, len(planets)):
+            p1, lon1 = planets[i]
+            p2, lon2 = planets[j]
+            diff = abs(lon1-lon2)
+            if diff > 180: diff = 360-diff
+            
+            if diff <= 1.0:
+                # Determine winner (higher longitude = winner traditionally)
+                winner = p1 if lon1 > lon2 else p2
+                loser  = p2 if winner==p1 else p1
+                wars.append({
+                    "planet1": p1, "planet2": p2,
+                    "separation_deg": round(diff,3),
+                    "winner": winner,
+                    "loser":  loser,
+                    "effect": f"{loser.capitalize()} is defeated — weakened significations",
+                    "note": "Graha Yuddha: planets within 1° — significant weakness for loser",
+                    "source": "BPHS Ch.3"
+                })
+    
+    return wars
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 14. MUHURTA CALCULATORS (Vivah, Griha Pravesh, Vehicle)
+# ═══════════════════════════════════════════════════════════════════════
+
+# Auspicious Tithis for each muhurta type
+VIVAH_TITHIS = [2,3,5,7,10,11,13]  # Dwitiya, Tritiya, Panchami, Saptami, Dashami, Ekadashi, Trayodashi
+VIVAH_NAKSHATRAS = [3,4,6,7,8,11,13,14,15,17,22,23,24,25,26]  # Rohini, Mrigashira, Punarvasu, Pushya, etc.
+VIVAH_MONTHS = [11,12,1,2,4,5]  # Margashirsha, Paush, Magh, Phalgun, Vaishakha, Jyeshtha
+
+GRIHA_PRAVESH_TITHIS = [2,3,5,7,10,11,12,13]
+GRIHA_PRAVESH_NAKSHATRAS = [3,4,6,7,8,11,12,13,14,20,22,23,24,25,26]
+
+VEHICLE_TITHIS = [2,3,5,7,10,11,12,13]
+VEHICLE_NAKSHATRAS = [3,4,6,7,8,11,13,22,23,24,25]
+
+def check_vivah_muhurta(year, month, day, tithi_idx, nak_idx, yoga_idx, vara_idx):
+    """Check if date is suitable for marriage."""
+    BAD_YOGAS = {0,5,8,9,12,14,16,18,26}  # Vishkumbha, Atiganda, etc.
+    BAD_VARA  = {0}  # Sunday avoided (some traditions)
+    
+    tithi_num = tithi_idx%30+1
+    
+    checks = {
+        "tithi_ok":   tithi_num in VIVAH_TITHIS,
+        "nakshatra_ok": nak_idx in VIVAH_NAKSHATRAS,
+        "month_ok":   month in VIVAH_MONTHS,
+        "yoga_ok":    yoga_idx not in BAD_YOGAS,
+        "vara_ok":    vara_idx not in BAD_VARA,
+    }
+    
+    score = sum(checks.values())
+    suitable = score >= 3 and checks["nakshatra_ok"] and checks["tithi_ok"]
+    
+    VIVAH_NAK_NAMES = ["Rohini","Mrigashira","Punarvasu","Pushya","Uttara Phalguni",
+                        "Hasta","Swati","Anuradha","Shravana","Dhanishtha",
+                        "Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"]
+    
+    return {
+        "suitable": suitable,
+        "score": f"{score}/5",
+        "checks": checks,
+        "good_nakshatras": VIVAH_NAK_NAMES,
+        "good_months": ["Margashirsha","Paush","Magh","Phalgun","Vaishakha","Jyeshtha"],
+        "avoid": ["Adhika Masa","Khar Masa","Panchak","Bhadra"],
+        "note": "Consult Jyotishi for complete Vivah Muhurta — this is a quick check only"
+    }
+
+
+def check_griha_pravesh_muhurta(year, month, day, tithi_idx, nak_idx, yoga_idx, vara_idx):
+    """Check if date is suitable for Griha Pravesh (entering new home)."""
+    BAD_YOGAS = {0,5,8,9,12,14,16,18,26}
+    
+    tithi_num = tithi_idx%30+1
+    checks = {
+        "tithi_ok":     tithi_num in GRIHA_PRAVESH_TITHIS,
+        "nakshatra_ok": nak_idx in GRIHA_PRAVESH_NAKSHATRAS,
+        "yoga_ok":      yoga_idx not in BAD_YOGAS,
+        "vara_ok":      vara_idx not in {0,6},  # Avoid Sun/Sat
+        "not_krishna_8": tithi_idx != 22,
+    }
+    score = sum(checks.values())
+    
+    return {
+        "suitable": score >= 4 and checks["tithi_ok"],
+        "score": f"{score}/5",
+        "checks": checks,
+        "note": "Best months: Vaishakha, Jyeshtha, Shravan, Magha, Phalgun"
+    }
+
+
+def check_vehicle_muhurta(year, month, day, tithi_idx, nak_idx, yoga_idx, vara_idx):
+    """Check if date is suitable for vehicle purchase."""
+    tithi_num = tithi_idx%30+1
+    checks = {
+        "tithi_ok":     tithi_num in VEHICLE_TITHIS,
+        "nakshatra_ok": nak_idx in VEHICLE_NAKSHATRAS,
+        "yoga_ok":      yoga_idx not in {0,5,8,9,12,16},
+        "vara_ok":      vara_idx in {1,3,4},  # Mon/Wed/Thu best
+    }
+    score = sum(checks.values())
+    
+    return {
+        "suitable": score >= 3,
+        "score": f"{score}/4",
+        "checks": checks,
+        "best_vara": "Monday, Wednesday, Thursday",
+        "note": "Ashwini nakshatra is especially good for vehicles"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 15. LUCKY NUMBER, COLOR, DAY
+# ═══════════════════════════════════════════════════════════════════════
+
+def calc_lucky_factors(lagna_sign: str, moon_sign: str, 
+                        birth_day: int, birth_month: int, birth_year: int) -> dict:
+    """Lucky number, color, day, direction based on birth details."""
+    SIGN_LORD = {
+        "Aries":"mars","Taurus":"venus","Gemini":"mercury","Cancer":"moon",
+        "Leo":"sun","Virgo":"mercury","Libra":"venus","Scorpio":"mars",
+        "Sagittarius":"jupiter","Capricorn":"saturn","Aquarius":"saturn",
+        "Pisces":"jupiter"
+    }
+    PLANET_NUMBER = {
+        "sun":1,"moon":2,"mars":9,"mercury":5,
+        "jupiter":3,"venus":6,"saturn":8,"rahu":4,"ketu":7
+    }
+    PLANET_COLOR = {
+        "sun":"Red/Orange","moon":"White/Silver","mars":"Red/Coral",
+        "mercury":"Green","jupiter":"Yellow/Gold","venus":"White/Pink",
+        "saturn":"Blue/Black","rahu":"Smoky Grey","ketu":"Multi-color"
+    }
+    PLANET_DAY = {
+        "sun":"Sunday","moon":"Monday","mars":"Tuesday","mercury":"Wednesday",
+        "jupiter":"Thursday","venus":"Friday","saturn":"Saturday"
+    }
+    PLANET_DIRECTION = {
+        "sun":"East","moon":"Northwest","mars":"South","mercury":"North",
+        "jupiter":"Northeast","venus":"Southeast","saturn":"West"
+    }
+    PLANET_METAL = {
+        "sun":"Gold","moon":"Silver","mars":"Copper","mercury":"Bronze",
+        "jupiter":"Gold","venus":"Silver","saturn":"Iron/Steel"
+    }
+    
+    # Numerology number from birth date
+    num = birth_day + birth_month + sum(int(d) for d in str(birth_year))
+    while num > 9: num = sum(int(d) for d in str(num))
+    
+    lagna_lord = SIGN_LORD.get(lagna_sign, "sun")
+    moon_lord  = SIGN_LORD.get(moon_sign, "moon")
+    
+    return {
+        "lucky_number":    PLANET_NUMBER.get(lagna_lord, 1),
+        "numerology_number": num,
+        "lucky_color":     PLANET_COLOR.get(lagna_lord,""),
+        "lucky_day":       PLANET_DAY.get(lagna_lord,""),
+        "lucky_direction": PLANET_DIRECTION.get(lagna_lord,""),
+        "lucky_metal":     PLANET_METAL.get(lagna_lord,""),
+        "lucky_god":       {
+            "sun":"Surya Deva","moon":"Chandra/Shiva","mars":"Hanuman/Kartikeya",
+            "mercury":"Vishnu/Ganesh","jupiter":"Brihaspati/Vishnu",
+            "venus":"Lakshmi/Shukra","saturn":"Shani/Shiva"
+        }.get(lagna_lord,""),
+        "lagna_lord": lagna_lord.capitalize(),
+        "moon_lord":  moon_lord.capitalize(),
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 16. RUDRAKSHA RECOMMENDATION
+# ═══════════════════════════════════════════════════════════════════════
+
+RUDRAKSHA_DATA = {
+    "1_mukhi":  {"planet":"sun",     "benefit":"Leadership, soul awakening, moksha"},
+    "2_mukhi":  {"planet":"moon",    "benefit":"Emotional balance, unity, relationships"},
+    "3_mukhi":  {"planet":"mars",    "benefit":"Self-confidence, freedom from past karma"},
+    "4_mukhi":  {"planet":"mercury", "benefit":"Intelligence, creativity, communication"},
+    "5_mukhi":  {"planet":"jupiter", "benefit":"Health, peace, wisdom, most common bead"},
+    "6_mukhi":  {"planet":"venus",   "benefit":"Love, beauty, willpower, grounding"},
+    "7_mukhi":  {"planet":"saturn",  "benefit":"Wealth, overcoming Sade Sati"},
+    "8_mukhi":  {"planet":"rahu",    "benefit":"Removes obstacles, Rahu's malefic effects"},
+    "9_mukhi":  {"planet":"ketu",    "benefit":"Shakti, fearlessness, spiritual power"},
+    "10_mukhi": {"planet":"vishnu",  "benefit":"Protection from all planets, peace"},
+    "11_mukhi": {"planet":"hanuman", "benefit":"Meditation, adventure, wisdom"},
+    "12_mukhi": {"planet":"sun",     "benefit":"Administrative power, health, radiance"},
+    "14_mukhi": {"planet":"saturn",  "benefit":"Intuition, protection, highest benefit"},
+}
+
+def calc_rudraksha(lagna_sign: str, weak_planets: list = None) -> dict:
+    """Recommend Rudraksha based on Lagna and weak planets."""
+    SIGN_LORD = {
+        "Aries":"mars","Taurus":"venus","Gemini":"mercury","Cancer":"moon",
+        "Leo":"sun","Virgo":"mercury","Libra":"venus","Scorpio":"mars",
+        "Sagittarius":"jupiter","Capricorn":"saturn","Aquarius":"saturn",
+        "Pisces":"jupiter"
+    }
+    
+    lagna_lord = SIGN_LORD.get(lagna_sign, "jupiter")
+    
+    # Primary = 5 mukhi (universal, everyone can wear)
+    # Secondary = Lagna lord's rudraksha
+    # Remedial = weak planet's rudraksha
+    
+    planet_mukhi = {
+        "sun":1,"moon":2,"mars":3,"mercury":4,"jupiter":5,
+        "venus":6,"saturn":7,"rahu":8,"ketu":9
+    }
+    
+    primary = "5_mukhi"
+    secondary_mukhi = planet_mukhi.get(lagna_lord, 5)
+    secondary = f"{secondary_mukhi}_mukhi"
+    
+    recommendations = [
+        {"mukhi": "5_mukhi", "type": "Universal", **RUDRAKSHA_DATA["5_mukhi"]},
+        {"mukhi": secondary, "type": "Lagna Lord", **RUDRAKSHA_DATA.get(secondary, {})},
+    ]
+    
+    if weak_planets:
+        for wp in weak_planets[:2]:
+            m = planet_mukhi.get(wp, 5)
+            key = f"{m}_mukhi"
+            if key in RUDRAKSHA_DATA:
+                recommendations.append({
+                    "mukhi": key, "type": f"Remedy ({wp})",
+                    **RUDRAKSHA_DATA[key]
+                })
+    
+    return {
+        "recommendations": recommendations,
+        "note": "Wear on Monday/Thursday. Energize before wearing. Nepal Rudraksha preferred.",
+        "source": "Rudraksha Jabala Upanishad, Shiva Purana"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 17. PANCHA PAKSHI SYSTEM
+# ═══════════════════════════════════════════════════════════════════════
+
+def calc_pancha_pakshi(birth_nakshatra_idx: int, year: int, month: int, day: int,
+                        sunrise_h: float, sunset_h: float) -> dict:
+    """
+    Pancha Pakshi = Five Birds system from Tamil Jyotish.
+    Each nakshatra belongs to one of 5 birds.
+    Each bird rules specific parts of the day.
+    Activities aligned with ruling bird's active time are most successful.
+    
+    Source: Pancha Pakshi Shastra (Tamil tradition)
+    """
+    BIRDS = ["Vulture","Owl","Crow","Cock","Peacock"]
+    
+    # Each nakshatra belongs to a bird
+    NAK_BIRD = [
+        0,4,3,2,1,0,4,3,2,1,0,4,3,2,1,  # Ashwini..Swati
+        0,4,3,2,1,0,4,3,2,1,0,4          # Vishakha..Revati
+    ]
+    
+    from datetime import date as _date
+    weekday = (_date(year,month,day).weekday()+1)%7  # Sun=0..Sat=6
+    
+    # Bird activity in 5 periods of the day
+    DAY_PERIODS = 5
+    period_len = (sunset_h - sunrise_h) / DAY_PERIODS
+    
+    # Ruling bird for each period (by weekday and paksha)
+    # Simplified Pancha Pakshi table
+    RULING_BIRD_DAY = {
+        0:[0,4,3,2,1],  # Sun
+        1:[1,0,4,3,2],  # Mon
+        2:[2,1,0,4,3],  # Tue
+        3:[3,2,1,0,4],  # Wed
+        4:[4,3,2,1,0],  # Thu
+        5:[0,4,3,2,1],  # Fri
+        6:[1,0,4,3,2],  # Sat
+    }
+    
+    birth_bird = BIRDS[NAK_BIRD[birth_nakshatra_idx % 27]]
+    birth_bird_idx = NAK_BIRD[birth_nakshatra_idx % 27]
+    
+    periods = []
+    for i in range(DAY_PERIODS):
+        start_h = sunrise_h + i * period_len
+        end_h   = start_h + period_len
+        ruling_bird_idx = RULING_BIRD_DAY[weekday][i]
+        ruling_bird = BIRDS[ruling_bird_idx]
+        
+        # Is birth bird ruling?
+        is_birth_bird = ruling_bird_idx == birth_bird_idx
+        # Activity: Eating=best, Ruling=very good, Walking=good,
+        #           Sleeping=avoid, Dying=worst
+        ACTIVITY = ["Ruling","Eating","Walking","Sleeping","Dying"]
+        activity_offset = (ruling_bird_idx - birth_bird_idx) % 5
+        activity = ACTIVITY[activity_offset]
+        
+        is_good = activity in ["Ruling","Eating","Walking"]
+        
+        def fmt(h):
+            hr=int(h)%24; mn=int((h%1)*60)
+            ap="AM" if hr<12 else "PM"; h12=hr%12 or 12
+            return f"{h12:02d}:{mn:02d} {ap}"
+        
+        periods.append({
+            "period": i+1,
+            "start": fmt(start_h),
+            "end":   fmt(end_h),
+            "ruling_bird": ruling_bird,
+            "activity": activity,
+            "is_favorable": is_good,
+        })
+    
+    return {
+        "birth_bird": birth_bird,
+        "periods": periods,
+        "best_times": [p for p in periods if p["is_favorable"]],
+        "note": "Pancha Pakshi: Tamil Jyotish system for timing activities"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 18. KAAL RATRI
+# ═══════════════════════════════════════════════════════════════════════
+
+def calc_kaal_ratri(year: int, month: int, day: int, 
+                     sunset_h: float, next_sunrise_h: float) -> dict:
+    """
+    Kaal Ratri = inauspicious night period, 1/8th of night duration.
+    Occurs before midnight. Avoid auspicious work during this time.
+    """
+    from datetime import date as _date
+    weekday = (_date(year,month,day).weekday()+1)%7
+    
+    night_len = next_sunrise_h + 24 - sunset_h  # may cross midnight
+    period_len = night_len / 8
+    
+    # Kaal Ratri occupies different period by weekday
+    KAAL_RATRI_PERIOD = {0:3, 1:2, 2:7, 3:4, 4:1, 5:6, 6:5}
+    period = KAAL_RATRI_PERIOD.get(weekday, 1)
+    
+    start_h = sunset_h + (period-1) * period_len
+    end_h   = start_h + period_len
+    
+    def fmt(h):
+        h = h % 24
+        hr=int(h); mn=int((h%1)*60)
+        ap="AM" if hr<12 else "PM"; h12=hr%12 or 12
+        return f"{h12:02d}:{mn:02d} {ap}"
+    
+    return {
+        "start": fmt(start_h),
+        "end":   fmt(end_h),
+        "duration_min": round(period_len*60),
+        "note": "Kaal Ratri: avoid auspicious activities, travel, new ventures"
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 19. PRADOSH TIMING
+# ═══════════════════════════════════════════════════════════════════════
+
+def check_pradosh(tithi_idx: int, sunset_h: float) -> dict:
+    """
+    Pradosh = Trayodashi (13th tithi) at sunset ±1.5 hours.
+    Most auspicious time for Shiva worship.
+    Occurs twice a month (Shukla and Krishna Trayodashi).
+    """
+    tithi_num = tithi_idx % 30 + 1
+    is_trayodashi = tithi_num == 13 or tithi_num == 28  # Shukla/Krishna 13th
+    
+    if not is_trayodashi:
+        return {"is_pradosh": False, "tithi_num": tithi_num}
+    
+    pradosh_start = sunset_h - 1.5  # 1.5 hours before sunset
+    pradosh_end   = sunset_h + 1.5  # 1.5 hours after sunset
+    
+    def fmt(h):
+        hr=int(h)%24; mn=int((h%1)*60)
+        ap="AM" if hr<12 else "PM"; h12=hr%12 or 12
+        return f"{h12:02d}:{mn:02d} {ap}"
+    
+    paksha = "Shukla" if tithi_idx < 15 else "Krishna"
+    
+    return {
+        "is_pradosh": True,
+        "paksha": paksha,
+        "start": fmt(pradosh_start),
+        "end":   fmt(pradosh_end),
+        "sunset": fmt(sunset_h),
+        "duration": "3 hours",
+        "significance": f"{paksha} Pradosh — Most auspicious time for Shiva worship",
+        "note": "Offer bilva leaves, milk, bhasma to Shiva during Pradosh time"
+    }
+

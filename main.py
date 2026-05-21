@@ -93,6 +93,24 @@ except Exception as e:
     TIMINGS_OK = False
 
 try:
+    from varshaphal import calc_varshaphal
+    VARSHA_OK = True
+except Exception as e:
+    VARSHA_OK = False
+
+try:
+    from prashna_kundali import calc_prashna_kundali
+    PRASHNA_OK = True
+except Exception as e:
+    PRASHNA_OK = False
+
+try:
+    from pratyantar_dasha import get_current_5level_dasha
+    PRANA_OK = True
+except Exception as e:
+    PRANA_OK = False
+
+try:
     from india_districts import search_india_location, get_all_districts, get_states
     INDIA_DB_OK = True
 except Exception as e:
@@ -772,5 +790,340 @@ async def get_special_yogas(year: int, month: int, day: int,
                 "vara": vara_name,
             }
         }
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/vimshopaka-bala")
+async def get_vimshopaka_bala(req: VedicChartRequest):
+    """Vimshopaka Bala — 20-point strength across 16 divisional charts."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        lons = {p: planets[p]["longitude"] for p in planets if "longitude" in planets.get(p,{})}
+        return calc_vimshopaka_bala(lons)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/graha-yuddha")
+async def get_graha_yuddha(req: VedicChartRequest):
+    """Check for Graha Yuddha (Planetary War) — planets within 1° of each other."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        lons = {p: planets[p]["longitude"] for p in planets if "longitude" in planets.get(p,{})}
+        return {"planetary_wars": check_graha_yuddha(lons)}
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.get("/api/muhurta-check")
+async def muhurta_check(
+    year: int, month: int, day: int,
+    muhurta_type: str = "vivah",
+    lat: float = 28.6139, lon: float = 77.2090, tz: float = 5.5
+):
+    """
+    Quick Muhurta check for: vivah, griha_pravesh, vehicle.
+    Returns suitability score and detailed checks.
+    """
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        from panchanga_timings import get_panchanga_with_timings
+        p = get_panchanga_with_timings(year, month, day, lat, lon, tz)
+        tithi_idx = p["tithi"][0]["number"] - 1
+        nak_idx   = ["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra",
+                     "Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni",
+                     "Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula",
+                     "Purva Ashadha","Uttara Ashadha","Shravana","Dhanishtha","Shatabhisha",
+                     "Purva Bhadrapada","Uttara Bhadrapada","Revati"
+                    ].index(p["nakshatra"][0]["name"])
+        yoga_idx  = ["Vishkumbha","Priti","Ayushman","Saubhagya","Shobhana","Atiganda",
+                     "Sukarma","Dhriti","Shoola","Ganda","Vriddhi","Dhruva","Vyaghata",
+                     "Harshana","Vajra","Siddhi","Vyatipata","Variyana","Parigha","Shiva",
+                     "Siddha","Sadhya","Shubha","Shukla","Brahma","Indra","Vaidhriti"
+                    ].index(p["yoga"][0]["name"])
+        vara_idx  = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+                    ].index(p["vara"]["name"])
+        
+        if muhurta_type == "vivah":
+            result = check_vivah_muhurta(year,month,day,tithi_idx,nak_idx,yoga_idx,vara_idx)
+        elif muhurta_type == "griha_pravesh":
+            result = check_griha_pravesh_muhurta(year,month,day,tithi_idx,nak_idx,yoga_idx,vara_idx)
+        elif muhurta_type == "vehicle":
+            result = check_vehicle_muhurta(year,month,day,tithi_idx,nak_idx,yoga_idx,vara_idx)
+        else:
+            raise HTTPException(400, "muhurta_type must be: vivah, griha_pravesh, vehicle")
+        
+        result["date"] = f"{year}-{month:02d}-{day:02d}"
+        result["panchanga_summary"] = {
+            "tithi": p["tithi"][0]["name"],
+            "nakshatra": p["nakshatra"][0]["name"],
+            "yoga": p["yoga"][0]["name"],
+            "vara": p["vara"]["name"],
+        }
+        return result
+    except HTTPException: raise
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/lucky-factors")
+async def get_lucky_factors(req: VedicChartRequest):
+    """Lucky number, color, day, direction, deity based on Lagna lord."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        houses  = await engine.get_houses(planets)
+        lagna_sign = houses.get(1,{}).get("sign","Aries").capitalize()
+        SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
+                 "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
+        moon_sign = SIGNS[int(planets.get("moon",{}).get("longitude",0)/30)%12]
+        return calc_lucky_factors(lagna_sign, moon_sign, bd.day, bd.month, bd.year)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/rudraksha")
+async def get_rudraksha(req: VedicChartRequest):
+    """Rudraksha recommendation based on Lagna lord and weak planets."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        houses  = await engine.get_houses(planets)
+        lagna_sign = houses.get(1,{}).get("sign","Aries").capitalize()
+        return calc_rudraksha(lagna_sign)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.get("/api/pancha-pakshi")
+async def get_pancha_pakshi(
+    nak_idx: int,
+    year: int, month: int, day: int,
+    lat: float = 28.6139, lon: float = 77.2090, tz: float = 5.5
+):
+    """Pancha Pakshi system — five-bird activity timing for the day."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        from panchanga_timings import _jd, calc_sunrise_sunset
+        sr, ss = calc_sunrise_sunset(year, month, day, lat, lon, tz)
+        return calc_pancha_pakshi(nak_idx, year, month, day, sr, ss)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.get("/api/pradosh")
+async def get_pradosh(
+    year: int, month: int, day: int,
+    lat: float = 28.6139, lon: float = 77.2090, tz: float = 5.5
+):
+    """Check if today is Pradosh and give Pradosh timing (Shiva worship window)."""
+    if not EXTRA_OK or not TIMINGS_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        from panchanga_timings import get_panchanga_with_timings
+        p = get_panchanga_with_timings(year, month, day, lat, lon, tz)
+        tithi_idx = p["tithi"][0]["number"] - 1
+        sr_str = p["sunrise"]; ss_str = p["sunset"]
+        def parse_t(t): 
+            parts = t.replace(" AM","").replace(" PM","").split(":")
+            h = int(parts[0])+(12 if "PM" in t and h!=12 else 0)
+            if "AM" in t and h==12: h=0
+            return h + int(parts[1])/60
+        ss_h = float(ss_str.split(":")[0]) + float(ss_str.split(":")[1].split(" ")[0])/60
+        if "PM" in ss_str and ss_h < 12: ss_h += 12
+        return check_pradosh(tithi_idx, ss_h)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/kala-sarpa")
+async def get_kala_sarpa(req: VedicChartRequest):
+    """Complete Kala Sarpa Dosha check — all 12 types."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        houses  = await engine.get_houses(planets)
+        return calc_kala_sarpa_dosha(planets, houses)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.get("/api/vedic-time")
+async def get_vedic_time(
+    year: int, month: int, day: int,
+    hour: float,
+    lat: float = 28.6139, lon: float = 77.2090, tz: float = 5.5
+):
+    """Convert clock time to Vedic time (Ghati/Pala/Vipala)."""
+    if not EXTRA_OK:
+        raise HTTPException(500, "Module not available")
+    try:
+        from panchanga_timings import calc_sunrise_sunset
+        sr, ss = calc_sunrise_sunset(year, month, day, lat, lon, tz)
+        return calc_vedic_time(hour, sr, ss)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/varshaphal")
+async def get_varshaphal(req: VedicChartRequest):
+    """
+    Varshaphal (Solar Return) — Annual horoscope for each year.
+    Shows Solar Return date, Varsha Lagna, Muntha position, 
+    Mudda Dasha for the year.
+    """
+    if not VARSHA_OK:
+        raise HTTPException(500, "Varshaphal module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        houses  = await engine.get_houses(planets)
+        sun_lon = planets.get("sun",{}).get("longitude", 0)
+        lagna_sign = houses.get(1,{}).get("sign","Aries")
+        return calc_varshaphal(
+            natal_sun_lon=sun_lon,
+            birth_year=bd.year, birth_month=bd.month, birth_day=bd.day,
+            birth_lagna_sign=lagna_sign.capitalize(),
+            lat=bd.latitude, lon=bd.longitude,
+            tz=getattr(bd,"timezone_offset",5.5),
+            years_to_show=3
+        )
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.get("/api/prashna")
+async def get_prashna(
+    question: str = "general",
+    lat: float = 28.6139,
+    lon: float = 77.2090,
+    tz: float = 5.5
+):
+    """
+    Prashna Kundali — Horary astrology chart at THIS exact moment.
+    question = health|wealth|marriage|career|children|property|
+               fortune|enemies|gains|longevity|general
+    No birth details needed — cast at query time.
+    """
+    if not PRASHNA_OK:
+        raise HTTPException(500, "Prashna module not available")
+    try:
+        return calc_prashna_kundali(lat, lon, tz, question)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/prana-dasha")
+async def get_prana_dasha(req: VedicChartRequest):
+    """
+    Complete 5-level Vimshottari Dasha:
+    Level 1: Mahadasha  (years)
+    Level 2: Antardasha (months)
+    Level 3: Pratyantar (weeks)
+    Level 4: Sookshma   (days)
+    Level 5: Prana      (hours)
+    Returns current running period at all 5 levels
+    + all Sookshma periods within current Pratyantar
+    + all Prana periods within current Sookshma.
+    """
+    if not PRANA_OK:
+        raise HTTPException(500, "Prana dasha module not available")
+    try:
+        from extra_features import calc_sookshma_dasha
+        from pratyantar_dasha import (calc_full_3level_dasha, calc_prana_dasha,
+                                       calc_pratyantar_dashas)
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        moon_lon = planets.get("moon",{}).get("longitude", 0)
+        birth_dt = datetime(bd.year, bd.month, bd.day, bd.hour, bd.minute)
+        today = datetime.now()
+        
+        # Current 5-level snapshot
+        current = get_current_5level_dasha(moon_lon, birth_dt)
+        
+        # Full sookshma list within current pratyantar
+        all_sookshma = []
+        all_prana    = []
+        full = calc_full_3level_dasha(moon_lon, birth_dt, years=40)
+        
+        for maha in full:
+            ms = datetime.strptime(maha["start"],"%Y-%m-%d")
+            me = datetime.strptime(maha["end"],"%Y-%m-%d")
+            if not (ms <= today <= me): continue
+            for antar in maha["antardashas"]:
+                as_ = datetime.strptime(antar["start"],"%Y-%m-%d")
+                ae  = datetime.strptime(antar["end"],"%Y-%m-%d")
+                if not (as_ <= today <= ae): continue
+                for prat in antar["pratyantars"]:
+                    ps = datetime.strptime(prat["start"],"%Y-%m-%d")
+                    pe = datetime.strptime(prat["end"],"%Y-%m-%d")
+                    if not (ps <= today <= pe): continue
+                    
+                    # All sookshma in this pratyantar
+                    all_sookshma = calc_sookshma_dasha(
+                        prat["lord"], ps, pe, antar["lord"], maha["lord"]
+                    )
+                    # Mark current
+                    for s in all_sookshma:
+                        ss = datetime.strptime(s["start"],"%Y-%m-%d")
+                        se = datetime.strptime(s["end"],"%Y-%m-%d")
+                        s["is_current"] = ss <= today <= se
+                        if s["is_current"]:
+                            # All prana in this sookshma
+                            all_prana = calc_prana_dasha(
+                                s["lord"], ss, se,
+                                prat["lord"], antar["lord"], maha["lord"]
+                            )
+                            for pr in all_prana:
+                                try:
+                                    prs = datetime.strptime(pr["start"],"%Y-%m-%d %H:%M")
+                                    pre = datetime.strptime(pr["end"],"%Y-%m-%d %H:%M")
+                                    pr["is_current"] = prs <= today <= pre
+                                except: pr["is_current"] = False
+                    break
+                break
+            break
+        
+        return {
+            "current_5level": current,
+            "all_sookshma_in_current_pratyantar": all_sookshma,
+            "all_prana_in_current_sookshma": all_prana,
+            "note": "Sookshma = days; Prana = hours. Use for precise event timing."
+        }
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+@app.post("/api/shodasavarga")
+async def get_shodasavarga(req: VedicChartRequest):
+    """
+    All 16 Shodasavarga divisional charts: D1 through D60.
+    Complete set as per BPHS Ch.6.
+    D1=Rasi, D2=Hora, D3=Drekkana, D4=Chaturthamsha, D7=Saptamsha,
+    D9=Navamsha, D10=Dasamsha, D12=Dwadashamsha, D16=Shodashamsha,
+    D20=Vimsamsha, D24=Siddhamsha, D27=Bhamsha, D30=Trimsamsha,
+    D40=Khavedamsha, D45=Akshavedamsha, D60=Shashtiamsha
+    """
+    if not EXTRA_OK:
+        raise HTTPException(500, "Divisional charts module not available")
+    try:
+        bd = req.birth_details
+        engine = AetherisEngine(bd)
+        planets = await engine.get_planet_positions()
+        lons = {p: planets[p]["longitude"] 
+                for p in planets if isinstance(planets.get(p),dict) 
+                and "longitude" in planets[p]}
+        if "ascendant" in planets:
+            lons["ascendant"] = planets["ascendant"]["longitude"]
+        return calc_divisional_charts(lons)
     except Exception as e:
         raise HTTPException(500, str(e))

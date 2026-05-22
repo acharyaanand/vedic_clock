@@ -990,7 +990,7 @@ function initKundC(){
   C.onclick=e=>{if(kMode==='3d'||!KDATA)return;showHouseTip(e);};
   new ResizeObserver(()=>{if(C.offsetWidth>0){C.width=C.offsetWidth;C.height=C.offsetWidth;drawK();}}).observe(C);
 }
-function setKM(m){kMode=m;['b2d','b3d','bnv'].forEach(id=>G(id).className='kmbtn');G({2d:'b2d',3d:'b3d',nav:'bnv'}[m]).className='kmbtn on';drawK();}
+function setKM(m){kMode=m;['b2d','b3d','bnv'].forEach(id=>G(id).className='kmbtn');G({'2d':'b2d','3d':'b3d','nav':'bnv'}[m]).className='kmbtn on';drawK();}lassName='kmbtn on';drawK();}
 function drawK(){
   const C=G('kundC');if(!C)return;
   const ctx=C.getContext('2d'),S=C.width;

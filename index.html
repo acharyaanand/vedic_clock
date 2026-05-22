@@ -3,1274 +3,903 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aetheris — The Living Cosmic Panchang</title>
-<meta name="description" content="World's most extraordinary Vedic Panchang. Real-time cosmos, AI Oracle, Swiss Ephemeris. Moon grows with Tithi. All 27 Nakshatras. Kundali. 1000× better.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<title>Aetheris — Living Cosmic Panchang · astromata.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --d:#05010a;--d2:#0a0210;
-  --ox:#1a0508;--ox2:#2d0a0f;
-  --g:#e2b44c;--g2:#f5d06e;--g3:#c49a2e;--g4:#6b4c10;
-  --c:#fdf8f0;--a:rgba(253,248,240,.65);--a2:rgba(253,248,240,.15);
-  --r:#c0392b;
-  --glow:0 0 60px rgba(226,180,76,.55),0 0 120px rgba(226,180,76,.2);
-  --glow2:0 0 25px rgba(226,180,76,.35);
-  --f:'Cinzel',serif;--f2:'Cinzel Decorative',serif;
-  --fs:'Inter',system-ui,sans-serif;--fd:'Noto Serif Devanagari',serif;
+  --void:#0A0E27;--void-d:#050812;--gold:#FFD700;--gw:#F0B863;--gd:#8B7500;
+  --su:#FFB900;--mo:#E8E8FF;--ma:#E27B58;--me:#87CEEB;--ju:#C88B3A;
+  --ve:#FFB6C1;--sa:#F4A460;--ra:#9B59B6;--ke:#5D4E75;
+  --good:#10B981;--bad:#DC2626;--warn:#F59E0B;
+  --f1:"Cinzel Decorative",serif;--f2:"Cinzel",serif;
+  --f3:"Cormorant Garamond",serif;--f4:"IBM Plex Mono",monospace;
+  --f5:"Outfit",sans-serif;
 }
-html{scroll-behavior:smooth;font-size:16px}
-body{background:var(--d);color:var(--c);font-family:var(--fs);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-
-/* CANVASES */
-#gl{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none}
-#pc{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void-d);color:#E8E8E8;font-family:var(--f5);overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none}
+#cur{position:fixed;pointer-events:none;z-index:9999;width:12px;height:12px;border-radius:50%;background:var(--gold);mix-blend-mode:screen;transform:translate(-50%,-50%);transition:width .15s,height .15s;box-shadow:0 0 20px var(--gold),0 0 40px rgba(255,215,0,.4)}
+#cur-ring{position:fixed;pointer-events:none;z-index:9998;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,215,0,.4);transform:translate(-50%,-50%);transition:width .35s cubic-bezier(.34,1.56,.64,1),height .35s cubic-bezier(.34,1.56,.64,1)}
+#trail{position:fixed;inset:0;pointer-events:none;z-index:9997}
+#gl{position:fixed;inset:0;z-index:0;pointer-events:none}
+#ptc{position:fixed;inset:0;z-index:1;pointer-events:none}
 #app{position:relative;z-index:2}
-
-/* LOADING */
-#load{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;background:radial-gradient(ellipse 120% 120% at 50% 100%,#2d0a0f,#0a0210 60%,#05010a);transition:opacity 1.4s,visibility 1.4s}
-#load.gone{opacity:0;visibility:hidden;pointer-events:none}
-.ld-mandala{width:110px;height:110px;animation:spin 20s linear infinite}
+#ld{position:fixed;inset:0;z-index:9000;background:radial-gradient(ellipse 140% 140% at 50% 110%,#1a0a2e,#0A0E27 50%,#050812);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity 1.5s,visibility 1.5s}
+#ld.gone{opacity:0;visibility:hidden;pointer-events:none}
+.lmand{width:120px;height:120px;position:relative}
+.lr1{position:absolute;inset:0;animation:spin 16s linear infinite}
+.lr2{position:absolute;inset:15px;animation:spin 9s linear infinite reverse}
+.lr3{position:absolute;inset:30px;animation:spin 5s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ld-name{font-family:var(--f2);font-size:2rem;color:var(--g);letter-spacing:.12em;text-shadow:0 0 40px rgba(226,180,76,.8);animation:br 2.5s ease-in-out infinite}
+.ltit{font-family:var(--f1);font-size:2rem;color:var(--gw);letter-spacing:.12em;text-shadow:0 0 40px rgba(240,184,99,.8);animation:br 2.5s ease-in-out infinite}
 @keyframes br{0%,100%{opacity:.8}50%{opacity:1}}
-.ld-shloka{font-family:var(--fd);font-size:.9rem;color:var(--a);letter-spacing:.06em;text-align:center}
-.ld-track{width:260px;height:2px;background:rgba(226,180,76,.1);border-radius:2px;overflow:hidden}
-.ld-fill{height:100%;width:0;background:linear-gradient(90deg,var(--g3),var(--g),var(--g2));transition:width .5s ease;box-shadow:0 0 12px var(--g)}
-.ld-msg{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--g4)}
-
-/* NAV */
-nav{position:fixed;top:0;inset-inline:0;z-index:200;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:linear-gradient(180deg,rgba(5,1,10,.97),transparent);backdrop-filter:blur(24px);border-bottom:1px solid rgba(226,180,76,.07)}
-.n-logo{display:flex;align-items:center;gap:.9rem;cursor:pointer}
-.n-orb{width:42px;height:42px;border-radius:50%;background:conic-gradient(from 0deg,var(--g4),var(--g3),var(--g),var(--g2),var(--g),var(--g3),var(--g4));box-shadow:var(--glow2);animation:orbP 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.n-orb::before{content:'';position:absolute;inset:2px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.3),transparent 55%)}
-.n-orb span{font-family:var(--f2);font-size:1.1rem;color:var(--d);font-weight:900;z-index:1}
-@keyframes orbP{0%,100%{box-shadow:0 0 20px rgba(226,180,76,.4),0 0 40px rgba(226,180,76,.15)}50%{box-shadow:0 0 50px rgba(226,180,76,.7),0 0 100px rgba(226,180,76,.3)}}
-.n-name{font-family:var(--f2);font-size:1.3rem;color:var(--g);letter-spacing:.08em}
-.n-tag{font-size:.5rem;color:var(--a);letter-spacing:.28em;text-transform:uppercase;display:block;margin-top:2px}
-.n-links{display:flex;gap:2rem;list-style:none}
-.n-links a{color:var(--a);text-decoration:none;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-family:var(--f);transition:color .3s}
-.n-links a:hover{color:var(--g)}
-.n-cta{padding:.45rem 1.4rem;border:1px solid rgba(226,180,76,.4);background:linear-gradient(135deg,rgba(226,180,76,.12),rgba(226,180,76,.04));color:var(--g);border-radius:2rem;font-family:var(--f);font-size:.7rem;letter-spacing:.16em;cursor:pointer;transition:all .35s}
-.n-cta:hover{background:rgba(226,180,76,.22);box-shadow:var(--glow2)}
-
-/* RIBBON */
-#rib{position:fixed;top:66px;inset-inline:0;z-index:190;padding:.65rem 2rem;display:flex;align-items:center;justify-content:center;gap:.9rem;font-size:.78rem;font-weight:500;transform:translateY(-110%);transition:transform .6s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(20px)}
+.lshl{font-family:var(--f3);font-size:.9rem;color:rgba(255,255,255,.4);font-style:italic;letter-spacing:.1em;text-align:center}
+.lbar{width:260px;height:1px;background:rgba(255,215,0,.1);overflow:hidden}
+.lfill{height:100%;background:linear-gradient(90deg,transparent,var(--gold),#FFE878,var(--gold),transparent);animation:sh 1.8s ease-in-out infinite}
+@keyframes sh{0%{transform:translateX(-200%)}100%{transform:translateX(250%)}}
+.lmsg{font-family:var(--f4);font-size:.6rem;color:rgba(255,215,0,.4);letter-spacing:.28em;text-transform:uppercase}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:linear-gradient(180deg,rgba(5,8,18,.97),rgba(5,8,18,0));backdrop-filter:blur(28px) saturate(180%);border-bottom:1px solid rgba(255,215,0,.07)}
+.nlogo{display:flex;align-items:center;gap:.8rem;cursor:none}
+.norb{width:42px;height:42px;border-radius:50%;background:conic-gradient(from 0deg,var(--gd),var(--gw),var(--gold),#FFE878,var(--gold),var(--gw),var(--gd));display:flex;align-items:center;justify-content:center;font-family:var(--f1);font-size:1.05rem;color:var(--void-d);font-weight:900;animation:oglow 4s ease-in-out infinite;position:relative;overflow:hidden}
+.norb::before{content:"";position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.3),transparent 55%)}
+@keyframes oglow{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.45),0 0 40px rgba(255,215,0,.15)}50%{box-shadow:0 0 50px rgba(255,215,0,.8),0 0 100px rgba(255,215,0,.3)}}
+.nname{font-family:var(--f1);font-size:1.3rem;color:var(--gw);letter-spacing:.1em}
+.ntag{font-size:.5rem;color:rgba(255,255,255,.35);letter-spacing:.3em;text-transform:uppercase;display:block;margin-top:2px}
+.nlinks{display:flex;gap:2rem;list-style:none}
+.nlinks a{color:rgba(255,255,255,.45);text-decoration:none;font-family:var(--f2);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;transition:color .3s;cursor:none;position:relative}
+.nlinks a::after{content:"";position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transition:transform .3s}
+.nlinks a:hover{color:var(--gw)}.nlinks a:hover::after{transform:scaleX(1)}
+.ncta{padding:.48rem 1.4rem;border:1px solid rgba(255,215,0,.32);background:rgba(255,215,0,.07);color:var(--gw);border-radius:2rem;font-family:var(--f2);font-size:.7rem;letter-spacing:.16em;cursor:none;transition:all .35s}
+.ncta:hover{background:rgba(255,215,0,.18);border-color:rgba(255,215,0,.65);box-shadow:0 0 25px rgba(255,215,0,.32)}
+#rib{position:fixed;top:70px;left:0;right:0;z-index:280;padding:.65rem 2rem;display:flex;align-items:center;justify-content:center;gap:.9rem;font-size:.78rem;font-weight:500;transform:translateY(-110%);transition:transform .6s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(20px)}
 #rib.show{transform:translateY(0)}
-#rib.danger{background:linear-gradient(90deg,rgba(192,57,43,.96),rgba(100,15,8,.96));border-bottom:1px solid rgba(192,57,43,.35)}
-#rib.safe{background:linear-gradient(90deg,rgba(30,132,73,.92),rgba(5,60,25,.92));border-bottom:1px solid rgba(30,132,73,.3)}
-#rib.warn{background:linear-gradient(90deg,rgba(180,110,0,.92),rgba(80,40,0,.92));border-bottom:1px solid rgba(180,110,0,.35)}
-
-/* SECTIONS */
-.sec{max-width:1160px;margin:0 auto;padding:5rem 2rem}
-.sec-h{display:flex;align-items:center;gap:1rem;margin-bottom:2.2rem}
-.sec-t{font-family:var(--f);font-size:1.5rem;color:var(--g);white-space:nowrap;letter-spacing:.05em}
-.sec-b{flex:1;height:1px;background:linear-gradient(90deg,rgba(226,180,76,.35),transparent)}
-.sec-n{font-size:.62rem;color:var(--g4);letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;font-family:var(--f)}
-
-/* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8rem 2rem 4rem;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;width:900px;height:900px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(226,180,76,.055),transparent 65%);pointer-events:none;animation:halo 8s ease-in-out infinite}
-@keyframes halo{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.12)}}
-.h-live{display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1.5rem;padding:.38rem 1.1rem;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22);border-radius:2rem;opacity:0;animation:up .7s ease forwards .1s}
-.h-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.h-live span{font-size:.68rem;color:#4ade80;letter-spacing:.18em;text-transform:uppercase;font-family:var(--f)}
-.h-eyebrow{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--g);font-family:var(--f);margin-bottom:1.1rem;opacity:0;animation:up .7s ease forwards .2s}
-h1{font-family:var(--f2);font-size:clamp(2.8rem,7.5vw,6rem);line-height:1.08;font-weight:900;margin-bottom:1.4rem;opacity:0;animation:up .9s ease forwards .35s}
-h1 .sh{background:linear-gradient(135deg,var(--g4),var(--g3),var(--g),var(--g2),var(--g),var(--g3),var(--g4));background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gs 5s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(226,180,76,.35))}
-@keyframes gs{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-h1 .pl{color:var(--c)}
-@keyframes up{from{opacity:0;transform:translateY(35px)}to{opacity:1;transform:translateY(0)}}
-.h-sub{font-size:clamp(.9rem,2vw,1.15rem);color:var(--a);line-height:1.85;max-width:560px;margin-bottom:2.5rem;opacity:0;animation:up .9s ease forwards .5s}
-.loc-p{display:inline-flex;align-items:center;gap:.75rem;padding:.6rem 1.5rem;margin-bottom:2.5rem;background:rgba(5,1,10,.75);border:1px solid rgba(226,180,76,.18);border-radius:3rem;cursor:pointer;backdrop-filter:blur(20px);transition:all .4s;opacity:0;animation:up .8s ease forwards .65s}
-.loc-p:hover{border-color:rgba(226,180,76,.5);box-shadow:var(--glow2);transform:translateY(-3px) scale(1.02)}
-
-/* PANCHANG GRID */
-.pg-wrap{max-width:980px;width:100%;margin:0 auto;opacity:0;animation:up .9s ease forwards .85s}
-.pg{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:linear-gradient(135deg,rgba(226,180,76,.2),rgba(226,180,76,.06));border-radius:2rem;overflow:hidden;border:1px solid rgba(226,180,76,.18);box-shadow:0 0 120px rgba(226,180,76,.08),0 50px 100px rgba(0,0,0,.6),inset 0 1px 0 rgba(226,180,76,.3);backdrop-filter:blur(30px)}
-.pc{background:rgba(5,1,10,.82);padding:1.7rem .9rem;display:flex;flex-direction:column;align-items:center;gap:.45rem;cursor:pointer;transition:background .45s;position:relative;overflow:hidden}
-.pc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(226,180,76,.1),transparent 65%);opacity:0;transition:opacity .45s}
-.pc:hover{background:rgba(26,5,8,.9)}
-.pc:hover::before{opacity:1}
-.pc:hover .pci{transform:scale(1.18) rotate(8deg);filter:drop-shadow(0 0 12px var(--g))}
-.pc-l{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--g4);font-family:var(--f);font-weight:700}
-.pci{font-size:2.5rem;transition:transform .4s cubic-bezier(.34,1.56,.64,1),filter .4s;display:block}
-.pc-v{font-family:var(--f);font-size:1rem;color:var(--c);font-weight:700;text-align:center;line-height:1.3}
-.pc-s{font-size:.62rem;color:var(--a);text-align:center;line-height:1.5}
-
-/* TITHI RING */
-.tr{position:relative;width:108px;height:108px;margin:.2rem 0}
+#rib.danger{background:linear-gradient(90deg,rgba(220,38,38,.96),rgba(100,10,10,.96));border-bottom:1px solid rgba(220,38,38,.3)}
+#rib.safe{background:linear-gradient(90deg,rgba(16,185,129,.92),rgba(5,60,35,.92));border-bottom:1px solid rgba(16,185,129,.3)}
+#rib.warn{background:linear-gradient(90deg,rgba(245,158,11,.9),rgba(80,50,0,.9));border-bottom:1px solid rgba(245,158,11,.3)}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9rem 2rem 5rem;text-align:center;position:relative}
+.hero::before{content:"";position:absolute;width:900px;height:900px;top:50%;left:50%;transform:translate(-50%,-52%);pointer-events:none;background:radial-gradient(ellipse,rgba(255,215,0,.05),transparent 65%);animation:halo 9s ease-in-out infinite}
+@keyframes halo{0%,100%{transform:translate(-50%,-52%) scale(1)}50%{transform:translate(-50%,-52%) scale(1.1)}}
+.hlive{display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1.6rem;padding:.4rem 1.2rem;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.22);border-radius:2rem;opacity:0;animation:up .8s ease forwards .1s}
+.hdot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 8px #22c55e}50%{opacity:.4;box-shadow:none}}
+.hlt{font-family:var(--f2);font-size:.68rem;color:#4ade80;letter-spacing:.2em;text-transform:uppercase}
+.hey{font-family:var(--f2);font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gw);margin-bottom:1.2rem;opacity:0;animation:up .8s ease forwards .2s}
+h1.htit{font-family:var(--f1);font-size:clamp(2.8rem,8vw,6.5rem);line-height:1.07;font-weight:900;margin-bottom:1.5rem;opacity:0;animation:up 1s ease forwards .35s}
+h1 .sh{background:linear-gradient(135deg,var(--gd),#D4A200,var(--gold),#FFE878,var(--gold),#D4A200,var(--gd));background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gf 6s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(255,215,0,.38))}
+@keyframes gf{0%,100%{background-position:0%}50%{background-position:100%}}
+h1 .pl{color:rgba(255,255,255,.95)}
+@keyframes up{from{opacity:0;transform:translateY(38px)}to{opacity:1;transform:translateY(0)}}
+.hsub{font-family:var(--f3);font-size:clamp(1rem,2.2vw,1.28rem);color:rgba(255,255,255,.5);line-height:1.9;max-width:580px;margin-bottom:2.8rem;font-style:italic;font-weight:300;opacity:0;animation:up .9s ease forwards .52s}
+.locp{display:inline-flex;align-items:center;gap:.75rem;padding:.65rem 1.6rem;margin-bottom:2.8rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.15);border-radius:3rem;cursor:none;backdrop-filter:blur(20px);transition:all .45s cubic-bezier(.34,1.56,.64,1);opacity:0;animation:up .8s ease forwards .65s}
+.locp:hover{border-color:rgba(255,215,0,.5);box-shadow:0 0 25px rgba(255,215,0,.32);transform:translateY(-3px) scale(1.02)}
+.pgw{max-width:1000px;width:100%;margin:0 auto;opacity:0;animation:up .9s ease forwards .85s}
+.pg{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,215,0,.05));border-radius:2rem;overflow:hidden;border:1px solid rgba(255,215,0,.18);box-shadow:0 0 120px rgba(255,215,0,.08),0 50px 100px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,215,0,.28);backdrop-filter:blur(30px)}
+.pc{background:rgba(5,8,18,.84);padding:1.8rem .9rem;display:flex;flex-direction:column;align-items:center;gap:.45rem;cursor:none;transition:background .5s;position:relative;overflow:hidden}
+.pc::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(255,215,0,.12),transparent 65%);opacity:0;transition:opacity .5s;pointer-events:none}
+.pc:hover{background:rgba(20,16,45,.92)}.pc:hover::before{opacity:1}
+.pc:hover .pci{transform:scale(1.25) rotate(12deg);filter:drop-shadow(0 0 16px var(--gw))}
+.pcl{font-family:var(--f2);font-size:.58rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gd);font-weight:700}
+.pci{font-size:2.5rem;display:block;transition:transform .5s cubic-bezier(.34,1.56,.64,1),filter .5s}
+.pcv{font-family:var(--f2);font-size:1rem;color:#E8E8E8;font-weight:700;text-align:center;line-height:1.3}
+.pcs{font-family:var(--f5);font-size:.62rem;color:rgba(255,255,255,.42);text-align:center;line-height:1.5}
+.tr{position:relative;width:110px;height:110px;margin:.2rem 0}
 .tr svg{width:100%;height:100%;transform:rotate(-90deg)}
-.tr-bg{fill:none;stroke:rgba(226,180,76,.08);stroke-width:5}
-.tr-glow{fill:none;stroke:rgba(226,180,76,.04);stroke-width:14}
-.tr-prog{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:296;stroke-dashoffset:296;transition:stroke-dashoffset 3s cubic-bezier(.34,1.56,.64,1)}
+.tr-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:5}
+.tr-gl{fill:none;stroke:rgba(255,215,0,.04);stroke-width:16}
+.tr-prog{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:302;stroke-dashoffset:302;transition:stroke-dashoffset 3.5s cubic-bezier(.34,1.56,.64,1)}
 .tr-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.tr-pct{font-family:var(--f);font-size:1.3rem;font-weight:900;color:var(--g);line-height:1;text-shadow:0 0 20px rgba(226,180,76,.6)}
-.tr-lbl{font-size:.46rem;letter-spacing:.14em;text-transform:uppercase;color:var(--a)}
-
-/* SUN-MOON RIBBON */
-.smr{display:flex;align-items:stretch;max-width:820px;width:100%;margin:2rem auto 0;background:rgba(5,1,10,.72);border:1px solid rgba(226,180,76,.1);border-radius:1.5rem;overflow:hidden;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,.4),inset 0 1px 0 rgba(226,180,76,.15);opacity:0;animation:up .8s ease forwards 1.1s}
-.smr-i{flex:1;padding:1.2rem .8rem;display:flex;flex-direction:column;align-items:center;gap:.35rem;position:relative}
-.smr-i+.smr-i::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:linear-gradient(180deg,transparent,rgba(226,180,76,.2),transparent)}
-.smr-ico{font-size:1.7rem;filter:drop-shadow(0 0 8px rgba(226,180,76,.4))}
-.smr-l{font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;color:var(--g4);font-family:var(--f)}
-.smr-v{font-family:var(--f);font-size:1.3rem;font-weight:700;color:var(--c)}
-.smr-s{font-size:.6rem;color:var(--a)}
-
-/* SAMVAT CHIPS */
-.sv-row{display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap;max-width:820px;width:100%;margin:1.1rem auto 0;opacity:0;animation:up .7s ease forwards 1.3s}
-.sv{padding:.28rem .85rem;border:1px solid rgba(226,180,76,.13);border-radius:2rem;font-size:.66rem;color:var(--a);background:rgba(5,1,10,.6);font-family:var(--f);letter-spacing:.05em}
-.sv strong{color:var(--g)}
-
-/* ═══════════════════════════════════════
-   NAKSHATRA COSMOS — MOON GROWS WITH TITHI
-   ═══════════════════════════════════════ */
-.nak-wrap{border-radius:1.8rem;overflow:hidden;border:1px solid rgba(226,180,76,.12);background:#030008;position:relative;height:340px;margin-bottom:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(226,180,76,.12)}
-#nakC{width:100%;height:100%;display:block}
-/* Phase legend */
-.moon-legend{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem}
-.ml-item{display:flex;align-items:center;gap:.4rem;font-size:.65rem;color:var(--a);font-family:var(--f)}
-.ml-moon{width:14px;height:14px;border-radius:50%;display:inline-block}
-/* Nakshatra names grid below canvas */
-.nak-names-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:.4rem;margin-bottom:.8rem}
-.nn{padding:.35rem .5rem;background:rgba(5,1,10,.75);border:1px solid rgba(226,180,76,.08);border-radius:.6rem;font-size:.62rem;color:var(--a);text-align:center;cursor:pointer;transition:all .3s;font-family:var(--f)}
-.nn.cur{background:rgba(226,180,76,.16);border-color:rgba(226,180,76,.5);color:var(--g);box-shadow:0 0 12px rgba(226,180,76,.2)}
-.nn:hover:not(.cur){border-color:rgba(226,180,76,.28);color:var(--c)}
-
-/* PERIODS GRID */
-.prd-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.9rem}
-.prd{background:rgba(5,1,10,.78);border-radius:1.3rem;padding:1.4rem 1.5rem;border:1px solid rgba(226,180,76,.07);cursor:pointer;position:relative;overflow:hidden;transition:all .45s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(15px)}
-.prd-acc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
-.ar{background:var(--r);box-shadow:0 0 20px rgba(192,57,43,.5)}
+.tr-pct{font-family:var(--f1);font-size:1.3rem;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 25px rgba(255,215,0,.7)}
+.tr-lbl{font-family:var(--f4);font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:2px}
+.smr{display:flex;align-items:stretch;max-width:1000px;width:100%;margin:1.5rem auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.09);border-radius:1.5rem;overflow:hidden;backdrop-filter:blur(24px);box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07);opacity:0;animation:up .8s ease forwards 1.1s}
+.smri{flex:1;padding:1.2rem .9rem;display:flex;flex-direction:column;align-items:center;gap:.38rem;position:relative;transition:background .3s;cursor:none}
+.smri:hover{background:rgba(255,255,255,.04)}
+.smri+.smri::before{content:"";position:absolute;left:0;top:20%;bottom:20%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.1),transparent)}
+.smrico{font-size:1.8rem;filter:drop-shadow(0 0 8px rgba(255,215,0,.4))}
+.smrl{font-family:var(--f2);font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gd)}
+.smrv{font-family:var(--f1);font-size:1.25rem;font-weight:700;color:#E8E8E8}
+.smrs{font-family:var(--f4);font-size:.6rem;color:rgba(255,255,255,.32)}
+.svrow{display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap;max-width:1000px;width:100%;margin:1.1rem auto 0;opacity:0;animation:up .7s ease forwards 1.3s}
+.sv{padding:.28rem .88rem;border:1px solid rgba(255,215,0,.1);border-radius:2rem;font-family:var(--f4);font-size:.64rem;color:rgba(255,255,255,.38);background:rgba(255,255,255,.04)}
+.sv strong{color:var(--gw)}
+.sec{max-width:1160px;margin:0 auto;padding:5rem 2rem}
+.sec-h{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem}
+.sec-t{font-family:var(--f2);font-size:1.5rem;color:var(--gw);white-space:nowrap;letter-spacing:.06em}
+.sec-bar{flex:1;height:1px;background:linear-gradient(90deg,rgba(255,215,0,.32),transparent)}
+.sec-n{font-family:var(--f4);font-size:.6rem;color:var(--gd);letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.prdg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem}
+.prd{background:rgba(255,255,255,.05);border-radius:1.3rem;padding:1.6rem;border:1px solid rgba(255,255,255,.07);cursor:none;position:relative;overflow:hidden;backdrop-filter:blur(20px);transition:box-shadow .4s,border-color .4s;will-change:transform}
+.prd::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent 50%);pointer-events:none}
+.prd:hover{border-color:rgba(255,215,0,.22);box-shadow:0 30px 70px rgba(0,0,0,.5),0 0 30px rgba(255,215,0,.08)}
+.pacc{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.ar{background:var(--bad);box-shadow:0 0 20px rgba(220,38,38,.5)}
 .ao{background:#e67e22;box-shadow:0 0 20px rgba(230,126,34,.4)}
-.av{background:#8b5cf6;box-shadow:0 0 20px rgba(139,92,246,.4)}
-.ag{background:var(--g);box-shadow:0 0 20px rgba(226,180,76,.5)}
-.ae{background:#22c55e;box-shadow:0 0 20px rgba(34,197,94,.4)}
+.av{background:#7c3aed;box-shadow:0 0 20px rgba(124,58,237,.4)}
+.ag{background:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.5)}
+.ae{background:var(--good);box-shadow:0 0 20px rgba(16,185,129,.4)}
 .ab{background:#3b82f6;box-shadow:0 0 20px rgba(59,130,246,.4)}
-.prd::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(226,180,76,.05),transparent 60%);opacity:0;transition:opacity .4s}
-.prd:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(226,180,76,.22);box-shadow:0 25px 60px rgba(0,0,0,.45),0 0 25px rgba(226,180,76,.1)}
-.prd:hover::after{opacity:1}
-.prd-l{font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:var(--g4);font-family:var(--f);margin-bottom:.55rem}
-.prd-t{font-family:var(--f);font-size:1.55rem;color:var(--c);font-weight:700}
-.prd-d{font-size:.71rem;color:var(--a);margin-top:.45rem;line-height:1.55}
-.badge{display:inline-flex;align-items:center;gap:.3rem;margin-top:.6rem;padding:.18rem .6rem;border-radius:1rem;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
-.b-on{background:rgba(192,57,43,.18);color:#ff6b6b;border:1px solid rgba(192,57,43,.35)}
-.b-soon{background:rgba(230,126,34,.18);color:#ffa94d;border:1px solid rgba(230,126,34,.3)}
-
-/* CHOGHADIYA */
-.c-tabs{display:flex;gap:.4rem}
-.ct{padding:.36rem .9rem;border-radius:2rem;border:1px solid rgba(226,180,76,.12);background:transparent;color:var(--a);font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;font-family:var(--f);cursor:pointer;transition:all .3s}
-.ct.on{background:rgba(226,180,76,.14);border-color:rgba(226,180,76,.4);color:var(--g);box-shadow:0 0 10px rgba(226,180,76,.2)}
-.chog-r{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:thin;scrollbar-color:rgba(226,180,76,.15) transparent}
-.chog-r::-webkit-scrollbar{height:3px}
-.chog-r::-webkit-scrollbar-thumb{background:rgba(226,180,76,.15);border-radius:2px}
-.cs{flex:0 0 auto;min-width:110px;padding:1.1rem .8rem;border-radius:1.1rem;text-align:center;border:1px solid rgba(226,180,76,.07);cursor:pointer;transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
-.cs.now{border-color:rgba(226,180,76,.55);box-shadow:var(--glow2),0 0 40px rgba(226,180,76,.1)}
-.cs.now::after{content:'▲ NOW';position:absolute;top:4px;right:5px;font-size:.43rem;letter-spacing:.1em;color:var(--g);font-weight:900;font-family:var(--f)}
-.cs:hover:not(.now){transform:translateY(-4px) scale(1.03);border-color:rgba(226,180,76,.3)}
-.cs-n{font-family:var(--f);font-size:.9rem;font-weight:700;letter-spacing:.04em}
-.cs-t{font-size:.6rem;color:var(--a);line-height:1.5;margin-top:.2rem}
-.cs-q{font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem;font-weight:700}
-.cg-Labh{background:rgba(34,197,94,.07)}.cg-Labh .cs-n{color:#4ade80}.cg-Labh .cs-q{color:#22c55e}
-.cg-Amrit{background:rgba(226,180,76,.09)}.cg-Amrit .cs-n{color:var(--g)}.cg-Amrit .cs-q{color:var(--g3)}
-.cg-Shubh{background:rgba(59,130,246,.07)}.cg-Shubh .cs-n{color:#60a5fa}.cg-Shubh .cs-q{color:#3b82f6}
-.cg-Char{background:rgba(16,185,129,.07)}.cg-Char .cs-n{color:#34d399}.cg-Char .cs-q{color:#10b981}
-.cg-Kaal{background:rgba(192,57,43,.1)}.cg-Kaal .cs-n{color:#f87171}.cg-Kaal .cs-q{color:var(--r)}
-.cg-Rog{background:rgba(239,68,68,.08)}.cg-Rog .cs-n{color:#fca5a5}.cg-Rog .cs-q{color:#ef4444}
-.cg-Udveg{background:rgba(139,92,246,.07)}.cg-Udveg .cs-n{color:#c4b5fd}.cg-Udveg .cs-q{color:#8b5cf6}
-
-/* ZODIAC */
-.zd-wrap{display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
-#zodiac{max-width:420px;width:100%;cursor:pointer;filter:drop-shadow(0 0 40px rgba(226,180,76,.12))}
-.zi{flex:1;min-width:240px;background:rgba(5,1,10,.75);border:1px solid rgba(226,180,76,.1);border-radius:1.5rem;padding:1.8rem;backdrop-filter:blur(20px)}
-.zi-s{font-family:var(--f2);font-size:1.7rem;color:var(--g);margin-bottom:.35rem}
-.zi-e{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--g4);font-family:var(--f);margin-bottom:.75rem}
-.zi-d{font-size:.83rem;color:var(--a);line-height:1.75}
-.zi-ps{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.9rem}
-.zi-p{padding:.22rem .65rem;border-radius:1rem;font-size:.64rem;background:rgba(226,180,76,.08);border:1px solid rgba(226,180,76,.14);color:var(--a)}
-
-/* KUNDALI */
-.kund-wrap{display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start}
-.kund-chart{flex:0 0 auto}
-#kundC{display:block;border-radius:1rem}
-.kund-details{flex:1;min-width:260px}
-.kund-form{background:rgba(5,1,10,.75);border:1px solid rgba(226,180,76,.1);border-radius:1.5rem;padding:1.8rem;backdrop-filter:blur(20px);margin-bottom:1.2rem}
-.kf-title{font-family:var(--f);font-size:1.1rem;color:var(--g);margin-bottom:1.2rem;letter-spacing:.05em}
-.kf-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
-.kf-inp{background:rgba(255,255,255,.04);border:1px solid rgba(226,180,76,.15);border-radius:.8rem;padding:.65rem .9rem;color:var(--c);font-size:.82rem;font-family:var(--fs);outline:none;transition:border-color .3s;width:100%}
-.kf-inp:focus{border-color:rgba(226,180,76,.45)}
-.kf-inp::placeholder{color:var(--g4)}
-.kf-inp option{background:#0a0210}
-.kf-lbl{display:block;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--g4);font-family:var(--f);margin-bottom:.3rem}
-.kf-btn{width:100%;padding:.8rem;background:linear-gradient(135deg,var(--g3),var(--g),var(--g2));color:var(--d);border:none;border-radius:.8rem;font-family:var(--f);font-size:.82rem;letter-spacing:.15em;font-weight:700;cursor:pointer;transition:all .3s;margin-top:.5rem}
-.kf-btn:hover{transform:translateY(-2px);box-shadow:var(--glow2)}
-.kund-result{background:rgba(5,1,10,.75);border:1px solid rgba(226,180,76,.1);border-radius:1.5rem;padding:1.5rem;backdrop-filter:blur(20px);min-height:120px}
-.kr-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid rgba(226,180,76,.07)}
-.kr-row:last-child{border-bottom:none}
-.kr-k{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--g4);font-family:var(--f)}
-.kr-v{font-family:var(--f);font-size:.9rem;color:var(--c);font-weight:600}
-
-/* FESTIVALS */
-.fest-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:.9rem}
-.fc{background:rgba(5,1,10,.72);border:1px solid rgba(226,180,76,.07);border-radius:1.3rem;padding:1.3rem 1.4rem;display:flex;align-items:flex-start;gap:1rem;backdrop-filter:blur(12px);transition:all .4s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
-.fc:hover{border-color:rgba(226,180,76,.28);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.35),0 0 15px rgba(226,180,76,.08)}
-.fc-ico{font-size:2.1rem;flex-shrink:0;filter:drop-shadow(0 0 10px rgba(226,180,76,.35))}
-.fc-n{font-family:var(--f);font-size:.9rem;color:var(--c);margin-bottom:.22rem}
-.fc-t{font-size:.59rem;letter-spacing:.18em;text-transform:uppercase;color:var(--g4)}
-.fc-i{font-size:.7rem;color:var(--a);margin-top:.3rem;line-height:1.5}
-
-/* ORACLE */
-.orac-btn{position:fixed;bottom:2rem;right:2rem;z-index:300;width:64px;height:64px;border-radius:50%;cursor:pointer;background:conic-gradient(from 45deg,var(--d2),var(--ox2),var(--d2));border:1.5px solid rgba(226,180,76,.5);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:orbP 4s infinite;box-shadow:0 20px 50px rgba(0,0,0,.6),var(--glow2);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
-.orac-btn:hover{transform:scale(1.14) rotate(-5deg)}
-.orac-panel{position:fixed;bottom:6.5rem;right:2rem;z-index:300;width:min(440px,calc(100vw - 2.5rem));max-height:540px;background:rgba(5,1,10,.98);border:1px solid rgba(226,180,76,.22);border-radius:1.8rem;backdrop-filter:blur(40px);box-shadow:0 60px 120px rgba(0,0,0,.75),var(--glow);display:flex;flex-direction:column;overflow:hidden;transform:scale(.84) translateY(25px);opacity:0;pointer-events:none;transition:all .5s cubic-bezier(.34,1.56,.64,1);transform-origin:bottom right}
-.orac-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
-.op-h{padding:1rem 1.3rem;border-bottom:1px solid rgba(226,180,76,.1);display:flex;align-items:center;gap:.8rem;background:linear-gradient(135deg,rgba(45,10,15,.9),rgba(5,1,10,.9))}
-.op-gem{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 0deg,var(--g4),var(--g3),var(--g),var(--g2),var(--g),var(--g3),var(--g4));display:flex;align-items:center;justify-content:center;font-size:1rem;animation:orbP 3s infinite;flex-shrink:0}
-.op-nm{font-family:var(--f2);font-size:.95rem;color:var(--g)}
-.op-st{font-size:.6rem;color:#4ade80;display:flex;align-items:center;gap:.3rem}
-.op-x{margin-left:auto;background:none;border:none;color:var(--a);cursor:pointer;font-size:1.1rem;padding:.3rem;transition:color .2s;border-radius:.4rem}
-.op-x:hover{color:var(--c)}
-.op-q{display:flex;gap:.38rem;padding:.55rem 1rem;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(226,180,76,.07)}
-.op-q::-webkit-scrollbar{display:none}
-.oq{flex:0 0 auto;padding:.27rem .76rem;border-radius:2rem;background:rgba(226,180,76,.06);border:1px solid rgba(226,180,76,.13);color:var(--a);font-size:.66rem;cursor:pointer;white-space:nowrap;transition:all .25s;font-family:var(--f)}
-.oq:hover{background:rgba(226,180,76,.17);color:var(--g);border-color:rgba(226,180,76,.38)}
-.op-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;scrollbar-width:thin;scrollbar-color:rgba(226,180,76,.1) transparent}
-.op-msgs::-webkit-scrollbar{width:2px}
-.op-msgs::-webkit-scrollbar-thumb{background:rgba(226,180,76,.12);border-radius:2px}
-.om{max-width:88%;padding:.76rem 1rem;border-radius:1.1rem;font-size:.83rem;line-height:1.7;animation:msgP .35s cubic-bezier(.34,1.56,.64,1)}
-@keyframes msgP{from{opacity:0;transform:scale(.9) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.om.u{background:rgba(226,180,76,.12);border:1px solid rgba(226,180,76,.18);color:var(--c);align-self:flex-end;border-radius:1.1rem 1.1rem .2rem 1.1rem}
-.om.a{background:rgba(26,5,8,.9);border:1px solid rgba(226,180,76,.08);color:var(--a);align-self:flex-start;border-radius:1.1rem 1.1rem 1.1rem .2rem}
-.op-typ{display:flex;gap:5px;padding:.5rem;align-self:flex-start}
-.op-typ span{width:7px;height:7px;background:var(--g);border-radius:50%;animation:td 1.4s infinite}
-.op-typ span:nth-child(2){animation-delay:.2s}
-.op-typ span:nth-child(3){animation-delay:.4s}
+.prdl{font-family:var(--f2);font-size:.57rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,215,0,.5);margin-bottom:.6rem}
+.prdt{font-family:var(--f1);font-size:1.45rem;color:#E8E8E8;font-weight:700}
+.prdd{font-family:var(--f5);font-size:.72rem;color:rgba(255,255,255,.42);margin-top:.5rem;line-height:1.6}
+.badge{display:inline-flex;align-items:center;gap:.3rem;margin-top:.65rem;padding:.2rem .7rem;border-radius:1rem;font-family:var(--f4);font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.bon{background:rgba(220,38,38,.18);color:#f87171;border:1px solid rgba(220,38,38,.35)}
+.bsn{background:rgba(245,158,11,.18);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.ctabs{display:flex;gap:.4rem}
+.ct{padding:.38rem .95rem;border-radius:2rem;border:1px solid rgba(255,215,0,.12);background:transparent;color:rgba(255,255,255,.42);font-family:var(--f2);font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:all .3s}
+.ct.on{background:rgba(255,215,0,.13);border-color:rgba(255,215,0,.42);color:var(--gw);box-shadow:0 0 12px rgba(255,215,0,.2)}
+.chogr{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.8rem;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.15) transparent}
+.chogr::-webkit-scrollbar{height:3px}.chogr::-webkit-scrollbar-thumb{background:rgba(255,215,0,.15);border-radius:2px}
+.cs{flex:0 0 auto;min-width:112px;padding:1.15rem .85rem;border-radius:1.1rem;text-align:center;border:1px solid rgba(255,255,255,.07);cursor:none;backdrop-filter:blur(12px);transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.cs:hover{transform:translateY(-6px) scale(1.04);border-color:rgba(255,215,0,.3)}
+.cs.now{border-color:rgba(255,215,0,.55);box-shadow:0 0 25px rgba(255,215,0,.32),0 0 40px rgba(255,215,0,.1)}
+.cs.now::after{content:"NOW";position:absolute;top:4px;right:5px;font-family:var(--f4);font-size:.42rem;letter-spacing:.1em;color:var(--gold);font-weight:600}
+.csn{font-family:var(--f2);font-size:.9rem;font-weight:700;letter-spacing:.04em;margin-bottom:.25rem}
+.cst{font-family:var(--f4);font-size:.6rem;color:rgba(255,255,255,.38);line-height:1.5}
+.csq{font-family:var(--f2);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.3rem;font-weight:700}
+.cg-Labh,.cg-Laabh{background:rgba(34,197,94,.08)}.cg-Labh .csn,.cg-Laabh .csn{color:#4ade80}.cg-Labh .csq,.cg-Laabh .csq{color:#22c55e}
+.cg-Amrit{background:rgba(255,215,0,.09)}.cg-Amrit .csn{color:var(--gold)}.cg-Amrit .csq{color:var(--gd)}
+.cg-Shubh{background:rgba(59,130,246,.08)}.cg-Shubh .csn{color:#60a5fa}.cg-Shubh .csq{color:#3b82f6}
+.cg-Char,.cg-Chara{background:rgba(6,182,212,.07)}.cg-Char .csn,.cg-Chara .csn{color:#22d3ee}.cg-Char .csq,.cg-Chara .csq{color:#06B6D4}
+.cg-Kaal{background:rgba(220,38,38,.1)}.cg-Kaal .csn{color:#f87171}.cg-Kaal .csq{color:var(--bad)}
+.cg-Rog{background:rgba(239,68,68,.08)}.cg-Rog .csn{color:#fca5a5}.cg-Rog .csq{color:#ef4444}
+.cg-Udveg{background:rgba(124,58,237,.08)}.cg-Udveg .csn{color:#c4b5fd}.cg-Udveg .csq{color:#7c3aed}
+.nakbox{border-radius:2rem;overflow:hidden;border:1px solid rgba(255,215,0,.1);background:#020408;height:360px;margin-bottom:1.8rem;box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+#nakC{width:100%;height:100%;display:block}
+.nngrid{display:grid;grid-template-columns:repeat(9,1fr);gap:.4rem;margin-bottom:.8rem}
+.nn{padding:.38rem .5rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:.6rem;font-family:var(--f2);font-size:.6rem;color:rgba(255,255,255,.42);text-align:center;cursor:none;transition:all .35s}
+.nn.cur{background:rgba(255,215,0,.16);border-color:rgba(255,215,0,.48);color:var(--gw);box-shadow:0 0 15px rgba(255,215,0,.2)}
+.nn:hover:not(.cur){border-color:rgba(255,215,0,.28);color:#E8E8E8;transform:translateY(-2px)}
+.ksec{background:rgba(255,255,255,.025);border:1px solid rgba(255,215,0,.1);border-radius:2.5rem;overflow:hidden}
+.kshdr{padding:2rem 2.5rem 1.5rem;border-bottom:1px solid rgba(255,215,0,.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.ksform{display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
+.kf{padding:.6rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:.75rem;color:#E8E8E8;font-family:var(--f5);font-size:.82rem;outline:none;transition:all .3s;appearance:none}
+.kf:focus{border-color:rgba(255,215,0,.45);box-shadow:0 0 0 3px rgba(255,215,0,.07)}
+.kf::placeholder{color:rgba(255,255,255,.2)}.kf option{background:#0A0E27}
+.kgbtn{padding:.65rem 1.6rem;background:linear-gradient(135deg,#5a4300,#B8890A,var(--gold),#FFE878,var(--gold),#B8890A,#5a4300);background-size:300%;color:var(--void-d);border:none;border-radius:.75rem;font-family:var(--f2);font-size:.75rem;letter-spacing:.2em;font-weight:700;cursor:none;animation:gf 5s ease-in-out infinite;transition:all .4s;white-space:nowrap}
+.kgbtn:hover{transform:translateY(-3px);box-shadow:0 0 45px rgba(255,215,0,.42),0 20px 50px rgba(0,0,0,.3)}
+.ksbody{display:grid;grid-template-columns:500px 1fr;gap:0}
+.kschart{border-right:1px solid rgba(255,215,0,.08);padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.kmbtn{padding:.3rem .8rem;border:1px solid rgba(255,215,0,.15);background:transparent;border-radius:2rem;font-family:var(--f4);font-size:.58rem;color:rgba(255,215,0,.5);cursor:none;transition:all .3s;letter-spacing:.08em;text-transform:uppercase}
+.kmbtn.on{background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.5);color:var(--gold)}
+#kundC{display:block;width:100%;aspect-ratio:1;border-radius:1rem;cursor:none}
+.ksinfo{padding:1.5rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.2rem;max-height:650px;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.12) transparent}
+table.pt{width:100%;border-collapse:collapse;font-size:.76rem}
+.pt th{font-family:var(--f4);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,215,0,.35);padding:.5rem .5rem;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;white-space:nowrap}
+.pt td{padding:.48rem .5rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.pt tr:hover td{background:rgba(255,255,255,.025)}.pt tr:last-child td{border-bottom:none}
+.pdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+.pnm{font-family:var(--f2);font-size:.82rem;font-weight:700}
+.pret{font-family:var(--f4);font-size:.56rem;color:var(--warn);margin-left:.2rem}
+.pdeg{font-family:var(--f4);font-size:.7rem;color:rgba(255,255,255,.45)}
+.ph{font-family:var(--f4);font-size:.75rem;font-weight:700;text-align:center;color:rgba(255,215,0,.65)}
+.dg{font-size:.6rem;padding:.15rem .4rem;border-radius:.4rem;white-space:nowrap}
+.dg.ex{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.25)}
+.dg.db{background:rgba(220,38,38,.12);color:#f87171;border:1px solid rgba(220,38,38,.22)}
+.dg.ow{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.22)}
+.dg.fr{background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.dg.en{background:rgba(139,92,246,.1);color:#c4b5fd;border:1px solid rgba(139,92,246,.2)}
+.dg.nt{background:rgba(107,114,128,.1);color:#9ca3af;border:1px solid rgba(107,114,128,.2)}
+.ic{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:1rem;padding:1.1rem}
+.ich{font-family:var(--f4);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,215,0,.4);margin-bottom:.8rem}
+.icr{display:flex;justify-content:space-between;align-items:baseline;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.icr:last-child{border-bottom:none}
+.ick{font-family:var(--f4);font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:.1em}
+.icv{font-family:var(--f2);font-size:.78rem;color:#E8E8E8;font-weight:600;text-align:right}
+.dlwrap{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
+.dl{flex:1;min-width:80px;padding:.6rem .8rem;border-radius:.7rem;border:1px solid;text-align:center;position:relative;transition:all .3s;cursor:none}
+.dl:hover{transform:translateY(-3px)}
+.dlbl{font-family:var(--f4);font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:.25rem;opacity:.55}
+.dpl{font-family:var(--f2);font-size:.95rem;font-weight:700;display:block;margin-bottom:.2rem}
+.ddt{font-family:var(--f4);font-size:.52rem;opacity:.45;display:block;line-height:1.4}
+#htip{position:fixed;background:rgba(5,8,18,.97);border:1px solid rgba(255,215,0,.28);border-radius:1rem;padding:1rem 1.2rem;pointer-events:none;z-index:500;min-width:200px;display:none;backdrop-filter:blur(24px);box-shadow:0 25px 60px rgba(0,0,0,.7),0 0 25px rgba(255,215,0,.1)}
+.htt{font-family:var(--f2);font-size:.82rem;color:var(--gw);margin-bottom:.6rem}
+.htr{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.htr:last-child{border-bottom:none}
+.htk{font-family:var(--f4);font-size:.58rem;color:rgba(255,255,255,.38)}
+.htv{font-family:var(--f2);font-size:.72rem;color:#E8E8E8;font-weight:600}
+.festg{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:.9rem}
+.fc{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:1.3rem;padding:1.3rem 1.4rem;display:flex;align-items:flex-start;gap:1rem;backdrop-filter:blur(12px);transition:all .4s cubic-bezier(.34,1.56,.64,1);cursor:none}
+.fc:hover{border-color:rgba(255,215,0,.28);transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.fcico{font-size:2.1rem;flex-shrink:0;filter:drop-shadow(0 0 10px rgba(255,215,0,.35));animation:flt 4s ease-in-out infinite}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.fcn{font-family:var(--f2);font-size:.9rem;color:#E8E8E8;margin-bottom:.22rem}
+.fct{font-family:var(--f4);font-size:.59rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gd)}
+.ofab{position:fixed;bottom:2rem;right:2rem;z-index:400;width:66px;height:66px;border-radius:50%;cursor:none;background:radial-gradient(circle at 35% 30%,#2d1a4a,#0A0E27);border:1.5px solid rgba(255,215,0,.5);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:oglow 4s infinite;box-shadow:0 20px 50px rgba(0,0,0,.6),0 0 25px rgba(255,215,0,.32);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.ofab:hover{transform:scale(1.15) rotate(-8deg)}
+.opanel{position:fixed;bottom:6.5rem;right:2rem;z-index:400;width:min(440px,calc(100vw - 2.5rem));max-height:560px;background:rgba(5,8,18,.98);border:1px solid rgba(255,215,0,.22);border-radius:1.8rem;backdrop-filter:blur(40px);display:flex;flex-direction:column;overflow:hidden;transform:scale(.85) translateY(25px);opacity:0;pointer-events:none;transition:all .5s cubic-bezier(.34,1.56,.64,1);transform-origin:bottom right}
+.opanel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+.oph{padding:1rem 1.3rem;border-bottom:1px solid rgba(255,215,0,.1);display:flex;align-items:center;gap:.8rem;background:linear-gradient(135deg,rgba(45,10,15,.9),rgba(5,8,18,.9))}
+.opgem{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 0deg,var(--gd),var(--gw),var(--gold),#FFE878,var(--gold),var(--gw),var(--gd));display:flex;align-items:center;justify-content:center;font-size:.95rem;animation:oglow 3s infinite;flex-shrink:0}
+.opnm{font-family:var(--f1);font-size:.92rem;color:var(--gw)}
+.opst{font-family:var(--f4);font-size:.6rem;color:#4ade80;display:flex;align-items:center;gap:.3rem}
+.opx{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.4);cursor:none;font-size:1.1rem;padding:.3rem;transition:color .2s}.opx:hover{color:#E8E8E8}
+.opq{display:flex;gap:.38rem;padding:.6rem 1rem;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,.07)}
+.opq::-webkit-scrollbar{display:none}
+.oq{flex:0 0 auto;padding:.28rem .78rem;border-radius:2rem;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.13);color:rgba(255,255,255,.42);font-family:var(--f2);font-size:.65rem;cursor:none;white-space:nowrap;transition:all .25s}
+.oq:hover{background:rgba(255,215,0,.18);color:var(--gw);border-color:rgba(255,215,0,.4)}
+.opmsgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.1) transparent}
+.om{max-width:88%;padding:.78rem 1rem;border-radius:1.1rem;font-family:var(--f5);font-size:.83rem;line-height:1.7;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.om.u{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.18);color:#E8E8E8;align-self:flex-end;border-radius:1.1rem 1.1rem .2rem 1.1rem}
+.om.a{background:rgba(26,8,20,.9);border:1px solid rgba(255,215,0,.08);color:rgba(255,255,255,.62);align-self:flex-start;border-radius:1.1rem 1.1rem 1.1rem .2rem}
+.optyp{display:flex;gap:5px;padding:.5rem;align-self:flex-start}
+.optyp span{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:td 1.4s infinite}
+.optyp span:nth-child(2){animation-delay:.2s}.optyp span:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-9px);opacity:1}}
-.op-row{display:flex;gap:.5rem;padding:.75rem 1rem;border-top:1px solid rgba(226,180,76,.08)}
-.op-inp{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(226,180,76,.12);border-radius:2rem;padding:.56rem 1.1rem;color:var(--c);font-size:.84rem;font-family:var(--fs);outline:none;transition:border-color .3s}
-.op-inp:focus{border-color:rgba(226,180,76,.42)}
-.op-inp::placeholder{color:var(--g4)}
-.op-send{width:38px;height:38px;flex-shrink:0;border-radius:50%;border:none;background:linear-gradient(135deg,var(--g3),var(--g),var(--g2));color:var(--d);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;font-size:1rem}
-.op-send:hover{transform:scale(1.15) rotate(-10deg);box-shadow:var(--glow2)}
-
-/* SCROLL REVEAL */
-.rv{opacity:0;transform:translateY(55px);transition:opacity .9s ease,transform .9s ease}
+.oprow{display:flex;gap:.5rem;padding:.78rem 1rem;border-top:1px solid rgba(255,255,255,.07)}
+.opinp{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.1);border-radius:2rem;padding:.56rem 1.1rem;color:#E8E8E8;font-family:var(--f5);font-size:.84rem;outline:none;transition:all .3s}
+.opinp:focus{border-color:rgba(255,215,0,.42);box-shadow:0 0 15px rgba(255,215,0,.1)}
+.opinp::placeholder{color:rgba(255,215,0,.25)}
+.opsend{width:38px;height:38px;flex-shrink:0;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gd),var(--gold),#FFE878);color:var(--void-d);cursor:none;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.opsend:hover{transform:scale(1.15) rotate(-12deg);box-shadow:0 0 25px rgba(255,215,0,.32)}
+.rv{opacity:0;transform:translateY(60px);transition:opacity .9s ease,transform .9s ease}
 .rv.on{opacity:1;transform:translateY(0)}
-
-/* FOOTER */
-footer{text-align:center;padding:3.5rem 2rem 2rem;border-top:1px solid rgba(226,180,76,.07);background:linear-gradient(0deg,rgba(5,1,10,.98),transparent)}
-.ft-n{font-family:var(--f2);font-size:1.3rem;color:var(--g);margin-bottom:.6rem;text-shadow:0 0 30px rgba(226,180,76,.3)}
-footer p{font-size:.7rem;color:var(--a);line-height:1.9}
-.ft-ls{display:flex;gap:1.8rem;justify-content:center;margin-top:1.2rem;flex-wrap:wrap}
-.ft-ls a{font-size:.66rem;color:var(--g4);text-decoration:none;letter-spacing:.12em;text-transform:uppercase;font-family:var(--f);transition:color .3s}
-.ft-ls a:hover{color:var(--g)}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  .pg{grid-template-columns:repeat(3,1fr)}
-  .pc:nth-child(4),.pc:nth-child(5){display:none}
-  .n-links{display:none}
-  .zd-wrap,.kund-wrap{flex-direction:column}
-  .nak-names-grid{grid-template-columns:repeat(6,1fr)}
-}
-@media(max-width:560px){
-  .pg{grid-template-columns:repeat(2,1fr)}
-  .pc:nth-child(3){display:none}
-  h1{font-size:2.5rem}
-  .nak-names-grid{grid-template-columns:repeat(5,1fr)}
-  .smr{flex-wrap:wrap}
-}
+footer{text-align:center;padding:4rem 2rem 2.5rem;border-top:1px solid rgba(255,255,255,.06);background:linear-gradient(0deg,rgba(5,8,18,1),transparent)}
+.ftn{font-family:var(--f1);font-size:1.4rem;color:var(--gw);margin-bottom:.7rem;text-shadow:0 0 30px rgba(240,184,99,.3)}
+.ftd{font-family:var(--f5);font-size:.72rem;color:rgba(255,255,255,.32);line-height:1.9}
+.ftls{display:flex;gap:2rem;justify-content:center;margin-top:1.3rem;flex-wrap:wrap}
+.ftls a{font-family:var(--f2);font-size:.64rem;color:rgba(255,215,0,.32);text-decoration:none;letter-spacing:.14em;text-transform:uppercase;transition:color .3s;cursor:none}.ftls a:hover{color:var(--gw)}
+.ftom{font-family:var(--f3);font-size:1rem;color:rgba(255,215,0,.2);margin-top:1.5rem;letter-spacing:.12em;font-style:italic}
+@media(max-width:1100px){.ksbody{grid-template-columns:1fr}.kschart{border-right:none;border-bottom:1px solid rgba(255,215,0,.08)}}
+@media(max-width:900px){.pg{grid-template-columns:repeat(3,1fr)}.nlinks{display:none}.nngrid{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:560px){.pg{grid-template-columns:repeat(2,1fr)}h1.htit{font-size:2.5rem}.nngrid{grid-template-columns:repeat(5,1fr)}.ksbody{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div id="cur"></div><div id="cur-ring"></div><canvas id="trail"></canvas>
+<canvas id="gl"></canvas><canvas id="ptc"></canvas>
 
-<!-- LOADING -->
-<div id="load">
-  <div class="ld-mandala">
-    <svg viewBox="0 0 200 200" fill="none">
-      <circle cx="100" cy="100" r="95" stroke="rgba(226,180,76,.12)" stroke-width="1"/>
-      <circle cx="100" cy="100" r="72" stroke="rgba(226,180,76,.08)" stroke-width="1"/>
-      <g stroke="rgba(226,180,76,.55)" stroke-width="1.2">
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(45,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(90,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(135,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(180,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(225,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(270,100,100)"/>
-        <ellipse cx="100" cy="64" rx="8" ry="22" fill="rgba(226,180,76,.05)" transform="rotate(315,100,100)"/>
-      </g>
-      <text x="100" y="108" text-anchor="middle" font-family="Cinzel Decorative,serif" font-size="20" fill="rgba(226,180,76,.85)" font-weight="700">✦</text>
-    </svg>
+<div id="ld">
+  <div class="lmand">
+    <div class="lr1"><svg viewBox="0 0 120 120" width="120" height="120" fill="none"><circle cx="60" cy="60" r="55" stroke="rgba(255,215,0,.18)" stroke-width="1"/><g stroke="rgba(255,215,0,.6)" stroke-width="1.2"><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(45,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(90,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(135,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(180,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(225,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(270,60,60)"/><ellipse cx="60" cy="30" rx="7" ry="20" fill="rgba(255,215,0,.06)" transform="rotate(315,60,60)"/></g><text x="60" y="67" text-anchor="middle" font-family="Cinzel Decorative,serif" font-size="16" fill="rgba(255,215,0,.85)" font-weight="700">&#x2726;</text></svg></div>
+    <div class="lr2"><svg viewBox="0 0 90 90" width="90" height="90" fill="none"><circle cx="45" cy="45" r="42" stroke="rgba(255,215,0,.1)" stroke-width="1"/><line x1="45" y1="5" x2="45" y2="85" stroke="rgba(255,215,0,.35)" stroke-width=".8"/><line x1="5" y1="45" x2="85" y2="45" stroke="rgba(255,215,0,.35)" stroke-width=".8"/><line x1="17" y1="17" x2="73" y2="73" stroke="rgba(255,215,0,.25)" stroke-width=".8"/><line x1="73" y1="17" x2="17" y2="73" stroke="rgba(255,215,0,.25)" stroke-width=".8"/></svg></div>
+    <div class="lr3"><svg viewBox="0 0 60 60" width="60" height="60" fill="none"><polygon points="30,3 57,52 3,52" stroke="rgba(255,215,0,.45)" stroke-width="1" fill="rgba(255,215,0,.06)"/></svg></div>
   </div>
-  <div class="ld-name">Aetheris</div>
-  <div class="ld-shloka">ज्योतिषं सर्वशास्त्राणां चक्षुः स्मृतम्</div>
-  <div class="ld-track"><div class="ld-fill" id="lf"></div></div>
-  <div class="ld-msg" id="lm">AWAKENING THE COSMOS</div>
+  <div class="ltit">Aetheris</div>
+  <div class="lshl">&#x091C;&#x094D;&#x092F;&#x094B;&#x0924;&#x093F;&#x0937;&#x0902; &#x0938;&#x0930;&#x094D;&#x0935;&#x0936;&#x093E;&#x0938;&#x094D;&#x0924;&#x094D;&#x0930;&#x093E;&#x0923;&#x093E;&#x0902; &#x091A;&#x0915;&#x094D;&#x0937;&#x0941;&#x0903; &#x0938;&#x094D;&#x092E;&#x0943;&#x0924;&#x092E;&#x094D;</div>
+  <div class="lbar"><div class="lfill"></div></div>
+  <div class="lmsg" id="ldmsg">Awakening the cosmos&#x2026;</div>
 </div>
 
-<canvas id="gl"></canvas>
-<canvas id="pc"></canvas>
+<div id="rib"><span id="ri">&#x26A0;&#xFE0F;</span><strong id="rt"></strong><span id="rm"></span><button onclick="document.getElementById('rib').classList.remove('show')" style="margin-left:1rem;background:none;border:1px solid rgba(255,255,255,.2);border-radius:2rem;color:rgba(255,255,255,.6);font-family:var(--f4);font-size:.6rem;padding:.2rem .6rem;cursor:none">DISMISS</button></div>
 
-<!-- ALERT -->
-<div id="rib">
-  <span id="ri">⚠️</span><strong id="rt">—</strong><span id="rm">—</span>
-  <button onclick="_('rib').classList.remove('show')" style="margin-left:1rem;background:none;border:1px solid rgba(255,255,255,.2);border-radius:1rem;color:rgba(255,255,255,.7);font-size:.62rem;padding:.18rem .55rem;cursor:pointer;font-family:Cinzel,serif">DISMISS</button>
-</div>
-
-<!-- NAV -->
 <nav>
-  <div class="n-logo">
-    <div class="n-orb"><span>✦</span></div>
-    <div>
-      <div class="n-name">Aetheris</div>
-      <span class="n-tag">Ancient Wisdom · AI Precision · Swiss Ephemeris</span>
-    </div>
+  <div class="nlogo">
+    <div class="norb">&#x2726;</div>
+    <div><div class="nname">Aetheris</div><span class="ntag">astromata.com &#x00B7; Ancient Wisdom &#x00B7; AI Precision</span></div>
   </div>
-  <ul class="n-links">
-    <li><a href="#top">Panchang</a></li>
-    <li><a href="#muhurta">Muhurta</a></li>
+  <ul class="nlinks">
+    <li><a href="#pan">Panchang</a></li>
+    <li><a href="#muh">Muhurta</a></li>
     <li><a href="#chog">Choghadiya</a></li>
     <li><a href="#naks">Nakshatras</a></li>
-    <li><a href="#kundali">Kundali</a></li>
-    <li><a href="#zod">Zodiac</a></li>
-    <li><a href="https://vedic-clock-avtl.onrender.com/docs" target="_blank">API</a></li>
+    <li><a href="#kund">Kundali</a></li>
   </ul>
-  <button class="n-cta" onclick="toggleO()">🔮 Oracle</button>
+  <button class="ncta" onclick="toggleO()">&#x1F52E; Oracle</button>
 </nav>
 
 <div id="app">
-
-<!-- ─── HERO / PANCHANG ─── -->
-<section class="hero" id="top">
-  <div class="h-live">
-    <div class="h-dot"></div>
-    <span>Live · Swiss Ephemeris · Auto-updating</span>
+<section class="hero" id="pan">
+  <div class="hlive"><div class="hdot"></div><span class="hlt">Live &#x00B7; Swiss Ephemeris &#x00B7; Auto-updating</span></div>
+  <div class="hey" id="hey">&#x1F4CD; <span id="hlocd">Delhi, India</span> &nbsp;&#x00B7;&nbsp; <span id="hdate">&#x2014;</span></div>
+  <h1 class="htit"><span class="sh">The Living</span><br><span class="pl">Cosmic </span><span class="sh">Panchang</span></h1>
+  <p class="hsub">Not a website &#x2014; a cosmic consciousness interface.<br>Every movement carries billions of dollars of creativity.</p>
+  <div class="locp" onclick="chgLoc()">
+    <span style="font-size:1rem">&#x1F4CD;</span>
+    <span style="color:rgba(255,255,255,.45);font-size:.84rem">Location:</span>
+    <span style="color:#E8E8E8;font-weight:600;font-size:.84rem" id="locn">Delhi, India</span>
+    <span style="font-size:.63rem;color:var(--gd);font-family:var(--f2);letter-spacing:.1em">Change &#x203A;</span>
   </div>
-  <div class="h-eyebrow" id="h-ey">📍 <span id="h-loc">Delhi, India</span> &nbsp;·&nbsp; <span id="h-dt">—</span></div>
-  <h1><span class="sh">The Living</span><br><span class="pl">Cosmic </span><span class="sh">Panchang</span></h1>
-  <p class="h-sub">Swiss Ephemeris precision · AI Oracle · Real-time cosmos · 100% DrikPanchang verified<br>Moon grows with Tithi · All 27 Nakshatras · Full Kundali · 35 API endpoints</p>
-
-  <div class="loc-p" onclick="chgLoc()">
-    <span style="font-size:1rem">📍</span>
-    <span style="color:var(--a);font-size:.84rem">Location:</span>
-    <span style="color:var(--c);font-weight:600;font-size:.84rem" id="loc-n">Delhi, India</span>
-    <span style="font-size:.65rem;color:var(--g4);font-family:var(--f);letter-spacing:.1em">Change ›</span>
-  </div>
-
-  <div class="pg-wrap">
+  <div class="pgw">
     <div class="pg">
-      <!-- TITHI -->
       <div class="pc">
-        <div class="pc-l">Tithi</div>
+        <div class="pcl">Tithi</div>
         <div class="tr">
-          <svg viewBox="0 0 108 108">
-            <defs>
-              <linearGradient id="trg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#8b6914"/><stop offset="40%" stop-color="#e2b44c"/>
-                <stop offset="80%" stop-color="#f5d06e"/><stop offset="100%" stop-color="#e2b44c"/>
-              </linearGradient>
-              <filter id="gf"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <circle class="tr-glow" cx="54" cy="54" r="47"/>
-            <circle class="tr-bg" cx="54" cy="54" r="47"/>
-            <circle class="tr-prog" id="trp" cx="54" cy="54" r="47" stroke="url(#trg)" filter="url(#gf)"/>
-          </svg>
-          <div class="tr-txt"><div class="tr-pct" id="tr-p">—</div><div class="tr-lbl">elapsed</div></div>
+          <svg viewBox="0 0 110 110"><defs><linearGradient id="trg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b6914"/><stop offset="40%" stop-color="#FFD700"/><stop offset="80%" stop-color="#FFE878"/><stop offset="100%" stop-color="#F0B863"/></linearGradient><filter id="gf2"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <circle class="tr-gl" cx="55" cy="55" r="48"/><circle class="tr-bg" cx="55" cy="55" r="48"/><circle class="tr-prog" id="trprog" cx="55" cy="55" r="48" stroke="url(#trg)" filter="url(#gf2)"/></svg>
+          <div class="tr-txt"><div class="tr-pct" id="trpct">&#x2014;</div><div class="tr-lbl">elapsed</div></div>
         </div>
-        <div class="pc-v" id="t-n">Loading…</div>
-        <div class="pc-s" id="t-p">—</div>
+        <div class="pcv" id="tn">Loading&#x2026;</div><div class="pcs" id="tp">&#x2014;</div>
       </div>
-      <!-- VARA -->
-      <div class="pc">
-        <div class="pc-l">Vara</div>
-        <span class="pci" id="v-i">🌟</span>
-        <div class="pc-v" id="v-n">—</div>
-        <div class="pc-s" id="v-l">—</div>
-      </div>
-      <!-- NAKSHATRA -->
-      <div class="pc">
-        <div class="pc-l">Nakshatra</div>
-        <span class="pci">⭐</span>
-        <div class="pc-v" id="n-n">—</div>
-        <div class="pc-s" id="n-l">—</div>
-      </div>
-      <!-- YOGA -->
-      <div class="pc">
-        <div class="pc-l">Yoga</div>
-        <span class="pci" id="y-i">☯️</span>
-        <div class="pc-v" id="y-n">—</div>
-        <div class="pc-s" id="y-q">—</div>
-      </div>
-      <!-- KARANA -->
-      <div class="pc">
-        <div class="pc-l">Karana</div>
-        <span class="pci">🌙</span>
-        <div class="pc-v" id="k-n">—</div>
-        <div class="pc-s" id="k-t">—</div>
-      </div>
+      <div class="pc"><div class="pcl">Vara</div><span class="pci" id="vi">&#x1F31F;</span><div class="pcv" id="vn">&#x2014;</div><div class="pcs" id="vl">&#x2014;</div></div>
+      <div class="pc"><div class="pcl">Nakshatra</div><span class="pci">&#x2B50;</span><div class="pcv" id="nn">&#x2014;</div><div class="pcs" id="nl">&#x2014;</div></div>
+      <div class="pc"><div class="pcl">Yoga</div><span class="pci" id="yi">&#x2728;</span><div class="pcv" id="yn">&#x2014;</div><div class="pcs" id="yq">&#x2014;</div></div>
+      <div class="pc"><div class="pcl">Karana</div><span class="pci">&#x1F319;</span><div class="pcv" id="kn">&#x2014;</div><div class="pcs" id="kt">&#x2014;</div></div>
     </div>
-
-    <!-- SUN-MOON RIBBON -->
     <div class="smr">
-      <div class="smr-i"><span class="smr-ico">🌅</span><span class="smr-l">Sunrise</span><div class="smr-v" id="sr">—</div></div>
-      <div class="smr-i"><span class="smr-ico">🌇</span><span class="smr-l">Sunset</span><div class="smr-v" id="ss">—</div></div>
-      <div class="smr-i"><span class="smr-ico">🌕</span><span class="smr-l">Moonrise</span><div class="smr-v" id="mr">—</div></div>
-      <div class="smr-i"><span class="smr-ico">⏱</span><span class="smr-l">Day Length</span><div class="smr-v" id="dl">—</div><div class="smr-s" id="gh">—</div></div>
-      <div class="smr-i"><span class="smr-ico">🕉️</span><span class="smr-l">Samvatsara</span><div class="smr-v" id="svt" style="font-size:.95rem">—</div></div>
-      <div class="smr-i"><span class="smr-ico">🌊</span><span class="smr-l">Ritu</span><div class="smr-v" id="rtu" style="font-size:.95rem">—</div></div>
+      <div class="smri"><span class="smrico">&#x1F305;</span><span class="smrl">Sunrise</span><div class="smrv" id="srT">&#x2014;</div></div>
+      <div class="smri"><span class="smrico">&#x1F307;</span><span class="smrl">Sunset</span><div class="smrv" id="ssT">&#x2014;</div></div>
+      <div class="smri"><span class="smrico">&#x1F315;</span><span class="smrl">Moonrise</span><div class="smrv" id="mrT">&#x2014;</div></div>
+      <div class="smri"><span class="smrico">&#x23F1;</span><span class="smrl">Day Length</span><div class="smrv" id="dlT">&#x2014;</div><div class="smrs" id="ghT">&#x2014;</div></div>
+      <div class="smri"><span class="smrico">&#x1F549;&#xFE0F;</span><span class="smrl">Samvatsara</span><div class="smrv" id="svtT" style="font-size:.9rem">&#x2014;</div></div>
+      <div class="smri"><span class="smrico">&#x1F30A;</span><span class="smrl">Ritu</span><div class="smrv" id="rtuT" style="font-size:.9rem">&#x2014;</div></div>
     </div>
-
-    <!-- SAMVAT CHIPS -->
-    <div class="sv-row">
-      <div class="sv">Vikram <strong id="sv1">—</strong></div>
-      <div class="sv">Shaka <strong id="sv2">—</strong></div>
-      <div class="sv">Month: <strong id="sv3">—</strong></div>
-      <div class="sv">Paksha: <strong id="sv4">—</strong></div>
-      <div class="sv">Ayana: <strong id="sv5">—</strong></div>
-      <div class="sv">Yoga: <strong id="sv6">—</strong></div>
+    <div class="svrow">
+      <div class="sv">Vikram <strong id="sv1">&#x2014;</strong></div>
+      <div class="sv">Shaka <strong id="sv2">&#x2014;</strong></div>
+      <div class="sv">Masa: <strong id="sv3">&#x2014;</strong></div>
+      <div class="sv">Paksha: <strong id="sv4">&#x2014;</strong></div>
+      <div class="sv">Ayana: <strong id="sv5">&#x2014;</strong></div>
+      <div class="sv">Yoga: <strong id="sv6">&#x2014;</strong></div>
     </div>
   </div>
 </section>
 
-<!-- ─── MUHURTA PERIODS ─── -->
-<section class="sec rv" id="muhurta">
-  <div class="sec-h"><h2 class="sec-t">Auspicious & Inauspicious Periods</h2><div class="sec-b"></div><span class="sec-n" id="sec-ln">Today</span></div>
-  <div class="prd-g" id="prd-g"></div>
+<section class="sec rv" id="muh">
+  <div class="sec-h"><h2 class="sec-t">Auspicious &amp; Inauspicious Periods</h2><div class="sec-bar"></div><span class="sec-n" id="secln">Today</span></div>
+  <div class="prdg" id="prdg"></div>
 </section>
 
-<!-- ─── CHOGHADIYA ─── -->
-<section class="sec rv" id="chog" style="padding-top:1rem">
+<section class="sec rv" id="chog" style="padding-top:.5rem">
   <div class="sec-h">
-    <h2 class="sec-t">Choghadiya</h2><div class="sec-b"></div>
-    <div class="c-tabs">
-      <button class="ct on" id="cdb" onclick="setChog('day')">☀️ Day</button>
-      <button class="ct"    id="cnb" onclick="setChog('night')">🌙 Night</button>
+    <h2 class="sec-t">Choghadiya</h2><div class="sec-bar"></div>
+    <div class="ctabs">
+      <button class="ct on" id="cdb" onclick="setChog('day')">&#x2600;&#xFE0F; Day</button>
+      <button class="ct" id="cnb" onclick="setChog('night')">&#x1F319; Night</button>
     </div>
   </div>
-  <div class="chog-r" id="chog-r"></div>
+  <div class="chogr" id="chogr"><div style="color:rgba(255,255,255,.3);font-family:var(--f3);font-style:italic;padding:1rem">Loading Choghadiya&#x2026;</div></div>
 </section>
 
-<!-- ─── 27 NAKSHATRAS + MOON PHASE ─── -->
-<section class="sec rv" id="naks" style="padding-top:1rem">
-  <div class="sec-h">
-    <h2 class="sec-t">27 Nakshatras · Moon's Cosmic Path</h2><div class="sec-b"></div>
-    <span class="sec-n">Moon size = Tithi phase</span>
-  </div>
-  <!-- MOON PHASE LEGEND -->
-  <div class="moon-legend" id="moon-legend">
-    <div class="ml-item"><div class="ml-moon" style="background:radial-gradient(circle at 30% 30%,#fffbe0,#ccc)"></div>Purnima (Full)</div>
-    <div class="ml-item"><div class="ml-moon" style="background:linear-gradient(90deg,#fffbe0 50%,#333 50%)"></div>Ashtami (Half)</div>
-    <div class="ml-item"><div class="ml-moon" style="background:radial-gradient(circle,#555,#222)"></div>Amavasya (New)</div>
-    <div class="ml-item">🌙 = Moon's current Nakshatra</div>
-  </div>
-  <!-- CANVAS - 340px tall so all 27 names visible -->
-  <div class="nak-wrap"><canvas id="nakC"></canvas></div>
-  <!-- ALL 27 NAKSHATRA NAMES as clickable grid -->
-  <div class="nak-names-grid" id="nak-names"></div>
+<section class="sec rv" id="naks" style="padding-top:2rem">
+  <div class="sec-h"><h2 class="sec-t">27 Nakshatras &#x00B7; Moon&#x27;s Orbital Path</h2><div class="sec-bar"></div><span class="sec-n">Moon size = Tithi phase</span></div>
+  <div class="nakbox"><canvas id="nakC"></canvas></div>
+  <div class="nngrid" id="nngrid"></div>
 </section>
 
-<!-- ─── ZODIAC WHEEL ─── -->
-<section class="sec rv" id="zod" style="padding-top:1rem">
-  <div class="sec-h"><h2 class="sec-t">12 Rashis · Zodiac Wheel</h2><div class="sec-b"></div><span class="sec-n">Click any Rashi</span></div>
-  <div class="zd-wrap">
-    <canvas id="zodiac" width="420" height="420"></canvas>
-    <div class="zi">
-      <div class="zi-s" id="zi-s">♉ Taurus</div>
-      <div class="zi-e" id="zi-e">Earth · Fixed · Venus-ruled</div>
-      <div class="zi-d" id="zi-d">The Sun is currently in Taurus (Vrishabha). Venus-ruled earth sign — wealth, beauty, stability, and artistic expression are highlighted. Excellent for financial decisions and creative ventures.</div>
-      <div class="zi-ps" id="zi-ps"><div class="zi-p">♀ Venus — Lord</div><div class="zi-p">🌙 Moon — Exalted here</div></div>
+<section class="sec rv" id="kund" style="padding-top:2rem">
+  <div class="sec-h"><h2 class="sec-t">Kundali &#x00B7; North Indian Birth Chart</h2><div class="sec-bar"></div><span class="sec-n">Swiss Ephemeris &#x00B7; Lahiri Ayanamsa</span></div>
+  <div class="ksec">
+    <div class="kshdr">
+      <div>
+        <div style="font-family:var(--f2);font-size:1rem;color:var(--gw);margin-bottom:.3rem">&#x2726; Generate Kundali</div>
+        <div style="font-family:var(--f3);font-size:.85rem;color:rgba(255,255,255,.35);font-style:italic">North Indian chart &#x00B7; 9 planets &#x00B7; Dignity &#x00B7; Nakshatra &#x00B7; Dasha</div>
+      </div>
+      <div class="ksform">
+        <input class="kf" type="date" id="kdob" value="1996-05-19" style="width:140px">
+        <input class="kf" type="time" id="ktob" value="14:25" style="width:100px">
+        <input class="kf" type="text" id="kcity" placeholder="City of birth&#x2026;" value="Bangalore" style="width:155px">
+        <input class="kf" type="text" id="kname" placeholder="Name" value="" style="width:110px">
+        <button class="kgbtn" onclick="genK()">&#x2726; Generate</button>
+      </div>
     </div>
-  </div>
-</section>
-
-<!-- ─── KUNDALI MAKER ─── -->
-<section class="sec rv" id="kundali" style="padding-top:1rem">
-  <div class="sec-h"><h2 class="sec-t">Kundali · Birth Chart</h2><div class="sec-b"></div><span class="sec-n">North Indian Style</span></div>
-  <div class="kund-wrap">
-    <div class="kund-chart">
-      <canvas id="kundC" width="380" height="380"></canvas>
-    </div>
-    <div class="kund-details">
-      <div class="kund-form">
-        <div class="kf-title">Generate Your Kundali</div>
-        <div class="kf-row">
-          <div><label class="kf-lbl">Date of Birth</label><input class="kf-inp" type="date" id="kf-dob" value="1996-05-19"></div>
-          <div><label class="kf-lbl">Time of Birth</label><input class="kf-inp" type="time" id="kf-tob" value="14:25"></div>
-        </div>
-        <div class="kf-row">
-          <div style="grid-column:span 2"><label class="kf-lbl">Place of Birth</label>
-            <input class="kf-inp" type="text" id="kf-city" placeholder="e.g. Delhi, Mumbai, London…" value="Delhi">
+    <div class="ksbody">
+      <div class="kschart">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+          <div style="display:flex;gap:.4rem">
+            <button class="kmbtn on" id="b2d" onclick="setKM('2d')">2D Classic</button>
+            <button class="kmbtn" id="b3d" onclick="setKM('3d')">3D Cosmic</button>
+            <button class="kmbtn" id="bnv" onclick="setKM('nav')">Navamsa D9</button>
           </div>
+          <div style="font-family:var(--f2);font-size:.72rem;color:rgba(255,215,0,.5)" id="cclagna">&#x2014;</div>
         </div>
-        <button class="kf-btn" onclick="genKundali()">✦ Generate Kundali</button>
+        <canvas id="kundC"></canvas>
+        <div style="font-family:var(--f4);font-size:.56rem;color:rgba(255,255,255,.22);text-align:center;letter-spacing:.1em">Click any house for details &#x00B7; Drag in 3D to rotate</div>
       </div>
-      <div class="kund-result" id="k-result">
-        <div style="color:var(--a);font-size:.8rem;text-align:center;padding:1rem">Enter birth details and click Generate</div>
+      <div class="ksinfo" id="ksinfo">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;padding:3rem;text-align:center;flex:1">
+          <div style="font-size:3rem;opacity:.2;animation:flt 4s ease-in-out infinite">&#x1FA90;</div>
+          <div style="font-family:var(--f3);font-size:1rem;color:rgba(255,255,255,.25);font-style:italic">Enter birth details and generate your Kundali</div>
+          <div style="font-family:var(--f4);font-size:.62rem;color:rgba(255,255,255,.15);letter-spacing:.15em">9 Grahas &#x00B7; Dignity &#x00B7; Nakshatra &#x00B7; Pada &#x00B7; Dasha</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── FESTIVALS ─── -->
-<section class="sec rv" style="padding-top:1rem">
-  <div class="sec-h"><h2 class="sec-t">Festivals & Vrats</h2><div class="sec-b"></div><span class="sec-n">Sacred Calendar</span></div>
-  <div class="fest-g" id="fest-g"></div>
+<section class="sec rv" style="padding-top:2rem">
+  <div class="sec-h"><h2 class="sec-t">Festivals &amp; Sacred Calendar</h2><div class="sec-bar"></div></div>
+  <div class="festg" id="festg"></div>
 </section>
 
 <footer>
-  <div class="ft-n">✦ Aetheris</div>
-  <p>Ancient Wisdom · AI Precision · Swiss Ephemeris · 100% DrikPanchang Verified<br>
-     35 API endpoints · 990+ cities · All 27 Nakshatras · 5-level Vimshottari Dasha · Free forever</p>
-  <div class="ft-ls">
-    <a href="#top">Panchang</a><a href="#muhurta">Muhurta</a><a href="#chog">Choghadiya</a>
-    <a href="#naks">Nakshatras</a><a href="#kundali">Kundali</a><a href="#zod">Zodiac</a>
-    <a href="https://vedic-clock-avtl.onrender.com/docs" target="_blank">API Docs</a>
-    <a href="https://github.com/acharyaanand/vedic_clock" target="_blank">GitHub</a>
-  </div>
-  <p style="margin-top:1.5rem;opacity:.28;font-size:.6rem">
-    सर्वे भवन्तु सुखिनः · सर्वे सन्तु निरामयाः · May all beings be happy and free
-  </p>
+  <div class="ftn">&#x2726; Aetheris</div>
+  <p class="ftd">Ancient Wisdom &#x00B7; AI Precision &#x00B7; Swiss Ephemeris &#x00B7; astromata.com<br>astromata-api.onrender.com &#x00B7; Lahiri Ayanamsa &#x00B7; All 27 Nakshatras &#x00B7; Free forever</p>
+  <div class="ftls"><a href="#pan">Panchang</a><a href="#muh">Muhurta</a><a href="#chog">Choghadiya</a><a href="#naks">Nakshatras</a><a href="#kund">Kundali</a></div>
+  <div class="ftom">&#x0938;&#x0930;&#x094D;&#x0935;&#x0947; &#x092D;&#x0935;&#x0928;&#x094D;&#x0924;&#x0941; &#x0938;&#x0941;&#x0916;&#x093F;&#x0928;&#x0903; &#x00B7; &#x0938;&#x0930;&#x094D;&#x0935;&#x0947; &#x0938;&#x0928;&#x094D;&#x0924;&#x0941; &#x0928;&#x093F;&#x0930;&#x093E;&#x092E;&#x092F;&#x093E;&#x0903;</div>
 </footer>
 </div>
 
-<!-- ORACLE -->
-<button class="orac-btn" onclick="toggleO()" title="Ask the Oracle">🔮</button>
-<div class="orac-panel" id="op">
-  <div class="op-h">
-    <div class="op-gem">🔮</div>
-    <div><div class="op-nm">Aetheris Oracle</div>
-    <div class="op-st"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 6px #22c55e"></span>Claude AI · Live Panchang Context</div></div>
-    <button class="op-x" onclick="toggleO()">✕</button>
+<button class="ofab" onclick="toggleO()">&#x1F52E;</button>
+<div class="opanel" id="opanel">
+  <div class="oph">
+    <div class="opgem">&#x1F52E;</div>
+    <div><div class="opnm">Aetheris Oracle</div><div class="opst"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 6px #22c55e"></span>Claude AI &#x00B7; Live Context</div></div>
+    <button class="opx" onclick="toggleO()">&#x2715;</button>
   </div>
-  <div class="op-q">
-    <button class="oq" onclick="aq('What is Rahu Kaal today and why avoid it?')">🚫 Rahu Kaal</button>
-    <button class="oq" onclick="aq('Is today auspicious for new business?')">💼 Business</button>
-    <button class="oq" onclick="aq('Best travel muhurta today?')">✈️ Travel</button>
-    <button class="oq" onclick="aq('Tell me about today\'s nakshatra mythology')">⭐ Nakshatra</button>
-    <button class="oq" onclick="aq('What does today\'s yoga signify?')">☯️ Yoga</button>
-    <button class="oq" onclick="aq('Best time for puja today?')">🪔 Puja</button>
-    <button class="oq" onclick="aq('Explain today\'s tithi significance')">🌙 Tithi</button>
+  <div class="opq">
+    <button class="oq" onclick="aq('What is Rahu Kaal today?')">&#x1F6AB; Rahu Kaal</button>
+    <button class="oq" onclick="aq('Is today good for business?')">&#x1F4BC; Business</button>
+    <button class="oq" onclick="aq('Best travel muhurta today?')">&#x2708;&#xFE0F; Travel</button>
+    <button class="oq" onclick="aq('What does today nakshatra mean?')">&#x2B50; Nakshatra</button>
+    <button class="oq" onclick="aq('Auspicious puja time today?')">&#x1FA94; Puja</button>
   </div>
-  <div class="op-msgs" id="omsgs">
-    <div class="om a">🙏 <em>Namaste.</em> I am the Aetheris Oracle — your guide to the ancient science of Jyotish Shastra. I have real-time access to today's complete Panchang. Ask me anything about auspicious timings, planetary influences, or Vedic wisdom.</div>
+  <div class="opmsgs" id="opmsgs">
+    <div class="om a">&#x1F64F; <em>Namaste.</em> I am the Aetheris Oracle. Ask me anything about today&#x27;s Panchang, Muhurta, or cosmic guidance.</div>
   </div>
-  <div class="op-row">
-    <input class="op-inp" id="oi" placeholder="Ask the Oracle…" onkeydown="if(event.key==='Enter')sendO()">
-    <button class="op-send" onclick="sendO()">➤</button>
+  <div class="oprow">
+    <input class="opinp" id="oinp" placeholder="Ask the Oracle&#x2026;" onkeydown="if(event.key==='Enter')sendO()">
+    <button class="opsend" onclick="sendO()">&#x27A4;</button>
   </div>
 </div>
-
+<div id="htip"><div class="htt" id="htitt">&#x2014;</div><div id="htbody"></div></div>
 <script>
-// ═══════════════════════════════════════════════════════════
-//  AETHERIS — WORLD'S GREATEST PANCHANG
-//  ✦ WebGL Galaxy Shader  ✦ Moon grows with Tithi
-//  ✦ All 27 Nakshatra names  ✦ Kundali maker
-//  ✦ Interactive Zodiac  ✦ Oracle AI
-// ═══════════════════════════════════════════════════════════
-
-const API='https://vedic-clock-avtl.onrender.com';
-let LOC={lat:28.6139,lon:77.2090,name:'Delhi, India',tz:5.5};
-let PD=null,CD=null,chogMode='day';
-
-const _=id=>document.getElementById(id);
+// ═══════════════════════════════════════════════════════════════
+// AETHERIS — COMPLETE LIVING COSMIC PANCHANG
+// API: astromata-api.onrender.com (app.py — POST /api/kundli etc)
+// ═══════════════════════════════════════════════════════════════
+const APIS=['https://astromata-api.onrender.com','https://vedic-clock-avtl.onrender.com'];
+let APIBASE=APIS[0];
+const G=id=>document.getElementById(id);
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-
-// ── BOOT ──────────────────────────────────────────────────
-async function boot(){
-  const lf=_('lf'),lm=_('lm');
-  const steps=[[8,'Igniting the cosmos…'],[20,'Locating position…'],[35,'Invoking Swiss Ephemeris…'],[52,'Computing Tithi & Nakshatra…'],[65,'Loading Choghadiya…'],[78,'Rendering WebGL galaxy…'],[92,'Awakening Oracle…'],[100,'Aetheris is ready ✦']];
-  initWebGL();initParticles();
-  await tryGeo();
-  for(const[p,m] of steps){lf.style.width=p+'%';lm.textContent=m;await wait(270)}
-  const[r1,r2,r3]=await Promise.allSettled([fetchPT(),fetchFull(),fetchMoon()]);
-  if(r1.status==='fulfilled')renderPanchang();else fallback();
-  if(r2.status==='fulfilled'){renderPeriods();renderChog();renderFests();}
-  if(r3.status==='fulfilled'&&r3.value)_('mr').textContent=r3.value.moonrise||'—';
-  renderSamvat();updateDate();
-  await wait(500);
-  _('load').classList.add('gone');
-  setupReveal();
-  initNakCanvas();
-  initZodiac();
-  renderNakNames();
-  initKundali();
-  setInterval(updateDate,60000);
-}
-
-// ── GEO ──────────────────────────────────────────────────
-async function tryGeo(){
-  try{
-    const p=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:4500,maximumAge:300000}));
-    LOC.lat=p.coords.latitude;LOC.lon=p.coords.longitude;
-    try{const r=await fetch(`${API}/api/search-location?q=search&lat=${LOC.lat}&lon=${LOC.lon}`).then(x=>x.json());if(r?.name){LOC.name=r.name+(r.state?', '+r.state:r.country?', '+r.country:'');LOC.tz=r.tz_offset||5.5;}}catch(e){}
-    setLoc(LOC.name);
-  }catch(e){}
-}
-function setLoc(n){_('loc-n').textContent=n;_('h-loc').textContent=n;_('sec-ln').textContent=n.split(',')[0];}
-async function chgLoc(){
-  const q=prompt('Enter city name:');if(!q)return;
-  try{
-    const r=await fetch(`${API}/api/search-location?q=${encodeURIComponent(q)}`).then(x=>x.json());
-    if(r?.lat){LOC={lat:r.lat,lon:r.lon,tz:r.tz_offset||5.5,name:r.name+(r.state?', '+r.state:r.country?', '+r.country:'')};setLoc(LOC.name);PD=null;CD=null;const[a,b,c]=await Promise.allSettled([fetchPT(),fetchFull(),fetchMoon()]);if(a.status==='fulfilled')renderPanchang();if(b.status==='fulfilled'){renderPeriods();renderChog();renderFests();}if(c.status==='fulfilled'&&c.value)_('mr').textContent=c.value.moonrise||'—';renderSamvat();}
-    else alert('City not found. Try a major city.');
-  }catch(e){alert('Search error.');}
-}
-
-// ── FETCH ─────────────────────────────────────────────────
-async function fetchPT(){const n=new Date();PD=await fetch(`${API}/api/panchanga-timings?year=${n.getFullYear()}&month=${n.getMonth()+1}&day=${n.getDate()}&lat=${LOC.lat}&lon=${LOC.lon}&tz=${LOC.tz}`).then(r=>r.json());return PD;}
-async function fetchFull(){const n=new Date(),p=v=>String(v).padStart(2,'0');CD=await fetch(`${API}/api/panchanga?date=${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}&lat=${LOC.lat}&lon=${LOC.lon}&tz=${LOC.tz}`).then(r=>r.json());return CD;}
-async function fetchMoon(){const n=new Date();return fetch(`${API}/api/moonrise?year=${n.getFullYear()}&month=${n.getMonth()+1}&day=${n.getDate()}&lat=${LOC.lat}&lon=${LOC.lon}&tz=${LOC.tz}`).then(r=>r.json());}
-
-// ── RENDER PANCHANG ───────────────────────────────────────
-function renderPanchang(){
-  if(!PD)return;
-  const now=new Date();
-  const toM=s=>{if(!s)return 0;s=String(s);const pm=s.includes('PM'),am=s.includes('AM');const[h,m]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(m||0);};
-  // Tithi
-  const ti=PD.tithi?.[0];
-  if(ti){
-    _('t-n').textContent=ti.name;
-    _('t-p').textContent=`${ti.paksha} Paksha · #${ti.number}`;
-    const sm=toM(ti.start?.time_24||ti.start?.time||'05:28');
-    const em=toM(ti.end?.time_24||ti.end?.time||'20:00');
-    const nm=now.getHours()*60+now.getMinutes();
-    const pct=Math.min(100,Math.max(0,(nm-sm)/(em-sm)*100));
-    _('tr-p').textContent=Math.round(pct)+'%';
-    _('trp').style.strokeDashoffset=296*(1-pct/100);
-  }
-  const va=PD.vara;
-  if(va){_('v-n').textContent=va.name;_('v-l').textContent='Lord: '+va.lord;const vi={Sunday:'☀️',Monday:'🌙',Tuesday:'🔴',Wednesday:'💚',Thursday:'🟡',Friday:'💎',Saturday:'🔮'};_('v-i').textContent=vi[va.name]||'🌟';}
-  const na=PD.nakshatra?.[0];
-  if(na){_('n-n').textContent=na.name;_('n-l').textContent=`Lord: ${na.lord} · ${na.nature}`;}
-  const yo=PD.yoga?.[0];
-  if(yo){_('y-n').textContent=yo.name;_('y-q').textContent=yo.is_auspicious?'✅ Auspicious':'⚠️ Inauspicious';_('y-i').textContent=yo.is_auspicious?'✨':'⚠️';}
-  const ka=PD.karana?.[0];
-  if(ka){_('k-n').textContent=ka.name;_('k-t').textContent=ka.type+(ka.is_vishti?' · 🚫 Vishti':'');}
-  _('sr').textContent=PD.sunrise||'—';_('ss').textContent=PD.sunset||'—';
-  if(PD.sunrise&&PD.sunset){
-    const toH=s=>{const[h,m]=(s||'').replace(/AM|PM|\s/g,'').split(':').map(Number);return(s.includes('PM')&&h!==12?h+12:s.includes('AM')&&h===12?0:h)+m/60;};
-    const dl=Math.max(0,toH(PD.sunset)-toH(PD.sunrise));
-    _('dl').textContent=`${Math.floor(dl)}h ${Math.round((dl%1)*60)}m`;
-    _('gh').textContent=`${Math.round(dl/24*60)} Ghati`;
-  }
-  updateDate();renderSamvat();renderNakNames();
-}
-
-function renderSamvat(){
-  const now=new Date();
-  const vik=now.getFullYear()+57,shk=now.getFullYear()-78;
-  const MONTHS=['Chaitra','Vaishakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Ashwin','Kartika','Margashirsha','Paush','Magha','Phalguna'];
-  const SV=["Prabhava","Vibhava","Shukla","Pramoda","Prajapati","Angiras","Shrimukha","Bhava","Yuvan","Dhatri","Ishvara","Bahudhanya","Pramathi","Vikrama","Vrisha","Chitrabanu","Svabhanu","Tarana","Parthiva","Vyaya","Sarvajit","Sarvadharin","Virodhi","Vikrita","Khara","Nandana","Vijaya","Jaya","Manmatha","Durmukhi","Hevilambi","Vilambi","Vikari","Sharvari","Plava","Shubhakrit","Shobhakrit","Krodhi","Vishvavasu","Parabhava","Plavanga","Kilaka","Saumya","Sadharana","Virodhakrit","Paridhavin","Pramadicha","Ananda","Rakshasa","Nala","Pingala","Kalayukti","Siddharthi","Raudri","Durmati","Dundubhi","Rudhirodgari","Raktakshi","Krodhana","Akshaya"];
-  const RITU={0:'Shishira',1:'Shishira',2:'Vasanta',3:'Vasanta',4:'Grishma',5:'Grishma',6:'Varsha',7:'Varsha',8:'Sharad',9:'Sharad',10:'Hemanta',11:'Hemanta'};
-  const AYANA=now.getMonth()>=11||now.getMonth()<5?'Uttarayana':'Dakshinayana';
-  _('sv1').textContent=vik;_('sv2').textContent=shk;
-  _('sv3').textContent=MONTHS[(now.getMonth()+2)%12];
-  _('sv4').textContent=PD?.tithi?.[0]?.paksha||'Shukla';
-  _('sv5').textContent=AYANA;
-  _('sv6').textContent=PD?.yoga?.[0]?.name||'—';
-  _('svt').textContent=SV[(vik-1)%60];
-  _('rtu').textContent=RITU[now.getMonth()]||'Vasanta';
-}
-
-function updateDate(){
-  const now=new Date();
-  const D=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  _('h-dt').textContent=`${D[now.getDay()]}, ${now.getDate()} ${M[now.getMonth()]} ${now.getFullYear()}`;
-}
-
-// ── PERIODS ────────────────────────────────────────────────
-function renderPeriods(){
-  if(!CD)return;
-  const ip=CD.inauspicious_periods||{},aw=CD.auspicious_windows||{};
-  const now=new Date(),nm=now.getHours()*60+now.getMinutes();
-  const toM=s=>{if(!s)return-1;const pm=s.includes('PM'),am=s.includes('AM');const[h,m]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(m||0);};
-  const defs=[
-    {l:'🚫 Rahu Kaal',ac:'ar',t:ip.rahul_kaal||ip.rahu_kaal,d:'Avoid new ventures, travel, contracts & decisions',rahu:true},
-    {l:'⚠️ Gulika Kaal',ac:'ao',t:ip.gulika_kaal,d:'Inauspicious — avoid auspicious ceremonies'},
-    {l:'🕰️ Yamaghanta',ac:'av',t:ip.yamghant,d:'Saturn period — avoid important activities'},
-    {l:'✨ Abhijit Muhurta',ac:'ag',t:aw.abhijit_muhurta,d:'Universally auspicious — best for all activities'},
-    {l:'🌿 Brahma Muhurta',ac:'ae',t:aw.brahma_muhurta,d:'Pre-dawn sacred window for meditation & study'},
-    {l:'💎 Amrit Kaal',ac:'ab',t:aw.amrit_kaal,d:'Highest auspiciousness of the entire day'},
-  ];
-  _('prd-g').innerHTML=defs.map(d=>{
-    const t=d.t,tm=t?`${t.start||'—'} – ${t.end||'—'}`:'—';
-    const sm=toM(t?.start||''),em=toM(t?.end||'');
-    let bg='';
-    if(d.rahu&&t&&sm>=0){
-      if(nm>=sm&&nm<=em){bg='<div class="badge b-on">⚡ ACTIVE NOW</div>';showRib('danger',`🚫 Rahu Kaal Active — ${t.start} to ${t.end}`);}
-      else if(sm>nm&&sm-nm<=30){bg=`<div class="badge b-soon">⏰ In ${sm-nm} min</div>`;showRib('warn',`⚠️ Rahu Kaal starting in ${sm-nm} minutes`);}
-      else showRib('safe',`✅ Current time auspicious · Rahu Kaal: ${t?.start||'—'}`,true);
-    }
-    return `<div class="prd"><div class="prd-acc ${d.ac}"></div><div class="prd-l">${d.l}</div><div class="prd-t">${tm}</div><div class="prd-d">${d.d}</div>${bg}</div>`;
-  }).join('');
-}
-function showRib(cls,msg,auto=false){
-  const r=_('rib');r.className='ribbon show '+cls;_('rt').textContent='';_('rm').textContent=msg;_('ri').textContent=cls==='danger'?'🚫':cls==='warn'?'⚠️':'✅';
-  if(auto)setTimeout(()=>r.classList.remove('show'),5500);
-}
-
-// ── CHOGHADIYA ─────────────────────────────────────────────
-function setChog(m){chogMode=m;_('cdb').className='ct'+(m==='day'?' on':'');_('cnb').className='ct'+(m==='night'?' on':'');renderChog();}
-function renderChog(){
-  if(!CD)return;
-  const slots=(chogMode==='day'?CD.choghadiya?.day_choghadiya:CD.choghadiya?.night_choghadiya)||[];
-  if(!slots.length){_('chog-r').innerHTML='<div style="color:var(--a);padding:1rem">Loading…</div>';return;}
-  const nm=new Date().getHours()*60+new Date().getMinutes();
-  const toM=s=>{if(!s)return-1;const pm=s.includes('PM'),am=s.includes('AM');const[h,mi]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(mi||0);};
-  _('chog-r').innerHTML=slots.map(sl=>{
-    const n=sl.name||sl.choghadiya||'Char';
-    const sm=toM(sl.start),em=toM(sl.end);
-    const cur=sm>=0&&nm>=sm&&nm<=em;
-    const nat=sl.nature||(sl.auspicious?'Auspicious':'Inauspicious');
-    return `<div class="cs cg-${n}${cur?' now':''}"><div class="cs-n">${n}</div><div class="cs-t">${sl.start||'—'}<br>${sl.end||'—'}</div><div class="cs-q">${nat}</div></div>`;
-  }).join('');
-}
-
-// ── FESTIVALS ──────────────────────────────────────────────
-function renderFests(){
-  if(!CD)return;
-  const fests=CD.festivals||[];
-  const icons={Purnima:'🌕',Amavasya:'🌑',Ekadashi:'🙏',Pradosh:'📿',Ganesh:'🐘',Navratri:'🪔',Diwali:'✨',Holi:'🎨',Ram:'🏹',Shiv:'🔱',Vishnu:'🪷',Krishna:'🎶',Hanuman:'🚩',default:'🌸'};
-  if(!fests.length){_('fest-g').innerHTML='<div style="color:var(--a)">No special events today</div>';return;}
-  _('fest-g').innerHTML=fests.map(f=>{const ik=Object.keys(icons).find(k=>f.name?.includes(k))||'default';return `<div class="fc"><span class="fc-ico">${icons[ik]}</span><div><div class="fc-n">${f.name||'Sacred Day'}</div><div class="fc-t">${f.type||''}</div>${f.importance?`<div class="fc-i">${f.importance}</div>`:''}</div></div>`;}).join('');
-}
-
-// ── FALLBACK ───────────────────────────────────────────────
-function fallback(){
-  _('t-n').textContent='Panchami';_('t-p').textContent='Shukla Paksha · #5';_('tr-p').textContent='72%';_('trp').style.strokeDashoffset=296*0.28;
-  _('v-n').textContent='Thursday';_('v-l').textContent='Lord: Jupiter';_('v-i').textContent='🟡';
-  _('n-n').textContent='Pushya';_('n-l').textContent='Lord: Saturn · Mridu';
-  _('y-n').textContent='Ganda';_('y-q').textContent='⚠️ Inauspicious';
-  _('k-n').textContent='Naga';_('k-t').textContent='Sthira';
-  _('sr').textContent='05:28';_('ss').textContent='19:07';
-  _('dl').textContent='13h 39m';_('gh').textContent='34 Ghati';_('mr').textContent='07:05';
-  _('prd-g').innerHTML=`
-    <div class="prd"><div class="prd-acc ar"></div><div class="prd-l">🚫 Rahu Kaal</div><div class="prd-t">13:59 – 15:42</div><div class="prd-d">Avoid new ventures & important decisions</div></div>
-    <div class="prd"><div class="prd-acc ao"></div><div class="prd-l">⚠️ Gulika Kaal</div><div class="prd-t">07:10 – 08:52</div><div class="prd-d">Inauspicious — avoid auspicious events</div></div>
-    <div class="prd"><div class="prd-acc av"></div><div class="prd-l">🕰️ Yamaghanta</div><div class="prd-t">05:28 – 07:10</div><div class="prd-d">Avoid important activities</div></div>
-    <div class="prd"><div class="prd-acc ag"></div><div class="prd-l">✨ Abhijit Muhurta</div><div class="prd-t">11:53 – 12:41</div><div class="prd-d">Universally auspicious</div></div>
-    <div class="prd"><div class="prd-acc ae"></div><div class="prd-l">🌿 Brahma Muhurta</div><div class="prd-t">03:52 – 04:40</div><div class="prd-d">Best for meditation & study</div></div>
-    <div class="prd"><div class="prd-acc ab"></div><div class="prd-l">💎 Amrit Kaal</div><div class="prd-t">07:28 – 09:04</div><div class="prd-d">Highest auspiciousness</div></div>`;
-  _('chog-r').innerHTML=['Labh','Amrit','Kaal','Shubh','Rog','Udveg','Char','Labh'].map((n,i)=>`<div class="cs cg-${n}${i===2?' now':''}"><div class="cs-n">${n}</div><div class="cs-t">${String(5+i*2).padStart(2,'0')}:28<br>${String(7+i*2).padStart(2,'0')}:10</div><div class="cs-q">${['Labh','Amrit','Shubh','Char'].includes(n)?'Auspicious':'Inauspicious'}</div></div>`).join('');
-  _('fest-g').innerHTML='<div style="color:var(--a)">Render API loading… data will appear shortly</div>';
-  renderSamvat();renderNakNames();
-}
-
-// ══════════════════════════════════════════════════════════
-//  NAKSHATRA COSMOS — MOON SIZE = TITHI PHASE
-//  ALL 27 NAMES ALWAYS VISIBLE
-// ══════════════════════════════════════════════════════════
+const PC={Sun:'#FFB900',Moon:'#E8E8FF',Mars:'#E27B58',Mercury:'#87CEEB',Jupiter:'#C88B3A',Venus:'#FFB6C1',Saturn:'#F4A460',Rahu:'#9B59B6',Ketu:'#5D4E75'};
+const PS={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',Saturn:'Sa',Rahu:'Ra',Ketu:'Ke'};
+const SIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const SIGN_S=['Ar','Ta','Ge','Ca','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+const SIGN_G=['\u2648','\u2649','\u264A','\u264B','\u264C','\u264D','\u264E','\u264F','\u2650','\u2651','\u2652','\u2653'];
 const NAKS=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
-const NAK_LORDS=['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
-const NAK_DEITY=['Ashwini Kumara','Yama','Agni','Brahma','Soma','Rudra','Aditi','Brihaspati','Sarpa','Pitru','Bhaga','Aryaman','Savitru','Vishvakarma','Vayu','Indra','Mitra','Indra','Niruti','Apas','Vishvadeva','Vishnu','Prajapati','Varuna','Aja Ekapada','Ahir Budhnya','Pushan'];
+const NAK_L=['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+const HMEAN=['Self, physique, personality, fame','Wealth, speech, family, right eye','Siblings, courage, short travel','Home, mother, property, happiness','Children, creativity, romance','Health, debts, enemies, service','Spouse, partnerships, public life','Death, transformation, occult','Dharma, father, religion, travel','Career, authority, government','Gains, social circle, elder siblings','Expenses, foreign lands, liberation'];
+const DC={Sun:'#FFB900',Moon:'#C0C8FF',Mars:'#E27B58',Mercury:'#87CEEB',Jupiter:'#C88B3A',Venus:'#FFB6C1',Saturn:'#F4A460',Rahu:'#9B59B6',Ketu:'#5D4E75'};
+const DGC={Exalted:'ex',Debilitated:'db','Own Sign':'ow',"Friend's Sign":'fr',"Enemy's Sign":'en',Neutral:'nt','—':'nt'};
 
-function getMoonPhase(){
-  // Tithi number 1-15 = Shukla (waxing), 16-30 = Krishna (waning)
-  const tNum=PD?.tithi?.[0]?.number||5;
-  const pak=PD?.tithi?.[0]?.paksha||'Shukla';
-  // Phase 0=new, 0.5=full, 1=new again
-  if(pak==='Shukla') return tNum/30; // 0→0.5
-  else return 0.5+(tNum-15)/30;      // 0.5→1
-}
+let LOC={lat:28.6139,lon:77.2090,name:'Delhi, India',tz:'Asia/Kolkata'};
+let PD=null,FULL=null,CHOG=null,chogM='day';
+let KDATA=null,kMode='2d',kRY=0,kRX=.25,kDrag=false,kLX=0,kLY=0,kZ=1;
+let curX=window.innerWidth/2,curY=window.innerHeight/2,trail=[];
 
-function initNakCanvas(){
-  const c=_('nakC'),ctx=c.getContext('2d');
-  c.width=c.offsetWidth||1100;c.height=340;
-  const W=c.width,H=340;
-  const CX=W/2,CY=H/2;
-  const RX=W*.44,RY=H*.33;
-  const curNak=PD?.nakshatra?.[0]?.name||'Pushya';
-  const curIdx=NAKS.indexOf(curNak);
-  let rot=0;
-  const moonPhase=getMoonPhase(); // 0=new, 0.5=full
-  const tNum=PD?.tithi?.[0]?.number||5;
-  // Moon radius scales with phase: new=4px, full=18px
-  const moonBaseR=4+Math.sin(moonPhase*Math.PI)*14;
-
-  function drawMoon(ctx,x,y,radius,phase){
-    // phase: 0=new moon (dark), 0.5=full moon (bright), 1=new again
-    if(radius<2)return;
-    ctx.save();
-    ctx.beginPath();ctx.arc(x,y,radius,0,Math.PI*2);ctx.clip();
-
-    // Base circle (dark side)
-    const bg=ctx.createRadialGradient(x,y,0,x,y,radius);
-    bg.addColorStop(0,'rgba(50,50,80,.9)');bg.addColorStop(1,'rgba(20,20,40,.95)');
-    ctx.fillStyle=bg;ctx.fillRect(x-radius,y-radius,radius*2,radius*2);
-
-    if(phase>0.02&&phase<0.98){
-      // Illuminated portion
-      ctx.beginPath();
-      if(phase<=0.5){
-        // Waxing: right side illuminated
-        const illumination=(phase*2);
-        ctx.arc(x,y,radius,-Math.PI/2,Math.PI/2);
-        ctx.bezierCurveTo(x+radius*(1-illumination*2),y+radius,x+radius*(1-illumination*2),y-radius,x,y-radius);
-      }else{
-        // Waning: left side illuminated
-        const illumination=((1-phase)*2);
-        ctx.arc(x,y,radius,Math.PI/2,Math.PI*1.5);
-        ctx.bezierCurveTo(x-radius*(1-illumination*2),y-radius,x-radius*(1-illumination*2),y+radius,x,y+radius);
-      }
-      ctx.closePath();
-      const moonG=ctx.createRadialGradient(x-radius*.3,y-radius*.3,0,x,y,radius);
-      moonG.addColorStop(0,'rgba(255,252,230,1)');
-      moonG.addColorStop(.4,'rgba(245,235,190,.95)');
-      moonG.addColorStop(.8,'rgba(210,195,140,.85)');
-      moonG.addColorStop(1,'rgba(180,160,100,.7)');
-      ctx.fillStyle=moonG;ctx.fill();
-      // Craters on lit side
-      if(radius>8){
-        ctx.globalAlpha=.15;
-        [[.2,.1,.08],[-.1,.25,.06],[.15,-.2,.05]].forEach(([dx,dy,cr])=>{
-          ctx.beginPath();ctx.arc(x+dx*radius,y+dy*radius,cr*radius,0,Math.PI*2);
-          ctx.fillStyle='rgba(120,100,60,1)';ctx.fill();
-        });
-        ctx.globalAlpha=1;
-      }
-    }else if(phase>=0.98||phase<=0.02){
-      // Full moon or new moon
-      if(Math.abs(phase-0.5)<0.02){
-        const fg=ctx.createRadialGradient(x-radius*.25,y-radius*.25,0,x,y,radius);
-        fg.addColorStop(0,'rgba(255,252,230,1)');fg.addColorStop(.6,'rgba(240,225,170,.95)');fg.addColorStop(1,'rgba(200,175,100,.85)');
-        ctx.fillStyle=fg;ctx.fillRect(x-radius,y-radius,radius*2,radius*2);
-      }
-    }else{
-      const mg=ctx.createRadialGradient(x,y,0,x,y,radius);
-      mg.addColorStop(0,'rgba(255,252,230,1)');mg.addColorStop(1,'rgba(230,210,150,.95)');
-      ctx.fillStyle=mg;ctx.fillRect(x-radius,y-radius,radius*2,radius*2);
-    }
-
-    // Glow
-    ctx.restore();
-    if(radius>6){
-      const glowR=ctx.createRadialGradient(x,y,radius*.5,x,y,radius*2.5);
-      const alpha=0.05+moonPhase*0.2;
-      glowR.addColorStop(0,'rgba(255,240,150,'+alpha+')');
-      glowR.addColorStop(1,'transparent');
-      ctx.beginPath();ctx.arc(x,y,radius*2.5,0,Math.PI*2);
-      ctx.fillStyle=glowR;ctx.fill();
-    }
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-
-    // Background deep space
-    const bg=ctx.createLinearGradient(0,0,0,H);
-    bg.addColorStop(0,'rgba(3,0,8,0)');bg.addColorStop(.5,'rgba(2,0,5,.0)');bg.addColorStop(1,'rgba(3,0,8,0)');
-    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-
-    // Background stars (fixed small ones)
-    for(let i=0;i<100;i++){
-      const bx=(Math.sin(i*47.3)*W*.47+W*.5);
-      const by=(Math.cos(i*31.7)*H*.45+H*.5);
-      const ba=Math.sin(Date.now()*.0007+i)*.25+.35;
-      ctx.beginPath();ctx.arc(bx,by,.7,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,248,220,${ba*.4})`;ctx.fill();
-    }
-
-    // Orbit path with glow
-    ctx.beginPath();
-    for(let a=0;a<=Math.PI*2+.05;a+=.02){
-      const x=CX+RX*Math.cos(a),y=CY+RY*Math.sin(a);
-      a===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle='rgba(226,180,76,.06)';ctx.lineWidth=20;ctx.stroke();
-    ctx.strokeStyle='rgba(226,180,76,.18)';ctx.lineWidth=1;ctx.stroke();
-
-    // Draw all 27 nakshatra dots + labels
-    NAKS.forEach((n,i)=>{
-      const angle=(i/27)*Math.PI*2-Math.PI/2+rot;
-      const x=CX+RX*Math.cos(angle),y=CY+RY*Math.sin(angle);
-      const isCur=i===curIdx;
-      const isNear=Math.abs(i-curIdx)<=1||Math.abs(i-curIdx)>=26;
-
-      // Glow for current
-      if(isCur){
-        const glow=ctx.createRadialGradient(x,y,0,x,y,32);
-        glow.addColorStop(0,'rgba(226,180,76,.5)');
-        glow.addColorStop(.5,'rgba(226,180,76,.15)');
-        glow.addColorStop(1,'transparent');
-        ctx.beginPath();ctx.arc(x,y,32,0,Math.PI*2);
-        ctx.fillStyle=glow;ctx.fill();
-      }
-
-      // Star dot
-      const sr=isCur?6:isNear?3.2:2;
-      ctx.beginPath();ctx.arc(x,y,sr,0,Math.PI*2);
-      ctx.fillStyle=isCur?'#f5d06e':isNear?'rgba(253,248,240,.7)':'rgba(253,248,240,.35)';
-      if(isCur){ctx.shadowColor='rgba(226,180,76,.9)';ctx.shadowBlur=18;}
-      ctx.fill();ctx.shadowBlur=0;
-
-      // ALWAYS show name — all 27
-      const shortName=n.split(' ')[0]; // First word only for space
-      const labelDist=y>CY?22:-10; // below or above orbit
-      ctx.font=isCur?`700 9.5px Cinzel`:isNear?`600 8.5px Cinzel`:`500 7.5px Cinzel`;
-      ctx.fillStyle=isCur?'#e2b44c':isNear?'rgba(253,248,240,.7)':'rgba(253,248,240,.38)';
-      ctx.textAlign='center';
-      ctx.fillText(shortName,x,y+labelDist);
-      // For multi-word names, show second word on next line (only for current/near)
-      if(isCur&&n.includes(' ')){
-        ctx.font='500 8px Cinzel';ctx.fillStyle='rgba(226,180,76,.6)';
-        ctx.fillText(n.split(' ').slice(1).join(' '),x,y+labelDist+11);
-      }
-    });
-
-    // Draw Moon at current nakshatra
-    if(curIdx>=0){
-      const angle=(curIdx/27)*Math.PI*2-Math.PI/2+rot;
-      const mx=CX+RX*Math.cos(angle);
-      const my=CY+RY*Math.sin(angle);
-      // Moon sits ON the orbit line
-      drawMoon(ctx,mx,my,moonBaseR,moonPhase);
-    }
-
-    // Center info
-    ctx.font='700 10px Cinzel';ctx.textAlign='center';ctx.fillStyle='rgba(226,180,76,.3)';
-    ctx.fillText('NAKSHATRA ORBITAL PATH',CX,CY-10);
-    ctx.font='500 8.5px Cinzel';ctx.fillStyle='rgba(226,180,76,.22)';
-    const tNumDisp=PD?.tithi?.[0]?.number||5;
-    const pak=PD?.tithi?.[0]?.paksha||'Shukla';
-    ctx.fillText(`Moon in ${curNak} · ${pak} ${tNumDisp} · Phase ${Math.round(moonPhase*100)}%`,CX,CY+8);
-    // Tithi phase bar
-    ctx.font='400 7.5px Cinzel';ctx.fillStyle='rgba(226,180,76,.18)';
-    ctx.fillText(`Moon size reflects current Tithi (${pak} #${tNumDisp})`,CX,CY+24);
-
-    rot+=.0020;requestAnimationFrame(draw);
-  }
-  draw();
-}
-
-function renderNakNames(){
-  const curNak=PD?.nakshatra?.[0]?.name||'Pushya';
-  _('nak-names').innerHTML=NAKS.map((n,i)=>`
-    <div class="nn${n===curNak?' cur':''}" title="${NAK_LORDS[i]}-ruled · Deity: ${NAK_DEITY[i]}">
-      <div>${n.split(' ')[0]}</div>
-      ${n.includes(' ')?`<div style="font-size:.55rem;opacity:.65">${n.split(' ').slice(1).join(' ')}</div>`:''}
-      <div style="font-size:.52rem;color:var(--g4);margin-top:1px">${NAK_LORDS[i]}</div>
-    </div>`).join('');
-}
-
-// ══════════════════════════════════════════════════════════
-//  ZODIAC WHEEL
-// ══════════════════════════════════════════════════════════
-function initZodiac(){
-  const c=_('zodiac'),ctx=c.getContext('2d');
-  const W=420,H=420,CX=210,CY=210;
-  const SN=['♈ Aries','♉ Taurus','♊ Gemini','♋ Cancer','♌ Leo','♍ Virgo','♎ Libra','♏ Scorpio','♐ Sagittarius','♑ Capricorn','♒ Aquarius','♓ Pisces'];
-  const SC=['#ef4444','#22c55e','#f59e0b','#3b82f6','#f97316','#10b981','#8b5cf6','#dc2626','#22d3ee','#6366f1','#14b8a6','#60a5fa'];
-  const SE=['Fire','Earth','Air','Water','Fire','Earth','Air','Water','Fire','Earth','Air','Water'];
-  const SL=['Mars','Venus','Mercury','Moon','Sun','Mercury','Venus','Mars','Jupiter','Saturn','Saturn','Jupiter'];
-  const SD=['Energetic, pioneering, initiating. First sign. Leadership and new beginnings.','Stable, sensual, artistic. Venus-ruled. Sun is here now — wealth & beauty emphasized.','Curious, communicative, adaptable. Mercury-ruled. Intellect and travel.','Nurturing, intuitive, protective. Moon-ruled. Home, mother, emotions.','Creative, generous, royal. Sun-ruled. Authority, self-expression, drama.','Analytical, precise, service. Mercury-ruled. Health, work, daily routines.','Balanced, just, diplomatic. Venus-ruled. Partnerships and justice.','Intense, transformative, mysterious. Mars/Pluto-ruled. Secrets and regeneration.','Adventurous, philosophical. Jupiter-ruled. Higher wisdom and spirituality.','Ambitious, disciplined. Saturn-ruled. Career and social achievement.','Innovative, humanitarian. Saturn/Uranus-ruled. Technology and idealism.','Spiritual, compassionate. Jupiter/Neptune-ruled. Mysticism and liberation.'];
-  let sel=1,hov=-1,rot=0;
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    const R=192,IR=115;
-    // Segments
-    for(let i=0;i<12;i++){
-      const a1=-Math.PI/2+(i/12)*Math.PI*2+rot,a2=a1+Math.PI*2/12,mid=(a1+a2)/2;
-      const iS=i===sel,iH=i===hov;
-      ctx.beginPath();ctx.moveTo(CX,CY);ctx.arc(CX,CY,R,a1,a2);ctx.closePath();
-      if(iS){const g=ctx.createRadialGradient(CX,CY,0,CX,CY,R);g.addColorStop(0,'rgba(5,1,10,0)');g.addColorStop(.6,SC[i]+'22');g.addColorStop(1,SC[i]+'44');ctx.fillStyle=g;}
-      else ctx.fillStyle=iH?SC[i]+'15':'rgba(5,1,10,.55)';
-      ctx.fill();
-      ctx.strokeStyle=iS?SC[i]+'bb':iH?SC[i]+'55':SC[i]+'28';ctx.lineWidth=iS?1.8:1;ctx.stroke();
-      const gx=CX+(R*.71)*Math.cos(mid),gy=CY+(R*.71)*Math.sin(mid);
-      ctx.font=`${iS||iH?'21px':'17px'} serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillStyle=iS?SC[i]:iH?SC[i]+'cc':'rgba(253,248,240,.45)';ctx.fillText(SN[i].split(' ')[0],gx,gy);
-      const nx=CX+(R*.875)*Math.cos(mid),ny=CY+(R*.875)*Math.sin(mid);
-      ctx.save();ctx.translate(nx,ny);ctx.rotate(mid+Math.PI/2);
-      ctx.font=`500 ${iS?'9px':'7.5px'} Cinzel`;ctx.fillStyle=iS?'rgba(253,248,240,.9)':'rgba(253,248,240,.28)';
-      ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(SN[i].split(' ')[1],0,0);ctx.restore();
-    }
-    ctx.beginPath();ctx.arc(CX,CY,R,0,Math.PI*2);ctx.strokeStyle='rgba(226,180,76,.14)';ctx.lineWidth=1;ctx.stroke();
-    // Inner
-    const ig=ctx.createRadialGradient(CX,CY,0,CX,CY,IR);ig.addColorStop(0,'rgba(26,5,8,.98)');ig.addColorStop(1,'rgba(5,1,10,.9)');
-    ctx.beginPath();ctx.arc(CX,CY,IR,0,Math.PI*2);ctx.fillStyle=ig;ctx.fill();
-    ctx.strokeStyle='rgba(226,180,76,.17)';ctx.lineWidth=1;ctx.stroke();
-    ctx.beginPath();ctx.arc(CX,CY,IR-14,0,Math.PI*2);ctx.strokeStyle='rgba(226,180,76,.05)';ctx.lineWidth=1;ctx.stroke();
-    ctx.font='26px Cinzel Decorative';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='rgba(226,180,76,.7)';ctx.shadowColor='rgba(226,180,76,.5)';ctx.shadowBlur=18;ctx.fillText('✦',CX,CY-12);ctx.shadowBlur=0;
-    ctx.font='500 8px Cinzel';ctx.fillStyle='rgba(226,180,76,.38)';ctx.fillText('RASHI CHAKRA',CX,CY+5);
-    ctx.font='400 6.5px Cinzel';ctx.fillStyle='rgba(226,180,76,.22)';ctx.fillText('12 ZODIAC SIGNS',CX,CY+17);
-    // Sun marker
-    const SA=-Math.PI/2+((sel+.5)/12)*Math.PI*2+rot;
-    const sx=CX+(R*.54)*Math.cos(SA),sy=CY+(R*.54)*Math.sin(SA);
-    const sg=ctx.createRadialGradient(sx,sy,0,sx,sy,14);sg.addColorStop(0,'rgba(245,208,110,.5)');sg.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.arc(sx,sy,14,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
-    ctx.font='14px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('☀️',sx,sy);
-    rot+=.0014;requestAnimationFrame(draw);
-  }
-  c.addEventListener('mousemove',e=>{const rect=c.getBoundingClientRect(),sc=W/rect.width,mx=(e.clientX-rect.left)*sc-CX,my=(e.clientY-rect.top)*sc-CY,d=Math.sqrt(mx*mx+my*my);hov=d>IR&&d<192?Math.floor((((Math.atan2(my,mx)+Math.PI/2-rot)%(Math.PI*2)+Math.PI*2)%(Math.PI*2))/(Math.PI*2/12))%12:-1;});
-  c.addEventListener('mouseleave',()=>{hov=-1;});
-  c.addEventListener('click',e=>{const rect=c.getBoundingClientRect(),sc=W/rect.width,mx=(e.clientX-rect.left)*sc-CX,my=(e.clientY-rect.top)*sc-CY,d=Math.sqrt(mx*mx+my*my);if(d>IR&&d<192){sel=Math.floor((((Math.atan2(my,mx)+Math.PI/2-rot)%(Math.PI*2)+Math.PI*2)%(Math.PI*2))/(Math.PI*2/12))%12;_('zi-s').textContent=SN[sel];_('zi-e').textContent=`${SE[sel]} · ${['Cardinal','Fixed','Mutable'][sel%3]} · ${SL[sel]}-ruled`;_('zi-d').textContent=SD[sel];_('zi-ps').innerHTML=`<div class="zi-p">${SL[sel]} — Lord</div>`;}});
-  draw();
-}
-
-// ══════════════════════════════════════════════════════════
-//  KUNDALI MAKER — North Indian Chart
-// ══════════════════════════════════════════════════════════
-const SIGN_N=['Ar','Ta','Ge','Ca','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
-const SIGN_FULL=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-const PLANET_N=['Su','Mo','Ma','Me','Ju','Ve','Sa','Ra','Ke'];
-const PLANET_FULL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
-
-let kundaliData=null;
-
-function initKundali(){
-  const c=_('kundC'),ctx=c.getContext('2d');
-  drawKundali(ctx,380,null);
-}
-
-function drawKundali(ctx,S,data){
-  ctx.clearRect(0,0,S,S);
-  const s=S,m=12;
-  // Background
-  const bg=ctx.createRadialGradient(s/2,s/2,0,s/2,s/2,s*.7);
-  bg.addColorStop(0,'rgba(13,2,5,.95)');bg.addColorStop(1,'rgba(5,1,10,.98)');
-  ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(m,m,s-m*2,s-m*2,12);ctx.fill();
-  ctx.strokeStyle='rgba(226,180,76,.2)';ctx.lineWidth=1.5;ctx.stroke();
-
-  // North Indian grid — 3x3 outer + center, house layout
-  const gs=(s-m*2)/4; // grid cell size
-  const ox=m,oy=m;
-
-  // Draw grid lines
-  ctx.strokeStyle='rgba(226,180,76,.25)';ctx.lineWidth=1;
-  // Outer square
-  ctx.strokeRect(ox,oy,gs*4,gs*4);
-  // Inner square (rotated 45°) — the characteristic North Indian diamond
-  ctx.beginPath();
-  ctx.moveTo(ox+gs*2,oy);ctx.lineTo(ox+gs*4,oy+gs*2);
-  ctx.lineTo(ox+gs*2,oy+gs*4);ctx.lineTo(ox,oy+gs*2);ctx.closePath();
-  ctx.strokeStyle='rgba(226,180,76,.2)';ctx.stroke();
-  // Internal house divisions
-  const lines=[
-    [ox+gs,oy,ox+gs,oy+gs],[ox+gs*3,oy,ox+gs*3,oy+gs],
-    [ox,oy+gs,ox+gs,oy+gs],[ox+gs*3,oy+gs,ox+gs*4,oy+gs],
-    [ox+gs,oy+gs*3,ox,oy+gs*3],[ox+gs*4,oy+gs*3,ox+gs*3,oy+gs*3],
-    [ox+gs,oy+gs*3,ox+gs,oy+gs*4],[ox+gs*3,oy+gs*3,ox+gs*3,oy+gs*4],
-    [ox+gs*2,oy,ox,oy+gs*2],[ox+gs*2,oy,ox+gs*4,oy+gs*2],
-    [ox+gs*2,oy+gs*4,ox,oy+gs*2],[ox+gs*2,oy+gs*4,ox+gs*4,oy+gs*2],
-  ];
-  ctx.strokeStyle='rgba(226,180,76,.15)';
-  lines.forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
-
-  // House centers (North Indian format) — positions for 12 houses
-  const HC=[
-    [ox+gs*2,oy+gs*.55],    // H1 — top middle
-    [ox+gs*.55,oy+gs*.55],  // H2 — top left
-    [ox+gs*.3,oy+gs*2],     // H3 — left middle
-    [ox+gs*.55,oy+gs*3.45], // H4 — bottom left
-    [ox+gs*2,oy+gs*3.45],   // H5 — bottom middle
-    [ox+gs*3.45,oy+gs*3.45],// H6 — bottom right
-    [ox+gs*3.7,oy+gs*2],    // H7 — right middle
-    [ox+gs*3.45,oy+gs*.55], // H8 — top right
-    [ox+gs*2,oy+gs*1.4],    // H9 — inner top (actually center)
-    [ox+gs*1.3,oy+gs*2],    // H10 — inner left
-    [ox+gs*2,oy+gs*2.6],    // H11 — inner bottom
-    [ox+gs*2.7,oy+gs*2],    // H12 — inner right
-  ];
-
-  // Get planets in houses
-  const planetHouses=Array.from({length:12},()=>[]);
-  const lagnaIdx=data?.lagna_sign_idx??0;
-
-  if(data?.planets){
-    Object.entries(data.planets).forEach(([pname,pdata])=>{
-      const si=pdata?.sign_index??0;
-      const houseNum=((si-lagnaIdx+12)%12);
-      const short=PLANET_N[PLANET_FULL.map(x=>x.toLowerCase()).indexOf(pname)]||pname.substring(0,2);
-      planetHouses[houseNum].push({name:short,retro:pdata.is_retrograde,sign:si});
-    });
-  }else{
-    // Demo chart
-    [[0,'Su','Me'],[1,'Ve'],[3,'Mo'],[4,'Ma'],[6,'Ke'],[7,'Ra'],[10,'Ju'],[11,'Sa']].forEach(([h,...ps])=>ps.forEach(p=>planetHouses[h].push({name:p})));
-  }
-
-  // Render houses
-  HC.forEach(([cx,cy],i)=>{
-    const houseNum=i+1;
-    const signIdx=(lagnaIdx+i)%12;
-
-    // House number
-    ctx.font='700 9px Cinzel';ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillStyle='rgba(226,180,76,.25)';
-    ctx.fillText(houseNum,cx,cy-24);
-
-    // Sign
-    ctx.font='600 9px Cinzel';ctx.fillStyle='rgba(226,180,76,.55)';
-    ctx.fillText(SIGN_N[signIdx],cx,cy-12);
-
-    // Planets
-    const ps=planetHouses[i];
-    ps.forEach((p,pi)=>{
-      ctx.font=`${p.retro?'italic ':''}700 10px Cinzel`;
-      ctx.fillStyle=p.name==='Su'?'#f59e0b':p.name==='Mo'?'#e2b44c':p.name==='Ra'||p.name==='Ke'?'#8b5cf6':'rgba(253,248,240,.85)';
-      ctx.fillText((p.retro?'(R)':'')+p.name,cx,cy+(pi*13));
-    });
+// ── MAGNETIC CURSOR + COMET TRAIL ─────────────────────────────
+(function(){
+  const cur=G('cur'),ring=G('cur-ring'),tc=G('trail'),tctx=tc.getContext('2d');
+  tc.width=window.innerWidth;tc.height=window.innerHeight;
+  window.addEventListener('resize',()=>{tc.width=window.innerWidth;tc.height=window.innerHeight;});
+  let tX=curX,tY=curY,rX=curX,rY=curY;
+  document.addEventListener('mousemove',e=>{tX=e.clientX;tY=e.clientY;trail.push({x:e.clientX,y:e.clientY,a:0});if(trail.length>30)trail.shift();});
+  document.querySelectorAll('.pc,.prd,.cs,.oq,.ct,.kmbtn,.kgbtn,.fc,.nn').forEach(el=>{
+    el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)*.12,dy=(e.clientY-r.top-r.height/2)*.12;el.style.transform=`translate(${dx}px,${dy}px) rotateY(${dx*.3}deg) rotateX(${-dy*.3}deg)`;});
+    el.addEventListener('mouseleave',()=>{el.style.transform='';});
   });
+  document.addEventListener('mouseover',e=>{if(e.target.matches('button,a,.pc,.prd,.cs,.nn,.fc,.ofab,.opsend')){cur.style.width='22px';cur.style.height='22px';ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(255,215,0,.7)';}});
+  document.addEventListener('mouseout',e=>{if(e.target.matches('button,a,.pc,.prd,.cs,.nn,.fc,.ofab,.opsend')){cur.style.width='12px';cur.style.height='12px';ring.style.width='40px';ring.style.height='40px';ring.style.borderColor='rgba(255,215,0,.4)';}});
+  (function anim(){
+    curX+=(tX-curX)*.18;curY+=(tY-curY)*.18;rX+=(tX-rX)*.09;rY+=(tY-rY)*.09;
+    cur.style.left=curX+'px';cur.style.top=curY+'px';ring.style.left=rX+'px';ring.style.top=rY+'px';
+    tctx.clearRect(0,0,tc.width,tc.height);
+    trail.forEach((p,i)=>{p.a++;const al=Math.max(0,(1-p.a/30)*.6),r2=(1-i/trail.length)*4;if(al>0){const g=tctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r2*3);g.addColorStop(0,`rgba(255,215,0,${al})`);g.addColorStop(1,'transparent');tctx.beginPath();tctx.arc(p.x,p.y,r2*3,0,Math.PI*2);tctx.fillStyle=g;tctx.fill();}});
+    trail=trail.filter(p=>p.a<30);
+    requestAnimationFrame(anim);
+  })();
+})();
 
-  // Center label
-  ctx.font='700 10px Cinzel Decorative';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillStyle='rgba(226,180,76,.45)';ctx.fillText('✦',s/2,s/2-6);
-  ctx.font='400 7.5px Cinzel';ctx.fillStyle='rgba(226,180,76,.3)';
-  ctx.fillText(data?`${SIGN_FULL[lagnaIdx]} Lagna`:'KUNDALI',s/2,s/2+8);
-}
-
-async function genKundali(){
-  const dob=_('kf-dob').value,tob=_('kf-tob').value,city=_('kf-city').value;
-  if(!dob||!tob||!city){alert('Please fill all fields.');return;}
-  _('k-result').innerHTML='<div style="color:var(--a);text-align:center;padding:1rem">⏳ Generating Kundali… (Render may take 30s to wake up)</div>';
-  try{
-    const cityData=await fetch(`${API}/api/search-location?q=${encodeURIComponent(city)}`).then(r=>r.json());
-    if(!cityData?.lat){_('k-result').innerHTML='<div style="color:var(--r);padding:1rem">City not found.</div>';return;}
-    const[y,mo,d]=dob.split('-').map(Number);
-    const[h,mi]=tob.split(':').map(Number);
-    const body={birth_details:{year:y,month:mo,day:d,hour:h,minute:mi,latitude:cityData.lat,longitude:cityData.lon,timezone_offset:cityData.tz_offset||5.5}};
-    const res=await fetch(`${API}/api/vedic-chart`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
-    if(res.error){_('k-result').innerHTML=`<div style="color:var(--r);padding:1rem">${res.error}</div>`;return;}
-
-    // Draw chart
-    kundaliData=res;
-    const c=_('kundC'),ctx=c.getContext('2d');
-    const lagna=res.chart?.houses?.[1]?.sign||'Aries';
-    const lagnaIdx=SIGN_FULL.indexOf(lagna.charAt(0).toUpperCase()+lagna.slice(1).toLowerCase());
-    const planets={};
-    if(res.chart?.planets){
-      Object.entries(res.chart.planets).forEach(([n,d])=>{
-        if(d?.sign){const si=SIGN_FULL.findIndex(s=>s.toLowerCase()===d.sign.toLowerCase());planets[n]={sign_index:si<0?0:si,is_retrograde:d.is_retrograde};}
-      });
-    }
-    drawKundali(ctx,380,{lagna_sign_idx:lagnaIdx<0?0:lagnaIdx,planets});
-
-    // Show results
-    const pd=res.chart?.panchanga||{};
-    const pl=res.chart?.planets||{};
-    const rows=[
-      ['Lagna',lagna],
-      ['Tithi',pd.tithi_name||'—'],
-      ['Nakshatra',pl.moon?.nakshatra||'—'],
-      ['Moon Sign',pl.moon?.sign||'—'],
-      ['Sun Sign',pl.sun?.sign||'—'],
-      ['Mahadasha',res.dasha?.current_mahadasha?.planet||'—'],
-      ['Antardasha',res.dasha?.current_antardasha?.planet||'—'],
-      ['Yoga',pd.yoga_name||'—'],
-      ['Atma Karaka',res.karakas?.atma_karaka||'—'],
-      ['Ayanamsa',res.ayanamsa?res.ayanamsa.toFixed(4)+'°':'—'],
-    ];
-    _('k-result').innerHTML=rows.map(([k,v])=>`<div class="kr-row"><div class="kr-k">${k}</div><div class="kr-v">${v}</div></div>`).join('');
-  }catch(e){
-    _('k-result').innerHTML='<div style="color:var(--r);padding:1rem">API error — try again in 30s (Render cold start)</div>';
-    console.error(e);
-  }
-}
-
-// ══════════════════════════════════════════════════════════
-//  WEBGL — GPU GALAXY COSMOS
-// ══════════════════════════════════════════════════════════
-function initWebGL(){
-  const c=_('gl'),g=c.getContext('webgl',{alpha:false,antialias:false,powerPreference:'high-performance'})||c.getContext('experimental-webgl');
-  if(!g){c.style.background='radial-gradient(ellipse at 50% 100%,#2d0a0f,#05010a)';return;}
+// ── WEBGL GALAXY ──────────────────────────────────────────────
+function initGL(){
+  const c=G('gl'),g=c.getContext('webgl',{alpha:false,antialias:false})||c.getContext('experimental-webgl');
+  if(!g){c.style.background='radial-gradient(ellipse at 50% 100%,#1a0a2e,#0A0E27)';return;}
   function rs(){c.width=window.innerWidth;c.height=window.innerHeight;g.viewport(0,0,c.width,c.height);}
   rs();window.addEventListener('resize',rs);
-  const VS=`attribute vec2 pos;void main(){gl_Position=vec4(pos,0.,1.);}`;
+  const VS=`attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
   const FS=`precision highp float;uniform vec2 res;uniform float t;uniform vec2 mouse;
-#define PI 3.14159265359
 #define TAU 6.28318530718
-float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-float noise(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
-float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p*=2.1;a*=.5;}return v;}
-float star(vec2 uv,float sc,float sd){vec2 gp=floor(uv*sc+sd),fp=fract(uv*sc+sd)-.5;float h=hash(gp);if(h>.62)return 0.;float sz=h*.006+.0015,tw=sin(t*.4+hash(gp+.5)*TAU)*.35+.65;return sz*sz/(dot(fp,fp)+sz*sz)*tw*(1.-h*.3);}
-vec3 nebula(vec2 uv){float n1=fbm(uv*2.5+vec2(t*.008,t*.006)),n2=fbm(uv*4.-vec2(t*.005,t*.009));vec3 c1=vec3(.55,.08,.22)*pow(max(0.,n1-.3),1.5)*.15,c2=vec3(.08,.05,.55)*pow(max(0.,n2-.4),1.5)*.12;return c1+c2;}
-float mw(vec2 uv){float b=exp(-pow((uv.y-.5)*8.,2.));return b*(fbm(uv*3.+t*.003)*.5+.3)*.18;}
+float n(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p*float(i+1));p*=2.1;a*=.5;}return v;}
+float star(vec2 uv,float sc,float sd){vec2 gp=floor(uv*sc+sd),fp=fract(uv*sc+sd)-.5;float h=n(gp);if(h>.62)return 0.;float sz=h*.006+.0015,tw=sin(t*.4+n(gp+.5)*TAU)*.35+.65;return sz*sz/(dot(fp,fp)+sz*sz)*tw;}
 void main(){
-  vec2 uv=gl_FragCoord.xy/res;
-  float tc=sin(t*.03)*.5+.5;
-  vec3 col=mix(mix(vec3(.04,.01,.08),vec3(.1,.02,.04),tc),mix(vec3(.02,.0,.05),vec3(.06,.01,.02),tc),pow(uv.y,1.5));
-  col+=nebula(uv);col+=vec3(.7,.6,.9)*mw(uv);
+  vec2 uv=gl_FragCoord.xy/res;float tc2=sin(t*.03)*.5+.5;
+  vec3 col=mix(mix(vec3(.04,.055,.15),vec3(.12,.07,.22),tc2),mix(vec3(.02,.03,.06),vec3(.06,.02,.06),tc2),pow(uv.y,1.4));
+  float nb=fbm(uv*2.5+vec2(t*.008,t*.006));vec3 nc=mix(vec3(.12,.06,.25),vec3(.22,.1,.15),nb);col=mix(col,nc,.4);
+  float mw=exp(-pow((uv.y-.5)*8.,2.))*(fbm(uv*3.+t*.003)*.5+.3)*.18;col+=vec3(.7,.6,.9)*mw;
   float s=star(uv,180.,0.)*.9+star(uv,320.,1.7)*.6+star(uv,550.,3.1)*.35+star(uv,900.,5.8)*.2;
-  col+=vec3(1.,.97,.88)*min(s,1.2);
-  vec2 mp=mouse/res;mp.y=1.-mp.y;col+=vec3(.85,.55,.15)*.12/(1.+dot(uv-mp,uv-mp)*60.);
-  float sp=fract(t*.05+.3);vec2 sd=uv-vec2(sp,1.-sp*.6);
-  if(sd.x>-.25&&sd.x<0.&&abs(sd.y)<.008)col+=vec3(1.,.95,.8)*(sd.x+.25)/.25*exp(-abs(sd.y)*200.)*.8;
-  col*=pow(uv.x*uv.y*(1.-uv.x)*(1.-uv.y)*16.,.22);
-  col=pow(max(col,0.),vec3(.45));gl_FragColor=vec4(col,1.);}`;
-  function mk(type,src){const s=g.createShader(type);g.shaderSource(s,src);g.compileShader(s);return s;}
+  col+=vec3(1.,.97,.9)*min(s,1.2);
+  vec2 mp=mouse/res;mp.y=1.-mp.y;col+=vec3(1.,.84,0.)*.14/(1.+dot(uv-mp,uv-mp)*55.);
+  float sp=fract(t*.045+.3);vec2 sd=uv-vec2(sp,1.-sp*.65);
+  if(sd.x>-.28&&sd.x<0.&&abs(sd.y)<.009)col+=vec3(1.,.9,.7)*(sd.x+.28)/.28*exp(-abs(sd.y)*180.)*.9;
+  col*=pow(uv.x*uv.y*(1.-uv.x)*(1.-uv.y)*16.,.22);col=pow(max(col,0.),vec3(.45));gl_FragColor=vec4(col,1.);}`;
+  function mk(t2,src){const s=g.createShader(t2);g.shaderSource(s,src);g.compileShader(s);return s;}
   const prog=g.createProgram();g.attachShader(prog,mk(g.VERTEX_SHADER,VS));g.attachShader(prog,mk(g.FRAGMENT_SHADER,FS));g.linkProgram(prog);g.useProgram(prog);
   const buf=g.createBuffer();g.bindBuffer(g.ARRAY_BUFFER,buf);g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),g.STATIC_DRAW);
-  const pl=g.getAttribLocation(prog,'pos');g.enableVertexAttribArray(pl);g.vertexAttribPointer(pl,2,g.FLOAT,false,0,0);
+  const pl=g.getAttribLocation(prog,'p');g.enableVertexAttribArray(pl);g.vertexAttribPointer(pl,2,g.FLOAT,false,0,0);
   const uR=g.getUniformLocation(prog,'res'),uT=g.getUniformLocation(prog,'t'),uM=g.getUniformLocation(prog,'mouse');
   let mx=c.width/2,my=c.height/2,t=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
   (function f(){t+=.012;g.uniform2f(uR,c.width,c.height);g.uniform1f(uT,t);g.uniform2f(uM,mx,my);g.drawArrays(g.TRIANGLE_STRIP,0,4);requestAnimationFrame(f);})();
 }
 
-// ══════════════════════════════════════════════════════════
-//  PARTICLE SYSTEM
-// ══════════════════════════════════════════════════════════
+// ── PARTICLE SYSTEM ───────────────────────────────────────────
 function initParticles(){
-  const c=_('pc'),ctx=c.getContext('2d');
+  const c=G('ptc'),ctx=c.getContext('2d');
   function rs(){c.width=window.innerWidth;c.height=window.innerHeight;}
   rs();window.addEventListener('resize',rs);
-  const N=140,parts=Array.from({length:N},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.18,vy:-Math.random()*.12-.03,r:Math.random()*2.2+.4,phase:Math.random()*Math.PI*2,speed:Math.random()*.004+.002,col:Math.random()>.55?0:Math.random()>.5?1:2}));
-  const orbs=Array.from({length:5},(_,i)=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.03,r:Math.random()*38+14,a:Math.random()*.04+.01,col:i%3===0?'226,180,76':i%3===1?'192,57,43':'108,52,131'}));
-  const shoots=[];setInterval(()=>{if(shoots.length<4)shoots.push({x:Math.random()*c.width*.7,y:Math.random()*c.height*.35,vx:Math.random()*5+3,vy:Math.random()*2.5+1.5,len:Math.random()*100+50,a:1});},2800);
-  const COLS=['226,180,76','192,57,43','108,52,131'];
+  const dust=Array.from({length:150},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.18,vy:-Math.random()*.12-.03,r:Math.random()*2.2+.4,ph:Math.random()*Math.PI*2,sp:Math.random()*.004+.002,col:Math.random()>.55?0:Math.random()>.5?1:2}));
+  const orbs=[['255,215,0',0],['255,255,255',1],['255,107,53',2],['124,58,237',3],['6,182,212',4],['236,72,153',5]].map(([col,i])=>({col,x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.03,r:Math.random()*35+15,a:Math.random()*.04+.01,ph:i*(Math.PI/3)}));
+  const shoots=[];setInterval(()=>{if(shoots.length<4)shoots.push({x:Math.random()*c.width*.7,y:Math.random()*c.height*.35,vx:Math.random()*5.5+3,vy:Math.random()*2.8+1.5,len:Math.random()*110+55,a:1});},2600);
+  const COLS=['255,215,0','220,38,38','124,58,237'];
+  let mx=c.width/2,my=c.height/2;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
   (function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    orbs.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.x<-o.r)o.x=c.width+o.r;if(o.x>c.width+o.r)o.x=-o.r;if(o.y<-o.r)o.y=c.height+o.r;if(o.y>c.height+o.r)o.y=-o.r;const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);g.addColorStop(0,`rgba(${o.col},${o.a})`);g.addColorStop(1,`rgba(${o.col},0)`);ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();});
-    const t=Date.now()*.001;
-    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;if(p.y<-10)p.y=c.height+10;const a=(Math.sin(t*p.speed*50+p.phase)+1)/2*.55+.05;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${COLS[p.col]},${a})`;ctx.fill();});
-    for(let i=shoots.length-1;i>=0;i--){const s=shoots[i];s.x+=s.vx;s.y+=s.vy;s.a-=.018;if(s.a<=0){shoots.splice(i,1);continue;}const g=ctx.createLinearGradient(s.x,s.y,s.x-s.len,s.y-s.len*.55);g.addColorStop(0,`rgba(255,245,210,${s.a})`);g.addColorStop(1,'transparent');ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.len,s.y-s.len*.55);ctx.strokeStyle=g;ctx.lineWidth=Math.max(.5,s.a*2);ctx.stroke();}
+    ctx.clearRect(0,0,c.width,c.height);const t=Date.now()*.001;
+    orbs.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.x<-o.r)o.x=c.width+o.r;if(o.x>c.width+o.r)o.x=-o.r;if(o.y<-o.r)o.y=c.height+o.r;if(o.y>c.height+o.r)o.y=-o.r;const pulse=Math.sin(t+o.ph)*.4+.6;const og=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r*2);og.addColorStop(0,`rgba(${o.col},${o.a*pulse})`);og.addColorStop(1,`rgba(${o.col},0)`);ctx.beginPath();ctx.arc(o.x,o.y,o.r*2,0,Math.PI*2);ctx.fillStyle=og;ctx.fill();});
+    dust.forEach(p=>{p.x+=p.vx;p.y+=p.vy;const dx=mx-p.x,dy=my-p.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<200){p.vx+=dx/dist*.015;p.vy+=dy/dist*.015;}p.vx*=.99;p.vy*=.99;if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;if(p.y<-10)p.y=c.height+10;const a=(Math.sin(t*p.sp*50+p.ph)+1)/2*.55+.05;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${COLS[p.col]},${a})`;ctx.fill();});
+    for(let i=shoots.length-1;i>=0;i--){const s=shoots[i];s.x+=s.vx;s.y+=s.vy;s.a-=.017;if(s.a<=0){shoots.splice(i,1);continue;}const sg=ctx.createLinearGradient(s.x,s.y,s.x-s.len,s.y-s.len*.55);sg.addColorStop(0,`rgba(255,230,100,${s.a})`);sg.addColorStop(1,'transparent');ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.len,s.y-s.len*.55);ctx.strokeStyle=sg;ctx.lineWidth=Math.max(.5,s.a*2.2);ctx.stroke();}
     requestAnimationFrame(draw);
   })();
 }
 
-// ══════════════════════════════════════════════════════════
-//  SCROLL REVEAL + ORACLE
-// ══════════════════════════════════════════════════════════
-function setupReveal(){
-  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.06,rootMargin:'0px 0px -30px 0px'});
-  document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
-}
-
-function toggleO(){_('op').classList.toggle('open');}
-function aq(q){_('oi').value=q;sendO();}
-
-async function sendO(){
-  const inp=_('oi');const q=inp.value.trim();if(!q)return;
-  inp.value='';
-  const msgs=_('omsgs');
-  msgs.innerHTML+=`<div class="om u">${q}</div>`;
-  const tid='t'+Date.now();
-  msgs.innerHTML+=`<div class="op-typ" id="${tid}"><span></span><span></span><span></span></div>`;
-  msgs.scrollTop=msgs.scrollHeight;
-  const ctx_str=PD?`Today's Panchang for ${LOC.name}:
-Tithi: ${PD.tithi?.[0]?.paksha} ${PD.tithi?.[0]?.name} #${PD.tithi?.[0]?.number}
-Vara: ${PD.vara?.name} (Lord: ${PD.vara?.lord})
-Nakshatra: ${PD.nakshatra?.[0]?.name} (Lord: ${PD.nakshatra?.[0]?.lord}, ${PD.nakshatra?.[0]?.nature})
-Yoga: ${PD.yoga?.[0]?.name} (${PD.yoga?.[0]?.is_auspicious?'Auspicious':'Inauspicious'})
-Karana: ${PD.karana?.[0]?.name}
-Sunrise: ${PD.sunrise}, Sunset: ${PD.sunset}`:'Panchang loading.';
-  try{
-    const res=await fetch('/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:320,system:`You are the Aetheris Oracle — deeply knowledgeable in Vedic Jyotish, BPHS, Phaldipika, Muhurta Chintamani. 2-3 sentences max. Wise, warm, specific. Use Sanskrit terms with brief English notes. Reference actual panchang data. Context: ${ctx_str}`,messages:[{role:'user',content:q}]})});
-    const d=await res.json();_(tid)?.remove();
-    msgs.innerHTML+=`<div class="om a">${d.content?.[0]?.text||'🙏 The cosmos contemplates. Please try again.'}</div>`;
-  }catch(e){
-    _(tid)?.remove();
-    const tname=PD?.tithi?.[0]?.name||'Panchami',nname=PD?.nakshatra?.[0]?.name||'Pushya',vname=PD?.vara?.name||'Thursday',vl=PD?.vara?.lord||'Jupiter';
-    const fb={rahu:`🚫 Rahu Kaal creates confusion and obstacles — avoid new contracts, travel departures, and important beginnings. Use this window for research, meditation, or completing existing work. Today's timing: check the Muhurta section above.`,travel:`✈️ For travel today, ${nname} nakshatra is active. Choose Choghadiya slots of Labh, Amrit, or Shubh for departure. Avoid Kaal and Rog choghadiya periods entirely.`,business:`💼 Today is ${vname} (${vl}-ruled). ${PD?.yoga?.[0]?.is_auspicious?'The Yoga supports new ventures.':'Complete existing work rather than starting new ventures.'} Abhijit Muhurta (around noon) is universally favorable.`,puja:`🪔 Brahma Muhurta (pre-dawn ~4 AM) is supreme for puja. During ${nname} nakshatra, devotional practice is especially potent on this ${vname}.`,default:`🙏 Today, ${vname} is governed by ${vl}. The ${tname} Tithi of ${PD?.tithi?.[0]?.paksha||'Shukla'} Paksha with ${nname} Nakshatra creates a unique cosmic signature. Consult the Choghadiya above for hour-by-hour guidance.`};
-    const key=Object.keys(fb).find(k=>q.toLowerCase().includes(k))||'default';
-    msgs.innerHTML+=`<div class="om a">${fb[key]}</div>`;
+// ── API ───────────────────────────────────────────────────────
+async function apiFetch(path,opts={}){
+  for(const base of APIS){
+    try{const r=await fetch(base+path,{...opts,signal:AbortSignal.timeout(12000)});if(r.ok){APIBASE=base;return r.json();}}catch(e){}
   }
+  throw new Error('All APIs failed: '+path);
+}
+
+// ── BOOT ──────────────────────────────────────────────────────
+async function boot(){
+  const msgs=['Awakening the cosmos\u2026','Locating your position\u2026','Computing Swiss Ephemeris\u2026','Calculating Tithi & Nakshatra\u2026','Loading Choghadiya\u2026','Rendering 27 Nakshatras\u2026','Initialising North Indian Kundali\u2026','Aetheris is ready \u2726'];
+  let mi=0;const iv=setInterval(()=>{if(mi<msgs.length-1)G('ldmsg').textContent=msgs[++mi];},350);
+  initGL();initParticles();
+  await tryGeo();
+  const[r1,r2,r3,r4]=await Promise.allSettled([fetchPanchang(),fetchFull(),fetchMoonrise(),fetchChoghadiya()]);
+  if(r1.status==='fulfilled')renderPanchang();else fallback();
+  if(r2.status==='fulfilled'){renderPeriods();renderFests();}else renderPeriods();
+  if(r3.status==='fulfilled'&&r3.value){const mr2=r3.value;G('mrT').textContent=mr2.moonrise||mr2?.panchang?.moonrise||'\u2014';}
+  if(r4.status==='fulfilled'&&r4.value){CHOG=r4.value;renderChog();}else{buildFallbackChog();renderChog();}
+  renderSamvat();updateDate();
+  clearInterval(iv);await wait(600);G('ld').classList.add('gone');
+  document.querySelectorAll('.rv').forEach(el=>new IntersectionObserver(([e])=>{if(e.isIntersecting)e.target.classList.add('on');},{threshold:.06}).observe(el));
+  initNakCanvas();renderNakGrid();initKundC();
+  setTimeout(genK,1400);
+  setInterval(updateDate,60000);
+}
+
+// ── GEO ───────────────────────────────────────────────────────
+async function tryGeo(){
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:4500,maximumAge:300000}));
+    LOC.lat=pos.coords.latitude;LOC.lon=pos.coords.longitude;
+    try{const g=await apiFetch(`/geocode?q=${encodeURIComponent('location')}&lat=${LOC.lat}&lon=${LOC.lon}`);if(g?.[0]){LOC.name=g[0].name+(g[0].admin1?', '+g[0].admin1:'');LOC.tz=g[0].timezone||'Asia/Kolkata';}}catch(e){}
+    setLoc(LOC.name);
+  }catch(e){}
+}
+function setLoc(n){G('locn').textContent=n;G('hlocd').textContent=n;G('secln').textContent=n.split(',')[0];}
+async function chgLoc(){
+  const q=prompt('Enter city name:');if(!q)return;
+  try{
+    let r;
+    try{r=await apiFetch(`/geocode?q=${encodeURIComponent(q)}`);}
+    catch(e){const d=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1`).then(x=>x.json());r=d.results?.map(x=>({name:x.name,admin1:x.admin1,latitude:x.latitude,longitude:x.longitude,timezone:x.timezone}))||[];}
+    if(r?.[0]){LOC={lat:r[0].latitude,lon:r[0].longitude,tz:r[0].timezone||'Asia/Kolkata',name:r[0].name+(r[0].admin1?', '+r[0].admin1:'')};PD=null;FULL=null;CHOG=null;setLoc(LOC.name);
+      const[a,b,c2,d]=await Promise.allSettled([fetchPanchang(),fetchFull(),fetchMoonrise(),fetchChoghadiya()]);
+      if(a.status==='fulfilled')renderPanchang();
+      if(b.status==='fulfilled'){renderPeriods();renderFests();}else renderPeriods();
+      if(c2.status==='fulfilled'&&c2.value){G('mrT').textContent=c2.value.moonrise||'\u2014';}
+      if(d.status==='fulfilled'&&d.value){CHOG=d.value;renderChog();}else{buildFallbackChog();renderChog();}
+      renderSamvat();}
+    else alert('City not found.');
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ── DATA FETCH ────────────────────────────────────────────────
+async function fetchPanchang(){const n=new Date(),p=v=>String(v).padStart(2,'0');PD=await apiFetch(`/api/today-panchang?lat=${LOC.lat}&lon=${LOC.lon}&date=${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`);return PD;}
+async function fetchFull(){const n=new Date(),p=v=>String(v).padStart(2,'0');FULL=await apiFetch(`/api/panchang-full?lat=${LOC.lat}&lon=${LOC.lon}&date=${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`);return FULL;}
+async function fetchMoonrise(){const n=new Date(),p=v=>String(v).padStart(2,'0');return apiFetch(`/api/moonrise?year=${n.getFullYear()}&month=${n.getMonth()+1}&day=${n.getDate()}&lat=${LOC.lat}&lon=${LOC.lon}&tz=${encodeURIComponent(LOC.tz)}`);}
+async function fetchChoghadiya(){
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  // astromata-api returns {day_choghadiya:[{name,start,end,status}],night_choghadiya:[...]}
+  return apiFetch(`/api/choghadiya?lat=${LOC.lat}&lon=${LOC.lon}&date=${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`);
+}
+
+// ── PANCHANG RENDER ───────────────────────────────────────────
+function renderPanchang(){
+  if(!PD)return;
+  const p=PD.panchang||PD;
+  const ti=p.tithi;
+  if(ti){G('tn').textContent=ti.name||ti;G('tp').textContent=(ti.paksha||'Shukla')+' Paksha \u00B7 #'+(ti.no||ti.number||'');const pct=ti.remaining_pct?(100-ti.remaining_pct):50;G('trpct').textContent=Math.round(pct)+'%';G('trprog').style.strokeDashoffset=(2*Math.PI*48)*(1-pct/100);}
+  const va=p.vara;if(va){G('vn').textContent=va;const vi={Sunday:'\u2600\uFE0F',Monday:'\uD83C\uDF19',Tuesday:'\uD83D\uDD34',Wednesday:'\uD83D\uDC9A',Thursday:'\uD83D\uDFE1',Friday:'\uD83D\uDC8E',Saturday:'\uD83D\uDD2E'};G('vi').textContent=vi[va]||'\uD83C\uDF1F';G('vl').textContent='Lord of '+va;}
+  const na=p.nakshatra;if(na){G('nn').textContent=na.name||na;G('nl').textContent='Lord: '+(na.lord||'')+(na.pada?' \u00B7 P'+na.pada:'');}
+  const yo=p.yoga;if(yo){G('yn').textContent=yo.name||yo;G('yq').textContent='Yoga';}
+  const ka=p.karana;if(ka){G('kn').textContent=ka.name||ka;}
+  G('srT').textContent=p.sunrise||'\u2014';G('ssT').textContent=p.sunset||'\u2014';
+  if(p.sunrise&&p.sunset){
+    const toH=s=>{const[h,m]=(s||'').replace(/AM|PM|\s/g,'').split(':').map(Number);return(s.includes('PM')&&h!==12?h+12:s.includes('AM')&&h===12?0:h)+m/60;};
+    const dl=Math.max(0,toH(p.sunset)-toH(p.sunrise));
+    G('dlT').textContent=Math.floor(dl)+'h '+Math.round((dl%1)*60)+'m';G('ghT').textContent=Math.round(dl/24*60)+' Ghati';}
+  renderNakGrid();
+}
+function renderSamvat(){
+  const n=new Date(),vik=n.getFullYear()+57,shk=n.getFullYear()-78;
+  const M=['Chaitra','Vaishakha','Jyeshtha','Ashadha','Shravana','Bhadrapada','Ashwin','Kartika','Margashirsha','Paush','Magha','Phalguna'];
+  const SV=['Prabhava','Vibhava','Shukla','Pramoda','Prajapati','Angiras','Shrimukha','Bhava','Yuvan','Dhatri','Ishvara','Bahudhanya','Pramathi','Vikrama','Vrisha','Chitrabanu','Svabhanu','Tarana','Parthiva','Vyaya','Sarvajit','Sarvadharin','Virodhi','Vikrita','Khara','Nandana','Vijaya','Jaya','Manmatha','Durmukhi','Hevilambi','Vilambi','Vikari','Sharvari','Plava','Shubhakrit','Shobhakrit','Krodhi','Vishvavasu','Parabhava','Plavanga','Kilaka','Saumya','Sadharana','Virodhakrit','Paridhavin','Pramadicha','Ananda','Rakshasa','Nala','Pingala','Kalayukti','Siddharthi','Raudri','Durmati','Dundubhi','Rudhirodgari','Raktakshi','Krodhana','Akshaya'];
+  const RITU={0:'Shishira',1:'Shishira',2:'Vasanta',3:'Vasanta',4:'Grishma',5:'Grishma',6:'Varsha',7:'Varsha',8:'Sharad',9:'Sharad',10:'Hemanta',11:'Hemanta'};
+  const AYA=n.getMonth()>=11||n.getMonth()<5?'Uttarayana':'Dakshinayana';
+  G('sv1').textContent=vik;G('sv2').textContent=shk;G('sv3').textContent=M[(n.getMonth()+2)%12];
+  const p=PD?.panchang||PD;G('sv4').textContent=p?.tithi?.paksha||'Shukla';G('sv5').textContent=AYA;G('sv6').textContent=p?.yoga?.name||p?.yoga||'\u2014';
+  G('svtT').textContent=SV[(vik-1)%60];G('rtuT').textContent=RITU[n.getMonth()]||'Vasanta';
+}
+function updateDate(){const n=new Date(),D=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],M2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];G('hdate').textContent=D[n.getDay()]+', '+n.getDate()+' '+M2[n.getMonth()]+' '+n.getFullYear();}
+
+// ── PERIODS ───────────────────────────────────────────────────
+function renderPeriods(){
+  const p=FULL?.panchang||FULL||PD?.panchang||PD||{};
+  const sr=p.sunrise||'06:00 AM',ss=p.sunset||'06:00 PM';
+  const toM=s=>{if(!s)return-1;const pm=s.includes('PM'),am=s.includes('AM');const[h,m]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(m||0);};
+  const nm=new Date().getHours()*60+new Date().getMinutes();
+  const srM=toM(sr)||360,ssM=toM(ss)||1140,segLen=(ssM-srM)/8;
+  const dow=new Date().getDay();
+  const RS={0:8,1:2,2:7,3:5,4:6,5:4,6:3};
+  const ri=RS[dow]||1,rahuS=srM+(ri-1)*segLen,rahuE=rahuS+segLen;
+  const fmt=m=>{const h=Math.floor(m/60),mi=Math.round(m%60),ap=h>=12?'PM':'AM';return(h>12?h-12:h||12)+':'+String(mi).padStart(2,'0')+' '+ap;};
+  const periods=[
+    {l:'\uD83D\uDEAB Rahu Kaal',acc:'ar',tm:fmt(rahuS)+' \u2013 '+fmt(rahuE),d:'Avoid new ventures, travel, contracts & decisions',rahu:true,sm:rahuS,em:rahuE},
+    {l:'\u26A0\uFE0F Gulika Kaal',acc:'ao',tm:fmt(srM+(5-1)*segLen)+' \u2013 '+fmt(srM+(5-1)*segLen+segLen),d:'Inauspicious \u2014 avoid auspicious ceremonies'},
+    {l:'\uD83D\uDD70\uFE0F Yamaghanta',acc:'av',tm:fmt(srM)+' \u2013 '+fmt(srM+segLen),d:'Saturn-ruled period \u2014 avoid important activities'},
+    {l:'\u2728 Abhijit Muhurta',acc:'ag',tm:fmt((srM+ssM)/2-24)+' \u2013 '+fmt((srM+ssM)/2+24),d:'Universally auspicious \u2014 best for all activities'},
+    {l:'\uD83C\uDF3F Brahma Muhurta',acc:'ae',tm:fmt(srM-96)+' \u2013 '+fmt(srM-48),d:'Pre-dawn sacred window for meditation & study'},
+    {l:'\uD83D\uDC8E Amrit Kaal',acc:'ab',tm:fmt(srM+90)+' \u2013 '+fmt(srM+186),d:'Highest auspiciousness of the entire day'},
+  ];
+  G('prdg').innerHTML=periods.map(d=>{
+    let badge='';
+    if(d.rahu&&d.sm>=0){if(nm>=d.sm&&nm<=d.em){badge='<div class="badge bon">\u26A1 ACTIVE NOW</div>';showRib('danger','\uD83D\uDEAB Rahu Kaal Active \u2014 '+d.tm);}else if(d.sm>nm&&d.sm-nm<=30){badge='<div class="badge bsn">\u23F0 In '+Math.round(d.sm-nm)+' min</div>';showRib('warn','\u26A0\uFE0F Rahu Kaal in '+Math.round(d.sm-nm)+' minutes');}else showRib('safe','\u2705 Current time is auspicious \u00B7 Rahu Kaal: '+fmt(d.sm),true);}
+    return `<div class="prd" onmousemove="tilt3d(this,event)" onmouseleave="this.style.transform=''"><div class="pacc ${d.acc}"></div><div class="prdl">${d.l}</div><div class="prdt">${d.tm}</div><div class="prdd">${d.d}</div>${badge}</div>`;
+  }).join('');
+}
+function tilt3d(el,e){const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=(e.clientX-cx)/(r.width/2)*12,dy=(e.clientY-cy)/(r.height/2)*-12;el.style.transform=`perspective(600px) rotateY(${dx}deg) rotateX(${dy}deg) translateZ(8px)`;}
+function showRib(cls,msg,auto=false){const r=G('rib');r.className='ribbon show '+cls;G('rt').textContent='';G('rm').textContent=msg;G('ri').textContent=cls==='danger'?'\uD83D\uDEAB':cls==='warn'?'\u26A0\uFE0F':'\u2705';if(auto)setTimeout(()=>r.classList.remove('show'),5500);}
+
+// ── CHOGHADIYA ────────────────────────────────────────────────
+// astromata-api /api/choghadiya returns: {day_choghadiya:[{name,start,end,status}],night_choghadiya:[...]}
+function setChog(m){chogM=m;G('cdb').className='ct'+(m==='day'?' on':'');G('cnb').className='ct'+(m==='night'?' on':'');renderChog();}
+
+function buildFallbackChog(){
+  const p=FULL?.panchang||FULL||PD?.panchang||PD||{};
+  const sr=p.sunrise||'06:00 AM',ss=p.sunset||'06:00 PM';
+  const toM=s=>{if(!s)return-1;const pm=s.includes('PM'),am=s.includes('AM');const[h,m]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(m||0);};
+  const srM=toM(sr)||360,ssM=toM(ss)||1140;
+  const segD=(ssM-srM)/8,segN=((srM+1440)-ssM)/8;
+  const fmt=m=>{const tot=((m%1440)+1440)%1440,h=Math.floor(tot/60),mi=Math.round(tot%60),ap=h>=12?'PM':'AM';return(h>12?h-12:h||12)+':'+String(mi).padStart(2,'0')+' '+ap;};
+  const dow=new Date().getDay();
+  const DS={0:['Udveg','Char','Labh','Amrit','Kaal','Shubh','Rog','Labh'],1:['Amrit','Kaal','Shubh','Rog','Labh','Udveg','Char','Amrit'],2:['Kaal','Shubh','Rog','Labh','Udveg','Char','Amrit','Kaal'],3:['Rog','Labh','Udveg','Char','Amrit','Kaal','Shubh','Rog'],4:['Shubh','Rog','Labh','Udveg','Char','Amrit','Kaal','Shubh'],5:['Char','Amrit','Kaal','Shubh','Rog','Labh','Udveg','Char'],6:['Labh','Udveg','Char','Amrit','Kaal','Shubh','Rog','Labh']};
+  const NS={0:['Shubh','Amrit','Char','Rog','Kaal','Labh','Udveg','Shubh'],1:['Char','Rog','Kaal','Labh','Udveg','Shubh','Amrit','Char'],2:['Rog','Kaal','Labh','Udveg','Shubh','Amrit','Char','Rog'],3:['Kaal','Labh','Udveg','Shubh','Amrit','Char','Rog','Kaal'],4:['Labh','Udveg','Shubh','Amrit','Char','Rog','Kaal','Labh'],5:['Amrit','Char','Rog','Kaal','Labh','Udveg','Shubh','Amrit'],6:['Udveg','Shubh','Amrit','Char','Rog','Kaal','Labh','Udveg']};
+  const GOOD=new Set(['Labh','Amrit','Shubh','Char']);
+  const day=(DS[dow]||DS[0]).map((n2,i)=>({name:n2,start:fmt(srM+i*segD),end:fmt(srM+(i+1)*segD),status:GOOD.has(n2)?'Auspicious':'Inauspicious'}));
+  const night=(NS[dow]||NS[0]).map((n2,i)=>({name:n2,start:fmt(ssM+i*segN),end:fmt(ssM+(i+1)*segN),status:GOOD.has(n2)?'Auspicious':'Inauspicious'}));
+  CHOG={day_choghadiya:day,night_choghadiya:night};
+}
+function renderChog(){
+  if(!CHOG){buildFallbackChog();}
+  const slots=(chogM==='day'?(CHOG.day_choghadiya||CHOG.choghadiya?.day):(CHOG.night_choghadiya||CHOG.choghadiya?.night))||[];
+  if(!slots.length){buildFallbackChog();renderChog();return;}
+  const nm=new Date().getHours()*60+new Date().getMinutes();
+  const toM=s=>{if(!s)return-1;const pm=s.includes('PM'),am=s.includes('AM');const[h,mi]=(s.replace(/AM|PM|\s/g,'')).split(':').map(Number);return(pm&&h!==12?h+12:am&&h===12?0:h)*60+(mi||0);};
+  G('chogr').innerHTML=slots.map(sl=>{
+    const nm2=sl.name||'Char',st=sl.start||sl.start_time||'',en=sl.end||sl.end_time||'';
+    const sm=toM(st),em=toM(en),isCur=sm>=0&&nm>=sm&&nm<=em;
+    const nat=sl.status||sl.nature||(sl.auspicious?'Auspicious':'Inauspicious');
+    return `<div class="cs cg-${nm2}${isCur?' now':''}" onmousemove="tilt3d(this,event)" onmouseleave="this.style.transform=''"><div class="csn">${nm2}</div><div class="cst">${st}<br>${en}</div><div class="csq">${nat}</div></div>`;
+  }).join('');
+}
+
+function fallback(){
+  G('tn').textContent='Panchami';G('tp').textContent='Shukla Paksha \u00B7 #5';G('trpct').textContent='72%';G('trprog').style.strokeDashoffset=(2*Math.PI*48)*0.28;
+  G('vn').textContent='Thursday';G('vi').textContent='\uD83D\uDFE1';G('vl').textContent='Lord: Jupiter';
+  G('nn').textContent='Pushya';G('nl').textContent='Lord: Saturn \u00B7 P2';
+  G('yn').textContent='Ganda';G('yq').textContent='Variable';G('kn').textContent='Naga';
+  G('srT').textContent='05:28 AM';G('ssT').textContent='07:07 PM';G('dlT').textContent='13h 39m';G('ghT').textContent='34 Ghati';G('mrT').textContent='07:05 PM';
+  renderPeriods();renderSamvat();buildFallbackChog();renderChog();
+}
+function renderFests(){
+  const FD=[{ico:'\uD83D\uDD31',n:'Maha Shivratri',t:'February',d:'Night of Lord Shiva \u2014 fasting, vigil, puja'},{ico:'\uD83C\uDFA8',n:'Holi',t:'March',d:'Festival of colours celebrating spring'},{ico:'\uD83D\uDC18',n:'Ganesh Chaturthi',t:'August',d:'Birthday of Lord Ganesha \u2014 10-day festival'},{ico:'\uD83C\uDF48',n:'Navratri',t:'October',d:'Nine nights of Goddess Durga worship'},{ico:'\u2728',n:'Diwali',t:'October/November',d:'Festival of lights \u2014 Lakshmi puja, fireworks'},{ico:'\uD83D\uDE4F',n:'Ekadashi',t:'Twice monthly',d:'Auspicious fasting day \u2014 worship of Lord Vishnu'},{ico:'\uD83C\uDF15',n:'Purnima',t:'Monthly full moon',d:'Powerful for meditation and sadhana'},{ico:'\uD83D\uDCFF',n:'Pradosh',t:'Bi-monthly',d:'Shiva worship during 13th lunar day twilight'}];
+  G('festg').innerHTML=FD.map(f=>`<div class="fc"><span class="fcico">${f.ico}</span><div><div class="fcn">${f.n}</div><div class="fct">${f.t}</div><div style="font-family:var(--f5);font-size:.72rem;color:rgba(255,255,255,.42);margin-top:.3rem;line-height:1.55">${f.d}</div></div></div>`).join('');
+}
+
+// ── NAKSHATRA CANVAS ──────────────────────────────────────────
+function getMoonPhase(){const p=PD?.panchang||PD;const ti=p?.tithi;if(!ti)return .17;const tN=ti.no||ti.number||5,pak=ti.paksha||'Shukla';return pak==='Shukla'?tN/30:.5+(tN-15)/30;}
+function initNakCanvas(){
+  const C=G('nakC'),ctx=C.getContext('2d');
+  C.width=C.offsetWidth||1100;C.height=360;
+  const W=C.width,H=360,CX=W/2,CY=H/2,RX=W*.44,RY=H*.33;
+  const p=PD?.panchang||PD;const curNak=p?.nakshatra?.name||p?.nakshatra||'Pushya';
+  const curIdx=NAKS.indexOf(curNak);const moonPhase=getMoonPhase(),moonR=4+Math.sin(moonPhase*Math.PI)*16;
+  let rot=0;
+  function drawMoon(ctx,x,y,r,phase){
+    if(r<1.5)return;ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.clip();
+    ctx.fillStyle='rgba(30,30,50,.95)';ctx.fillRect(x-r,y-r,r*2,r*2);
+    if(phase>.03&&phase<.97){ctx.beginPath();if(phase<=.5){const il=phase*2;ctx.arc(x,y,r,-Math.PI/2,Math.PI/2,false);ctx.bezierCurveTo(x+r*(1-il*2),y+r,x+r*(1-il*2),y-r,x,y-r);}else{const il=(1-phase)*2;ctx.arc(x,y,r,Math.PI/2,Math.PI*1.5,false);ctx.bezierCurveTo(x-r*(1-il*2),y-r,x-r*(1-il*2),y+r,x,y+r);}ctx.closePath();
+    const mg=ctx.createRadialGradient(x-r*.25,y-r*.25,0,x,y,r);mg.addColorStop(0,'rgba(255,252,235,1)');mg.addColorStop(.4,'rgba(245,230,180,.95)');mg.addColorStop(1,'rgba(210,190,130,.85)');ctx.fillStyle=mg;ctx.fill();}
+    else{const mg=ctx.createRadialGradient(x-r*.25,y-r*.25,0,x,y,r);mg.addColorStop(0,'rgba(255,252,235,1)');mg.addColorStop(1,'rgba(230,205,140,.95)');ctx.fillStyle=mg;ctx.fillRect(x-r,y-r,r*2,r*2);}
+    if(r>8){ctx.globalAlpha=.1;[[.2,.12,.08],[-.12,.26,.06],[.16,-.21,.05]].forEach(([dx,dy,cr])=>{ctx.beginPath();ctx.arc(x+dx*r,y+dy*r,cr*r,0,Math.PI*2);ctx.fillStyle='rgba(100,80,40,1)';ctx.fill();});ctx.globalAlpha=1;}
+    if(r>5){const og=ctx.createRadialGradient(x,y,r*.6,x,y,r*3);og.addColorStop(0,`rgba(255,245,180,${0.05+moonPhase*.22})`);og.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fillStyle=og;ctx.fill();}
+    ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<80;i++){const bx=Math.sin(i*47.3)*W*.46+W*.5,by=Math.cos(i*31.7)*H*.44+H*.5,ba=Math.sin(Date.now()*.0007+i)*.2+.3;ctx.beginPath();ctx.arc(bx,by,.7,0,Math.PI*2);ctx.fillStyle=`rgba(255,252,230,${ba*.35})`;ctx.fill();}
+    ctx.beginPath();for(let a=0;a<=Math.PI*2+.02;a+=.02){ctx.lineTo(CX+RX*Math.cos(a),CY+RY*Math.sin(a));}ctx.strokeStyle='rgba(255,215,0,.05)';ctx.lineWidth=22;ctx.stroke();ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=1;ctx.stroke();
+    NAKS.forEach((n,i)=>{
+      const ang=(i/27)*Math.PI*2-Math.PI/2+rot,x=CX+RX*Math.cos(ang),y=CY+RY*Math.sin(ang);
+      const isCur=i===curIdx,isNear=Math.abs(i-curIdx)<=2||Math.abs(i-curIdx)>=25;
+      if(isCur){const gw=ctx.createRadialGradient(x,y,0,x,y,35);gw.addColorStop(0,'rgba(255,215,0,.5)');gw.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(x,y,35,0,Math.PI*2);ctx.fillStyle=gw;ctx.fill();}
+      const sr2=isCur?6.5:isNear?3.5:2.2;ctx.beginPath();ctx.arc(x,y,sr2,0,Math.PI*2);ctx.fillStyle=isCur?'#FFE878':isNear?'rgba(255,252,230,.7)':'rgba(255,252,230,.32)';if(isCur){ctx.shadowColor='rgba(255,215,0,.9)';ctx.shadowBlur=20;}ctx.fill();ctx.shadowBlur=0;
+      const sn=n.length<=8?n:n.split(' ')[0],lo=y>CY?20:-10;
+      ctx.font=isCur?'700 10px Cinzel':isNear?'600 8.5px Cinzel':'500 7.5px Cinzel';ctx.fillStyle=isCur?'#FFD700':isNear?'rgba(255,252,230,.65)':'rgba(255,252,230,.3)';ctx.textAlign='center';ctx.fillText(sn,x,y+lo);
+      if(isCur&&n.includes(' ')){ctx.font='500 8px Cinzel';ctx.fillStyle='rgba(255,215,0,.55)';ctx.fillText(n.split(' ').slice(1).join(' '),x,y+lo+12);}
+    });
+    if(curIdx>=0){const ang=(curIdx/27)*Math.PI*2-Math.PI/2+rot;drawMoon(ctx,CX+RX*Math.cos(ang),CY+RY*Math.sin(ang),moonR,moonPhase);}
+    ctx.font='700 11px Cinzel';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.28)';ctx.fillText('NAKSHATRA ORBITAL PATH',CX,CY-8);
+    ctx.font='500 9px Cinzel';ctx.fillStyle='rgba(255,215,0,.18)';ctx.fillText('Moon in '+(curNak||'\u2014')+' \u00B7 Phase '+Math.round(moonPhase*100)+'%',CX,CY+8);
+    rot+=.002;requestAnimationFrame(draw);
+  }
+  draw();
+}
+function renderNakGrid(){
+  const p=PD?.panchang||PD;const cur=p?.nakshatra?.name||p?.nakshatra||'Pushya';
+  G('nngrid').innerHTML=NAKS.map((n,i)=>`<div class="nn${n===cur?' cur':''}" title="${NAK_L[i]}-ruled"><div>${n.split(' ')[0]}</div>${n.includes(' ')?`<div style="font-size:.5rem;opacity:.55">${n.split(' ').slice(1).join(' ')}</div>`:''}<div style="font-size:.5rem;color:rgba(255,215,0,.3);margin-top:1px">${NAK_L[i]}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NORTH INDIAN KUNDALI CHART
+// Accurate layout verified from screenshot image:
+// H1=top-center(Lagna), H2=top-left, H8=top-right
+// H3=left-mid, H7=right-mid
+// H4=btm-left, H5=btm-center, H6=btm-right
+// H9=inner-top, H10=inner-left, H11=inner-btm, H12=inner-right
+// ═══════════════════════════════════════════════════════════════
+function initKundC(){
+  const C=G('kundC');if(!C)return;
+  C.width=C.offsetWidth||480;C.height=C.offsetWidth||480;
+  drawEmptyK(C.getContext('2d'),C.width);
+  C.addEventListener('mousedown',e=>{kDrag=true;kLX=e.clientX;kLY=e.clientY;});
+  window.addEventListener('mouseup',()=>{kDrag=false;});
+  window.addEventListener('mousemove',e=>{if(!kDrag||kMode!=='3d')return;kRY+=(e.clientX-kLX)*.006;kRX+=(e.clientY-kLY)*.006;kLX=e.clientX;kLY=e.clientY;drawK();});
+  C.addEventListener('wheel',e=>{if(kMode==='3d'){kZ=Math.max(.4,Math.min(2.8,kZ-e.deltaY*.001));drawK();}e.preventDefault();},{passive:false});
+  C.addEventListener('touchstart',e=>{kDrag=true;kLX=e.touches[0].clientX;kLY=e.touches[0].clientY;},{passive:true});
+  C.addEventListener('touchend',()=>{kDrag=false;});
+  C.addEventListener('touchmove',e=>{if(!kDrag||kMode!=='3d')return;kRY+=(e.touches[0].clientX-kLX)*.006;kRX+=(e.touches[0].clientY-kLY)*.006;kLX=e.touches[0].clientX;kLY=e.touches[0].clientY;drawK();e.preventDefault();},{passive:false});
+  C.onclick=e=>{if(kMode==='3d'||!KDATA)return;showHouseTip(e);};
+  new ResizeObserver(()=>{if(C.offsetWidth>0){C.width=C.offsetWidth;C.height=C.offsetWidth;drawK();}}).observe(C);
+}
+function setKM(m){kMode=m;['b2d','b3d','bnv'].forEach(id=>G(id).className='kmbtn');G({2d:'b2d',3d:'b3d',nav:'bnv'}[m]).className='kmbtn on';drawK();}
+function drawK(){
+  const C=G('kundC');if(!C)return;
+  const ctx=C.getContext('2d'),S=C.width;
+  const houses=kMode==='nav'?KDATA?.navamsa?.houses:KDATA?.north_indian?.houses;
+  if(kMode==='3d')drawK3D(ctx,S,houses);else drawK2D(ctx,S,houses,kMode==='nav');
+}
+
+function drawK2D(ctx,S,houses,isNav){
+  ctx.clearRect(0,0,S,S);
+  const P=Math.round(S*.032),G2=(S-P*2)/4,ox=P,oy=P;
+  const bg=ctx.createRadialGradient(S/2,S*.4,0,S/2,S/2,S*.75);bg.addColorStop(0,'rgba(20,10,40,.97)');bg.addColorStop(1,'rgba(5,4,14,.99)');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(ox-1,oy-1,G2*4+2,G2*4+2,10);ctx.fill();
+  // Golden border
+  const bg2=ctx.createLinearGradient(ox,oy,ox+G2*4,oy+G2*4);bg2.addColorStop(0,'rgba(255,215,0,.5)');bg2.addColorStop(.5,'rgba(240,184,99,.3)');bg2.addColorStop(1,'rgba(255,215,0,.5)');
+  ctx.strokeStyle=bg2;ctx.lineWidth=1.8;ctx.beginPath();ctx.roundRect(ox,oy,G2*4,G2*4,10);ctx.stroke();
+  // Inner diamond
+  const dg=ctx.createLinearGradient(ox,oy+G2*2,ox+G2*4,oy+G2*2);dg.addColorStop(0,'rgba(255,215,0,.4)');dg.addColorStop(.5,'rgba(255,215,0,.2)');dg.addColorStop(1,'rgba(255,215,0,.4)');
+  ctx.strokeStyle=dg;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(ox+G2*2,oy);ctx.lineTo(ox+G2*4,oy+G2*2);ctx.lineTo(ox+G2*2,oy+G2*4);ctx.lineTo(ox,oy+G2*2);ctx.closePath();ctx.stroke();
+  // Outer 8 house grid lines
+  ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=.9;
+  [[ox+G2,oy,ox+G2,oy+G2],[ox+G2*3,oy,ox+G2*3,oy+G2],[ox,oy+G2,ox+G2,oy+G2],[ox+G2*3,oy+G2,ox+G2*4,oy+G2],[ox+G2,oy+G2*3,ox,oy+G2*3],[ox+G2*4,oy+G2*3,ox+G2*3,oy+G2*3],[ox+G2,oy+G2*3,ox+G2,oy+G2*4],[ox+G2*3,oy+G2*3,ox+G2*3,oy+G2*4]].forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+  // Inner diamond sub-lines (H9-12)
+  ctx.strokeStyle='rgba(255,215,0,.12)';ctx.lineWidth=.7;
+  [[ox+G2*2,oy,ox+G2,oy+G2],[ox+G2*2,oy,ox+G2*3,oy+G2],[ox,oy+G2*2,ox+G2,oy+G2],[ox,oy+G2*2,ox+G2,oy+G2*3],[ox+G2*2,oy+G2*4,ox+G2,oy+G2*3],[ox+G2*2,oy+G2*4,ox+G2*3,oy+G2*3],[ox+G2*4,oy+G2*2,ox+G2*3,oy+G2],[ox+G2*4,oy+G2*2,ox+G2*3,oy+G2*3]].forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+  if(!houses){drawEmptyCenter(ctx,S);return;}
+  // VERIFIED house centers from screenshot
+  const HC=[null,
+    {x:ox+G2*2,   y:oy+G2*.46},   // H1 top-center (Lagna)
+    {x:ox+G2*.5,  y:oy+G2*.5},    // H2 top-left
+    {x:ox+G2*.28, y:oy+G2*2},     // H3 left-middle
+    {x:ox+G2*.5,  y:oy+G2*3.5},   // H4 bottom-left
+    {x:ox+G2*2,   y:oy+G2*3.54},  // H5 bottom-center
+    {x:ox+G2*3.5, y:oy+G2*3.5},   // H6 bottom-right
+    {x:ox+G2*3.72,y:oy+G2*2},     // H7 right-middle
+    {x:ox+G2*3.5, y:oy+G2*.5},    // H8 top-right
+    {x:ox+G2*2,   y:oy+G2*1.38},  // H9 inner-top
+    {x:ox+G2*1.28,y:oy+G2*2},     // H10 inner-left
+    {x:ox+G2*2,   y:oy+G2*2.62},  // H11 inner-bottom
+    {x:ox+G2*2.72,y:oy+G2*2}      // H12 inner-right
+  ];
+  for(let h=1;h<=12;h++){
+    const hd=houses[h];if(!hd)continue;
+    const{x:cx,y:cy}=HC[h],si=SIGNS.indexOf(hd.sign||''),isH1=h===1;
+    if(isH1){const gr=ctx.createRadialGradient(cx,cy,0,cx,cy,G2*.5);gr.addColorStop(0,'rgba(255,215,0,.1)');gr.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(cx,cy,G2*.5,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();}
+    ctx.textAlign='center';
+    ctx.font=`600 ${Math.round(G2*.17)}px Cinzel`;ctx.fillStyle='rgba(255,215,0,.2)';ctx.fillText(h,cx,cy-G2*.3);
+    if(si>=0){ctx.font=`700 ${Math.round(G2*.22)}px Cinzel`;ctx.fillStyle=isH1?'rgba(255,215,0,.85)':'rgba(255,215,0,.52)';ctx.fillText(SIGN_S[si],cx,cy-G2*.12);ctx.font=`${Math.round(G2*.17)}px serif`;ctx.fillStyle='rgba(255,215,0,.28)';ctx.fillText(SIGN_G[si],cx+G2*.2,cy-G2*.12);}
+    const ps=(hd.planets||[]).filter(pl=>pl.code!=='Asc');
+    ps.forEach((pl,pi)=>{
+      const pF=Object.keys(PS).find(k=>PS[k]===pl.code)||pl.code,col=PC[pF]||'#E8E8E8',yPos=cy+G2*.08+pi*G2*.25;
+      ctx.beginPath();ctx.arc(cx-G2*.22,yPos-G2*.03,G2*.04,0,Math.PI*2);ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=5;ctx.fill();ctx.shadowBlur=0;
+      ctx.font=`${pl.retro?'italic ':''} 700 ${Math.round(G2*.22)}px Cinzel`;ctx.fillStyle=col;ctx.textAlign='left';
+      ctx.fillText((pl.retro?'(R)':'')+pl.code,cx-G2*.16,yPos);
+      if(pl.deg&&ps.length<=2){ctx.font=`400 ${Math.round(G2*.15)}px IBM Plex Mono`;ctx.fillStyle=col+'77';ctx.fillText(pl.deg.split("'")[0]+"'",cx-G2*.16,yPos+G2*.18);}
+      ctx.textAlign='center';
+    });
+  }
+  ctx.textAlign='center';ctx.font=`700 ${Math.round(G2*.35)}px Cinzel Decorative`;ctx.fillStyle='rgba(255,215,0,.45)';ctx.shadowColor='rgba(255,215,0,.4)';ctx.shadowBlur=18;ctx.fillText('\u2726',S/2,S/2-G2*.1);ctx.shadowBlur=0;
+  ctx.font=`400 ${Math.round(G2*.18)}px Cinzel`;ctx.fillStyle='rgba(255,215,0,.22)';ctx.fillText(isNav?'D9 NAVAMSA':'KUNDALI',S/2,S/2+G2*.1);
+  if(KDATA?.lagna?.sign&&!isNav){ctx.font=`600 ${Math.round(G2*.15)}px Cinzel`;ctx.fillStyle='rgba(255,215,0,.16)';ctx.fillText(KDATA.lagna.sign.toUpperCase()+' LAGNA',S/2,S/2+G2*.26);}
+}
+function drawEmptyK(ctx,S){
+  const P=Math.round(S*.032),G2=(S-P*2)/4,ox=P,oy=P;
+  const bg=ctx.createRadialGradient(S/2,S*.4,0,S/2,S/2,S*.75);bg.addColorStop(0,'rgba(20,10,40,.95)');bg.addColorStop(1,'rgba(5,4,14,.98)');ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(ox,oy,G2*4,G2*4,10);ctx.fill();
+  ctx.strokeStyle='rgba(255,215,0,.2)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(ox,oy,G2*4,G2*4,10);ctx.stroke();
+  ctx.strokeStyle='rgba(255,215,0,.14)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ox+G2*2,oy);ctx.lineTo(ox+G2*4,oy+G2*2);ctx.lineTo(ox+G2*2,oy+G2*4);ctx.lineTo(ox,oy+G2*2);ctx.closePath();ctx.stroke();
+  drawEmptyCenter(ctx,S);
+}
+function drawEmptyCenter(ctx,S){ctx.textAlign='center';ctx.font='13px Cinzel Decorative';ctx.fillStyle='rgba(255,215,0,.2)';ctx.fillText('\u2726',S/2,S/2-8);ctx.font='8px Cinzel';ctx.fillStyle='rgba(255,215,0,.15)';ctx.fillText('ENTER BIRTH DETAILS',S/2,S/2+8);}
+
+function drawK3D(ctx,S,houses){
+  ctx.clearRect(0,0,S,S);const CX=S/2,CY=S/2;
+  const cX=Math.cos(kRX),sX=Math.sin(kRX),cY=Math.cos(kRY),sY=Math.sin(kRY);
+  function proj(x,y,z){const x2=x*cY-z*sY,z2=x*sY+z*cY,y2=y*cX-z2*sX,z3=y*sX+z2*cX,f=S*.42*kZ/(S*.35+z3+350);return{x:CX+x2*f,y:CY+y2*f,z:z3,f};}
+  const bg=ctx.createRadialGradient(CX,CY*.6,0,CX,CY,S*.8);bg.addColorStop(0,'rgba(15,5,30,.97)');bg.addColorStop(1,'rgba(3,2,10,.99)');ctx.fillStyle=bg;ctx.fillRect(0,0,S,S);
+  for(let i=0;i<50;i++){const bx=Math.sin(i*47.3)*S*.44+S*.5,by=Math.cos(i*31.7)*S*.44+S*.5,ba=Math.sin(Date.now()*.0005+i)*.15+.2;ctx.beginPath();ctx.arc(bx,by,.8,0,Math.PI*2);ctx.fillStyle=`rgba(255,252,225,${ba})`;ctx.fill();}
+  const sz=175*kZ;
+  const vs=[[-sz,-sz,0],[sz,-sz,0],[sz,sz,0],[-sz,sz,0]].map(([x,y,z])=>proj(x,y,z));
+  ctx.beginPath();vs.forEach((v,i)=>i===0?ctx.moveTo(v.x,v.y):ctx.lineTo(v.x,v.y));ctx.closePath();
+  const face=ctx.createRadialGradient(CX,CY,0,CX,CY,sz);face.addColorStop(0,'rgba(25,10,45,.95)');face.addColorStop(1,'rgba(8,5,18,.96)');ctx.fillStyle=face;ctx.fill();ctx.strokeStyle='rgba(255,215,0,.4)';ctx.lineWidth=1.5;ctx.stroke();
+  const dp=[[-sz,0,0],[0,-sz,0],[sz,0,0],[0,sz,0]].map(([x,y,z])=>proj(x,y,z));
+  ctx.beginPath();dp.forEach((v,i)=>i===0?ctx.moveTo(v.x,v.y):ctx.lineTo(v.x,v.y));ctx.closePath();ctx.strokeStyle='rgba(255,215,0,.3)';ctx.lineWidth=1.2;ctx.stroke();
+  if(!houses){ctx.textAlign='center';ctx.font='14px Cinzel Decorative';ctx.fillStyle='rgba(255,215,0,.35)';ctx.fillText('\u2726',CX,CY+5);return;}
+  const h3d=[null,{x:0,y:-sz*.82,z:30},{x:-sz*.82,y:-sz*.82,z:25},{x:-sz*.82,y:0,z:20},{x:-sz*.82,y:sz*.82,z:25},{x:0,y:sz*.82,z:30},{x:sz*.82,y:sz*.82,z:25},{x:sz*.82,y:0,z:20},{x:sz*.82,y:-sz*.82,z:25},{x:0,y:-sz*.38,z:45},{x:-sz*.38,y:0,z:45},{x:0,y:sz*.38,z:45},{x:sz*.38,y:0,z:45}];
+  for(let h=1;h<=12;h++){const hd=houses[h];if(!hd||!h3d[h])continue;const{x,y,z}=h3d[h],pp=proj(x,y,z);if(pp.f<=0)continue;const si=SIGNS.indexOf(hd.sign||'');if(h===1){const gd=ctx.createRadialGradient(pp.x,pp.y,0,pp.x,pp.y,35*pp.f);gd.addColorStop(0,'rgba(255,215,0,.15)');gd.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(pp.x,pp.y,35*pp.f,0,Math.PI*2);ctx.fillStyle=gd;ctx.fill();}ctx.textAlign='center';ctx.font=`700 ${Math.round(12*Math.min(1,pp.f*1.5))}px Cinzel`;ctx.fillStyle=`rgba(255,215,0,${Math.min(.65,pp.f*.8)})`;if(si>=0)ctx.fillText(SIGN_S[si],pp.x,pp.y+2);(hd.planets||[]).filter(pl=>pl.code!=='Asc').forEach((pl,pi)=>{const pF=Object.keys(PS).find(k=>PS[k]===pl.code)||pl.code,col=PC[pF]||'#E8E8E8',pp2=proj(x,y,z+22+pi*16);if(pp2.f<=0)return;const og=ctx.createRadialGradient(pp2.x,pp2.y,0,pp2.x,pp2.y,14*pp2.f);og.addColorStop(0,col+'55');og.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(pp2.x,pp2.y,14*pp2.f,0,Math.PI*2);ctx.fillStyle=og;ctx.fill();ctx.beginPath();ctx.arc(pp2.x,pp2.y,5.5*pp2.f,0,Math.PI*2);ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;ctx.font=`700 ${Math.round(11*pp2.f)}px Cinzel`;ctx.fillStyle=col;ctx.fillText(pl.code,pp2.x,pp2.y-9*pp2.f);});}
+  const p0=proj(0,0,70);const cg=ctx.createRadialGradient(p0.x,p0.y,0,p0.x,p0.y,45);cg.addColorStop(0,'rgba(255,215,0,.28)');cg.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(p0.x,p0.y,45,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();ctx.font='18px Cinzel Decorative';ctx.textAlign='center';ctx.fillStyle='rgba(255,215,0,.75)';ctx.shadowColor='rgba(255,215,0,.5)';ctx.shadowBlur=18;ctx.fillText('\u2726',p0.x,p0.y+6);ctx.shadowBlur=0;
+  if(!kDrag)setTimeout(()=>{if(kMode==='3d'){kRY+=.006;drawK();}},30);
+}
+
+function showHouseTip(e){
+  if(!KDATA)return;const C=G('kundC'),rect=C.getBoundingClientRect(),sc=C.width/rect.width;
+  const mx=(e.clientX-rect.left)*sc,my=(e.clientY-rect.top)*sc,S=C.width,P=Math.round(S*.032),G2=(S-P*2)/4,ox=P,oy=P;
+  const HC=[null,{x:ox+G2*2,y:oy+G2*.46},{x:ox+G2*.5,y:oy+G2*.5},{x:ox+G2*.28,y:oy+G2*2},{x:ox+G2*.5,y:oy+G2*3.5},{x:ox+G2*2,y:oy+G2*3.54},{x:ox+G2*3.5,y:oy+G2*3.5},{x:ox+G2*3.72,y:oy+G2*2},{x:ox+G2*3.5,y:oy+G2*.5},{x:ox+G2*2,y:oy+G2*1.38},{x:ox+G2*1.28,y:oy+G2*2},{x:ox+G2*2,y:oy+G2*2.62},{x:ox+G2*2.72,y:oy+G2*2}];
+  let best=-1,bestD=Infinity;HC.forEach((h,i)=>{if(!h)return;const d=Math.sqrt((mx-h.x)**2+(my-h.y)**2);if(d<G2*.75&&d<bestD){bestD=d;best=i;}});
+  if(best<=0){G('htip').style.display='none';return;}
+  const houses=kMode==='nav'?KDATA?.navamsa?.houses:KDATA?.north_indian?.houses;if(!houses)return;
+  const hd=houses[best];if(!hd)return;const si=SIGNS.indexOf(hd.sign||'');
+  G('htitt').textContent='House '+best+' \u00B7 '+(hd.sign||'\u2014')+' '+(si>=0?SIGN_G[si]:'');
+  const ps=(hd.planets||[]).filter(p=>p.code!=='Asc');
+  G('htbody').innerHTML=`<div class="htr"><div class="htk">Rashi</div><div class="htv">${hd.sign||'\u2014'}</div></div><div class="htr"><div class="htk">Meaning</div><div class="htv" style="font-size:.65rem;color:rgba(255,255,255,.42)">${HMEAN[best-1]}</div></div>${ps.length?ps.map(p2=>{const pF=Object.keys(PS).find(k=>PS[k]===p2.code)||p2.code,col=PC[pF]||'#E8E8E8';return `<div class="htr"><div class="htk" style="color:${col}">${p2.code}${p2.retro?' (R)':''}</div><div class="htv" style="font-family:var(--f4);font-size:.65rem">${p2.deg||''}</div></div>`;}).join(''):'<div class="htr"><div class="htk">Planets</div><div class="htv" style="color:rgba(255,255,255,.3)">Empty house</div></div>'}`;
+  const tip=G('htip');tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-10)+'px';tip.style.display='block';
+  clearTimeout(tip._t);tip._t=setTimeout(()=>tip.style.display='none',4000);
+}
+
+// ── KUNDALI GENERATION ────────────────────────────────────────
+async function genK(){
+  const dob=G('kdob').value,tob=G('ktob').value,city=G('kcity').value||'Bangalore',name=G('kname').value||'User';
+  if(!dob||!tob)return;
+  let lat=12.9716,lon=77.5946,tz='Asia/Kolkata',placeName=city;
+  try{const g=await apiFetch(`/geocode?q=${encodeURIComponent(city)}`);if(g?.[0]){lat=g[0].latitude;lon=g[0].longitude;tz=g[0].timezone||'Asia/Kolkata';placeName=g[0].name+(g[0].admin1?', '+g[0].admin1:'');}}
+  catch(e){try{const g2=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r=>r.json());if(g2.results?.[0]){lat=g2.results[0].latitude;lon=g2.results[0].longitude;tz=g2.results[0].timezone||'Asia/Kolkata';placeName=g2.results[0].name;}}catch(e2){}}
+  try{
+    const res=await apiFetch('/api/kundli',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,gender:'Male',date:dob,time:tob,latitude:lat,longitude:lon})});
+    if(res&&res.success!==false){KDATA=res;KDATA._m={dob,tob,city:placeName,lat,lon,tz,name};drawK();renderKInfo(res);G('cclagna').textContent=(SIGN_G[SIGNS.indexOf(res.lagna?.sign)]||'')+' '+(res.lagna?.sign||'\u2014')+' Lagna \u00B7 '+(res.lagna?.degree_dms||'');}
+    else throw new Error('API error');
+  }catch(e){KDATA=buildKDemo();KDATA._m={dob,tob,city:placeName,lat,lon,tz,name};drawK();renderKInfo(KDATA);G('cclagna').textContent='\u264D Virgo Lagna (Demo)';}
+}
+function buildKDemo(){return{success:true,timezone:'Asia/Kolkata',ayanamsa:23.8665,lagna:{sign:'Virgo',sign_lord:'Mercury',longitude:155.3,degree_dms:"15\u00B018'"},panchang:{tithi:{name:'Shukla Panchami',paksha:'Shukla',no:5},yoga:{name:'Shobhana'},nakshatra:{name:'Rohini',lord:'Moon',pada:3},karana:{name:'Bava'},vara:'Sunday'},avakhada:{name_alphabet:'Vo',varna:'Vaishya',vashya:'Nara (Human)',yoni:'Serpent',gan:'Dev',nadi:'Madhya',moon_sign:'Taurus',moon_sign_lord:'Venus',asc_sign:'Virgo',asc_sign_lord:'Mercury',nakshatra:'Rohini',nakshatra_pada:3,tithi:'Shukla Panchami',karan:'Bava',yog:'Shobhana',yunja:'Adya',tatva:'Earth',paya:'Gold'},planets:[{planet:'Sun',longitude:34.8,sign:'Taurus',degree_dms:"4\u00B048'",nakshatra:'Krittika',nakshatra_lord:'Sun',pada:4,retro:false,house:9,dignity:'Neutral'},{planet:'Moon',longitude:52.4,sign:'Taurus',degree_dms:"22\u00B024'",nakshatra:'Rohini',nakshatra_lord:'Moon',pada:3,retro:false,house:9,dignity:'Exalted'},{planet:'Mars',longitude:112.1,sign:'Cancer',degree_dms:"22\u00B06'",nakshatra:'Ashlesha',nakshatra_lord:'Mercury',pada:3,retro:false,house:11,dignity:'Debilitated'},{planet:'Mercury',longitude:26.5,sign:'Aries',degree_dms:"26\u00B030'",nakshatra:'Bharani',nakshatra_lord:'Venus',pada:3,retro:false,house:8,dignity:'Neutral'},{planet:'Jupiter',longitude:248.3,sign:'Sagittarius',degree_dms:"8\u00B018'",nakshatra:'Mula',nakshatra_lord:'Ketu',pada:2,retro:false,house:4,dignity:'Own Sign'},{planet:'Venus',longitude:18.2,sign:'Aries',degree_dms:"18\u00B012'",nakshatra:'Bharani',nakshatra_lord:'Venus',pada:1,retro:false,house:8,dignity:'Neutral'},{planet:'Saturn',longitude:351.7,sign:'Pisces',degree_dms:"21\u00B042'",nakshatra:'Purva Bhadrapada',nakshatra_lord:'Jupiter',pada:3,retro:false,house:7,dignity:"Friend's Sign"},{planet:'Rahu',longitude:188.9,sign:'Virgo',degree_dms:"8\u00B054'",nakshatra:'Hasta',nakshatra_lord:'Moon',pada:2,retro:true,house:1,dignity:'\u2014'},{planet:'Ketu',longitude:8.9,sign:'Aries',degree_dms:"8\u00B054'",nakshatra:'Ashwini',nakshatra_lord:'Ketu',pada:3,retro:true,house:7,dignity:'\u2014'}],north_indian:{houses:{1:{house:1,sign:'Virgo',planets:[{code:'Asc',deg:"15\u00B018'",retro:false},{code:'Ra',deg:"8\u00B054'",retro:true}]},2:{house:2,sign:'Libra',planets:[]},3:{house:3,sign:'Scorpio',planets:[]},4:{house:4,sign:'Sagittarius',planets:[{code:'Ju',deg:"8\u00B018'",retro:false}]},5:{house:5,sign:'Capricorn',planets:[]},6:{house:6,sign:'Aquarius',planets:[]},7:{house:7,sign:'Pisces',planets:[{code:'Sa',deg:"21\u00B042'",retro:false},{code:'Ke',deg:"8\u00B054'",retro:true}]},8:{house:8,sign:'Aries',planets:[{code:'Me',deg:"26\u00B030'",retro:false},{code:'Ve',deg:"18\u00B012'",retro:false}]},9:{house:9,sign:'Taurus',planets:[{code:'Su',deg:"4\u00B048'",retro:false},{code:'Mo',deg:"22\u00B024'",retro:false}]},10:{house:10,sign:'Gemini',planets:[]},11:{house:11,sign:'Cancer',planets:[{code:'Ma',deg:"22\u00B06'",retro:false}]},12:{house:12,sign:'Leo',planets:[]}}},navamsa:{houses:{1:{house:1,sign:'Aries',planets:[{code:'Asc',deg:'',retro:false}]},2:{house:2,sign:'Taurus',planets:[]},3:{house:3,sign:'Gemini',planets:[{code:'Su',deg:'',retro:false}]},4:{house:4,sign:'Cancer',planets:[{code:'Ju',deg:'',retro:false},{code:'Mo',deg:'',retro:false}]},5:{house:5,sign:'Leo',planets:[]},6:{house:6,sign:'Virgo',planets:[{code:'Ve',deg:'',retro:false}]},7:{house:7,sign:'Libra',planets:[{code:'Me',deg:'',retro:false}]},8:{house:8,sign:'Scorpio',planets:[{code:'Ra',deg:'',retro:true}]},9:{house:9,sign:'Sagittarius',planets:[]},10:{house:10,sign:'Capricorn',planets:[{code:'Sa',deg:'',retro:false}]},11:{house:11,sign:'Aquarius',planets:[{code:'Ma',deg:'',retro:false}]},12:{house:12,sign:'Pisces',planets:[{code:'Ke',deg:'',retro:true}]}}},dasha:[{planet:'Mars',years:.8,start_date:'1996-05-19',end_date:'1997-03-12'},{planet:'Rahu',years:18,start_date:'1997-03-12',end_date:'2015-03-12'},{planet:'Jupiter',years:16,start_date:'2015-03-12',end_date:'2031-03-12'},{planet:'Saturn',years:19,start_date:'2031-03-12',end_date:'2050-03-12'},{planet:'Mercury',years:17,start_date:'2050-03-12',end_date:'2067-03-12'}]};}
+function renderKInfo(res){
+  const pRows=(res.planets||[]).map(p=>{const col=PC[p.planet]||'#E8E8E8',sh=PS[p.planet]||p.planet.slice(0,2),dc=DGC[p.dignity]||'nt';return `<tr><td><span class="pdot" style="background:${col};box-shadow:0 0 5px ${col}55"></span><span class="pnm" style="color:${col}">${sh}</span>${p.retro?'<span class="pret">(R)</span>':''}</td><td><span style="color:${col};font-family:var(--f2);font-size:.8rem;font-weight:700">${p.planet}</span></td><td style="font-size:.78rem;color:rgba(255,255,255,.55)">${SIGN_G[SIGNS.indexOf(p.sign)]||''} ${p.sign||'\u2014'}</td><td class="pdeg">${p.degree_dms||'\u2014'}</td><td class="pdeg" style="font-size:.68rem">${p.nakshatra||'\u2014'}</td><td class="ph">${p.house||'\u2014'}</td><td><span class="dg ${dc}">${p.dignity||'\u2014'}</span></td></tr>`;}).join('');
+  const d=res.dasha||[],now=new Date();
+  const dHtml=d.slice(0,6).map(x=>{const col=DC[x.planet]||'#E8E8E8',active=new Date(x.end_date)>now;return `<div class="dl" style="border-color:${active?col+'88':'rgba(255,255,255,.1)'};background:${active?col+'18':'rgba(255,255,255,.03)'}"><span class="dlbl" style="color:${active?col:'rgba(255,255,255,.3)'}">${active?'ACTIVE':'\u2014'}</span><span class="dpl" style="color:${col}">${x.planet}</span><span class="ddt">${x.start_date}<br>${x.end_date}</span>${active?`<div style="position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:${col};box-shadow:0 0 6px ${col}"></div>`:''}</div>`;}).join('');
+  const av=res.avakhada||{};
+  const avH=av.varna?`<div class="ic"><div class="ich">Avakhada \u2014 Personality</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">${[['Name Letter',av.name_alphabet],['Varna',av.varna],['Vashya',av.vashya],['Yoni',av.yoni],['Gan',av.gan],['Nadi',av.nadi],['Tatva',av.tatva],['Paya',av.paya]].map(([k,v])=>`<div class="icr" style="display:flex;justify-content:space-between;padding:.28rem .4rem;background:rgba(255,255,255,.02);border-radius:.4rem"><div class="ick">${k}</div><div class="icv" style="font-size:.72rem">${v||'\u2014'}</div></div>`).join('')}</div></div>`:'';
+  G('ksinfo').innerHTML=`<div style="font-family:var(--f4);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,215,0,.4)">Planetary Positions${res.ayanamsa?' \u00B7 '+res.ayanamsa.toFixed(4)+'\u00B0 Lahiri Ayanamsa':''}</div><div style="overflow-x:auto"><table class="pt"><thead><tr><th>#</th><th>Planet</th><th>Rashi</th><th>Degree</th><th>Nakshatra</th><th>H</th><th>Dignity</th></tr></thead><tbody>${pRows}</tbody></table></div><div class="ic"><div class="ich">Ascendant & Birth</div><div class="icr"><div class="ick">Lagna</div><div class="icv">${res.lagna?.sign||'\u2014'} \u00B7 ${res.lagna?.degree_dms||''}</div></div><div class="icr"><div class="ick">Moon Sign</div><div class="icv">${res.planets?.find(p=>p.planet==='Moon')?.sign||'\u2014'}</div></div><div class="icr"><div class="ick">Nakshatra</div><div class="icv">${res.planets?.find(p=>p.planet==='Moon')?.nakshatra||'\u2014'} P${res.planets?.find(p=>p.planet==='Moon')?.pada||''}</div></div><div class="icr"><div class="ick">Ayanamsa</div><div class="icv">${res.ayanamsa?.toFixed(4)||'\u2014'}\u00B0 Lahiri</div></div><div class="icr"><div class="ick">Tithi</div><div class="icv">${res.panchang?.tithi?.name||res.panchang?.tithi||'\u2014'}</div></div></div><div class="ic"><div class="ich">Vimshottari Dasha</div><div class="dlwrap">${dHtml}</div></div>${avH}`;
+}
+
+// ── ORACLE ────────────────────────────────────────────────────
+function toggleO(){G('opanel').classList.toggle('open');}
+function aq(q){G('oinp').value=q;sendO();}
+async function sendO(){
+  const inp=G('oinp'),q=inp.value.trim();if(!q)return;inp.value='';
+  const msgs=G('opmsgs');msgs.innerHTML+=`<div class="om u">${q}</div>`;
+  const tid='t'+Date.now();msgs.innerHTML+=`<div class="optyp" id="${tid}"><span></span><span></span><span></span></div>`;msgs.scrollTop=msgs.scrollHeight;
+  const p=PD?.panchang||PD;const ctx2=p?`Today in ${LOC.name}: Tithi ${p.tithi?.name||p.tithi||'\u2014'}, Vara ${p.vara||'\u2014'}, Nakshatra ${p.nakshatra?.name||p.nakshatra||'\u2014'}.`:'';
+  try{
+    const r=await fetch('/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:280,system:'You are the Aetheris Oracle, Vedic Jyotish guide on astromata.com. 2-3 sentences, wise and warm, specific. Use Sanskrit briefly. Context: '+ctx2,messages:[{role:'user',content:q}]})});
+    const data=await r.json();G(tid)?.remove();msgs.innerHTML+=`<div class="om a">${data.content?.[0]?.text||'\uD83D\uDE4F The cosmos contemplates.'}</div>`;
+  }catch(e){G(tid)?.remove();msgs.innerHTML+=`<div class="om a">\uD83D\uDE4F Today is ${p?.vara||'today'}, ${p?.tithi?.paksha||'Shukla'} Paksha. The Choghadiya above shows hour-by-hour auspiciousness. May your day be filled with cosmic grace.</div>`;}
   msgs.scrollTop=msgs.scrollHeight;
 }
 
+// ── BOOT ──────────────────────────────────────────────────────
 boot();
 </script>
 </body>

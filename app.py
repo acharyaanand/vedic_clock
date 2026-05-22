@@ -295,7 +295,7 @@ app.add_middleware(
     # If you add a new subdomain (e.g. api.astromata.com or kundli.astromata.com),
     # add it to this list.
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "X-API-Key", "Authorization"],
 )
